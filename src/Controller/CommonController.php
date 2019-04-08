@@ -10,6 +10,8 @@ abstract class CommonController extends AbstractFOSRestController
 {
     const SERIALIZE_GROUP_DEFAULT = 'default';
 
+    const SERIALIZE_GROUP_PRIVATE = 'private';
+
     const SERIALIZE_GROUP_LIST = 'list';
 
     const SERIALIZE_GROUP_DETAILS = 'details';

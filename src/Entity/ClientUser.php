@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as JMSSerializer;
+use JMS\Serializer\Annotation\Type;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 
 /**
@@ -26,13 +27,12 @@ class ClientUser extends User
     /**
      * @var string
      *
-     * @ORM\Column(name="phone_number", type="phone_number", length=255, unique=true, nullable=true)
+     * @ORM\Column(name="phone_number", type="phone_number", unique=true, nullable=true)
      *
-     * @Assert\NotBlank()
      * @Assert\Length(max="255")
      * @AssertPhoneNumber(defaultRegion="RU", type="mobile")
      *
-     * @JMSSerializer\Type("libphonenumber\PhoneNumber")
+     * @Type("libphonenumber\PhoneNumber")
      *
      * @JMSSerializer\Groups({"private"})
      * @JMSSerializer\Expose
@@ -48,18 +48,18 @@ class ClientUser extends User
     private $confirmationKey;
 
     /**
-     * @return string
+     * @return mixed
      */
-    public function getPhoneNumber(): string
+    public function getPhoneNumber()
     {
         return $this->phoneNumber;
     }
 
     /**
-     * @param string $phoneNumber
-     * @return ClientUser
+     * @param $phoneNumber
+     * @return $this
      */
-    public function setPhoneNumber(string $phoneNumber = null): ClientUser
+    public function setPhoneNumber($phoneNumber = null): self
     {
         $this->phoneNumber = $phoneNumber;
         return $this;

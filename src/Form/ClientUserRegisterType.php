@@ -4,7 +4,9 @@ namespace App\Form;
 
 use App\Entity\ClientUser;
 use App\Entity\User;
-use libphonenumber\PhoneNumberType;
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberUtil;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,6 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 
 class ClientUserRegisterType extends CommonType
 {
@@ -25,9 +28,15 @@ class ClientUserRegisterType extends CommonType
      */
     private $passwordEncoder;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    /**
+     * @var PhoneNumberUtil
+     */
+    private $phoneNumberUtil;
+
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, PhoneNumberUtil $phoneNumberUtil)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $this->phoneNumberUtil = $phoneNumberUtil;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -56,6 +65,17 @@ class ClientUserRegisterType extends CommonType
                     ]
                 ]
             ]);
+
+//        $builder->get('phoneNumber')->addModelTransformer(new CallbackTransformer(
+//            function ($number) {
+//                return (string) $number;
+//            },
+//            function ($number) {
+//
+//                return $this->phoneNumberUtil->parse($number);
+//
+//            }
+//        ));
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var User $user */

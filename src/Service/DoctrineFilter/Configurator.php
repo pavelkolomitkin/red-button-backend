@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Filter;
+namespace App\Service\DoctrineFilter;
 
 use App\Entity\User;
 use App\Service\UserAwareServiceTrait;

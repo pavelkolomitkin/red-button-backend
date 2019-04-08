@@ -22,7 +22,9 @@ class SecurityController extends CommonController
 
         return $this->getResponse([
             'user' => $user
-        ], Response::HTTP_CREATED);
+        ], Response::HTTP_CREATED,
+            [],
+            [static::SERIALIZE_GROUP_PRIVATE]);
     }
 
     /**
@@ -40,7 +42,10 @@ class SecurityController extends CommonController
 
         return $this->getResponse([
             'user' => $user
-        ]);
+        ], Response::HTTP_CREATED,
+            [],
+            [static::SERIALIZE_GROUP_PRIVATE]
+        );
     }
 
     /**
@@ -52,6 +57,9 @@ class SecurityController extends CommonController
 
         return $this->getResponse([
             'user' => $user
-        ]);
+        ], Response::HTTP_CREATED,
+            [],
+            [static::SERIALIZE_GROUP_PRIVATE]
+        );
     }
 }

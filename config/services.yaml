@@ -43,7 +43,7 @@ services:
                   - '@app.service.mailer'
 
     app.filter.configurator:
-        class: App\Service\DoctrineFilter\ActiveUserFilter
+        class: App\Service\DoctrineFilter\Configurator
         arguments:
             - '@doctrine.orm.entity_manager'
         calls:
