@@ -34,8 +34,18 @@ class ClientUser extends User
      *
      * @JMSSerializer\Type("libphonenumber\PhoneNumber")
      *
+     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Expose
+     *
      */
     private $phoneNumber;
+
+    /**
+     * @var ClientConfirmationKey
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\ClientConfirmationKey", mappedBy="client", cascade={"persist", "remove"})
+     */
+    private $confirmationKey;
 
     /**
      * @return string
@@ -62,5 +72,26 @@ class ClientUser extends User
         $result[] = 'ROLE_CLIENT_USER';
 
         return $result;
+    }
+
+
+    /**
+     * @return ClientConfirmationKey
+     */
+    public function getConfirmationKey(): ClientConfirmationKey
+    {
+        return $this->confirmationKey;
+    }
+
+    /**
+     * @param ClientConfirmationKey $confirmationKey
+     * @return $this
+     */
+    public function setConfirmationKey(ClientConfirmationKey $confirmationKey): self
+    {
+        $this->confirmationKey = $confirmationKey;
+        $confirmationKey->setClient($this);
+
+        return $this;
     }
 }

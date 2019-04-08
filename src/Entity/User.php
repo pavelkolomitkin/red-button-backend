@@ -42,6 +42,9 @@ abstract class User implements UserInterface
      * @Assert\NotBlank()
      * @Assert\Email()
      * @Assert\Length(max="180")
+     *
+     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Expose
      */
     private $email;
 
@@ -52,11 +55,17 @@ abstract class User implements UserInterface
      *
      * @Assert\NotBlank()
      * @Assert\Length(max="255")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $fullName;
 
     /**
      * @ORM\Column(type="json")
+     *
+     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Expose
      */
     private $roles = [];
 
@@ -65,6 +74,13 @@ abstract class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="is_active", type="boolean", nullable=false)
+     */
+    private $isActive = false;
 
     public function getId(): ?int
     {
@@ -159,6 +175,24 @@ abstract class User implements UserInterface
     public function setFullName(string $fullName): self
     {
         $this->fullName = $fullName;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return (bool) $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     * @return User
+     */
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
         return $this;
     }
 }
