@@ -7,6 +7,8 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as JMSSerializer;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -18,6 +20,8 @@ use JMS\Serializer\Annotation as JMSSerializer;
  * @JMSSerializer\ExclusionPolicy("all")
  *
  * @Gedmo\SoftDeleteable(fieldName="deletedAt")
+ *
+ * @UniqueEntity("email", message="User with that email is already exist!")
  */
 abstract class User implements UserInterface
 {
@@ -35,6 +39,9 @@ abstract class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     * @Assert\Length(max="180")
      */
     private $email;
 
@@ -42,6 +49,9 @@ abstract class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="full_name", type="string", length=255)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(max="255")
      */
     private $fullName;
 

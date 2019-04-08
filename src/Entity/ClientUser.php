@@ -5,19 +5,35 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as JMSSerializer;
+use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
+
 /**
  * Class ClientUser
  * @package App\Entity
  *
  * @ORM\Entity(repositoryClass="App\Repository\ClientUserRepository")
  * @ORM\Table(name="client_user")
+ *
+ * @JMSSerializer\ExclusionPolicy("all")
+ *
+ * @UniqueEntity("phoneNumber", message="User with that phone number is already exist!")
  */
 class ClientUser extends User
 {
     /**
      * @var string
      *
-     * @ORM\Column(name="phone_number", type="string", length=255, unique=true, nullable=true)
+     * @ORM\Column(name="phone_number", type="phone_number", length=255, unique=true, nullable=true)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(max="255")
+     * @AssertPhoneNumber(defaultRegion="RU", type="mobile")
+     *
+     * @JMSSerializer\Type("libphonenumber\PhoneNumber")
+     *
      */
     private $phoneNumber;
 
