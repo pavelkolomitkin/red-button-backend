@@ -11,6 +11,8 @@ doctrine:
         driver: 'pdo_pgsql'
         charset: utf8
         url: '%env(DATABASE_URL)%'
+        types:
+            phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore
@@ -22,3 +24,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+
+        filters:
+            softdeleteable:
+                class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+                enabled: true
+
+            active_user:
+                class: App\Service\DoctrineFilter\ActiveUserFilter
+                enabled: true
