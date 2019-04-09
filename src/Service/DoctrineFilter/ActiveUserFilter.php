@@ -3,12 +3,24 @@
 
 namespace App\Service\DoctrineFilter;
 
+use App\Entity\AdminUser;
 use App\Entity\User;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ActiveUserFilter extends SQLFilter
 {
+    /**
+     * @var UserInterface
+     */
+    private $user;
+
+    public function setUser(UserInterface $user)
+    {
+        $this->user = $user;
+    }
+
     /**
      * Gets the SQL query part to add to a query.
      *
@@ -19,7 +31,11 @@ class ActiveUserFilter extends SQLFilter
      */
     public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias)
     {
-        // TODO: Implement addFilterConstraint() method.
+        if ($this->user instanceof AdminUser)
+        {
+            return '';
+        }
+
         if ($targetEntity->reflClass->isSubclassOf(User::class))
         {
             return $targetTableAlias . '.is_active = 1';
