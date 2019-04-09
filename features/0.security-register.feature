@@ -5,12 +5,12 @@ Feature:
     When I add "Content-Type" header equal to "application/json"
     And I add "Accept" header equal to "application/json"
 
-    When I send a "POST" request to "/client/security/register" with body:
+    When I send a "POST" request to "/security/register" with body:
     """
     {
         "email": "tes",
         "fullName": "Ivan Batkovich",
-        "phoneNumber": "+74353456534"
+        "phoneNumber": "rew",
         "plainPassword":
         {
             "password": "1267",
@@ -25,6 +25,9 @@ Feature:
         "errors": {
             "email": [
                 "This value is not a valid email address."
+            ],
+            "phoneNumber": [
+                "This value is not a valid phone number."
             ],
             "plainPassword": {
                 "password": [
@@ -68,6 +71,7 @@ Feature:
     {
         "email": "test@example.com",
         "fullName": "Ivan Batkovich",
+        "phoneNumber": "+79023456534",
         "plainPassword":
         {
             "password": "1234567",
@@ -76,13 +80,9 @@ Feature:
     }
     """
     Then the response status code should be 201
-    Then the JSON should be equal to:
-    """
-    {
-        "user": {
-            "id": 1,
-            "email": "test@example.com",
-            "fullName": "Ivan Batkovich"
-        }
-    }
-    """
+    Then the JSON node "user.id" should be equal to the number "1"
+    Then the JSON node "user.email" should be equal to the string "test@example.com"
+    Then the JSON node "user.fullName" should be equal to the string "Ivan Batkovich"
+    Then the JSON node "user.phoneNumber" should be equal to the string "+79023456534"
+    Then the JSON node "user.roles" should exist
+    Then the JSON node "user.roles[1]" should be equal to the string "ROLE_CLIENT_USER"

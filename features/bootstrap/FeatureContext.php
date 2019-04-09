@@ -1,6 +1,9 @@
 <?php
 
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\PyStringNode;
+use Behat\MinkExtension\Context\MinkContext;
+use PHPUnit\Framework\Assert as Assertions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -11,21 +14,46 @@ use Symfony\Component\HttpKernel\KernelInterface;
  * 
  * @see http://behat.org/en/latest/quick_start.html
  */
-class FeatureContext implements Context
+class FeatureContext extends MinkContext
 {
     /**
      * @var KernelInterface
      */
     private $kernel;
+    /**
+     * @var \Doctrine\ORM\EntityManagerInterface
+     */
+    private $entityManager;
 
     /**
-     * @var Response|null
+     * @var \Symfony\Component\BrowserKit\Response|null
      */
     private $response;
 
-    public function __construct(KernelInterface $kernel)
+    /**
+     * @var string
+     */
+    private $authToken = null;
+
+    /**
+     * @var string
+     */
+    private $registerConfirmationKey;
+
+    /**
+     * @var null | array
+     */
+    private $lastNote = null;
+
+
+
+    public function __construct(
+        KernelInterface $kernel,
+        \Doctrine\ORM\EntityManagerInterface $entityManager
+    )
     {
         $this->kernel = $kernel;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -44,5 +72,145 @@ class FeatureContext implements Context
         if ($this->response === null) {
             throw new \RuntimeException('No response received');
         }
+    }
+
+    /**
+     * @Given I have an activation key with email :email
+     * @param $email
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function iHaveAnActivationRegisterKey($email)
+    {
+        $connection = $this->entityManager->getConnection();
+
+        $statement = $connection->prepare("SELECT client_confirmation_key.key as confirmation_key FROM client_confirmation_key
+            JOIN users ON (client_confirmation_key.client_id = users.id)
+            WHERE users.email = :email
+        ");
+
+        $statement->bindValue("email", $email);
+        $statement->execute();
+
+        $key = $statement->fetch(\Doctrine\DBAL\FetchMode::ASSOCIATIVE);
+
+        $this->registerConfirmationKey = $key['confirmation_key'];
+    }
+
+    /**
+     * @Then I try activate my registration by key
+     */
+    public function iTryActivateRegistration()
+    {
+        $this->sendRequest('POST', '/security/confirm-register/' . $this->registerConfirmationKey);
+    }
+
+
+    /**
+     * @return \Behat\Mink\Driver\Goutte\Client
+     */
+    protected function getClient()
+    {
+        /** @var \Behat\Mink\Driver\Goutte\Client $result */
+        $result = $this->getSession('default')->getDriver()->getClient();
+
+        if ($this->authToken !== null)
+        {
+            $result->setHeader('Authorization', 'Bearer ' . $this->authToken);
+        }
+        else
+        {
+            $result->removeHeader('Authorization');
+        }
+
+        return $result;
+    }
+
+    /**
+     * Locates url, based on provided path.
+     * Override to provide custom routing mechanism.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    public function locatePath($path)
+    {
+        $startUrl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
+
+        return 0 !== strpos($path, 'http') ? $startUrl . ltrim($path, '/') : $path;
+    }
+
+    protected function sendRequest($method, $url, $params = [], $files = [], $server = [], $content = null, $additionHeaders = [
+        'Content-Type' => 'application/json'
+    ])
+    {
+        $url = $this->locatePath($url);
+
+        $client = $this->getClient();
+        foreach ($additionHeaders as $name => $value)
+        {
+            $client->setHeader($name, $value);
+        }
+
+        $client->request($method, $url, $params, $files, $server, $content);
+        $this->response = $client->getInternalResponse();
+
+        return $this->response;
+    }
+
+    /**
+     * @Then I hold the authorize token from response
+     */
+    public function iKeepAuthorizationTokenFromRequest()
+    {
+        $data = json_decode($this->getClient()->getResponse()->getContent(), true);
+        $this->authToken = $data['token'];
+    }
+
+    /**
+     * @When I try to get user profile
+     */
+    public function iTryToGetUserProfile()
+    {
+        $this->sendRequest('GET', '/security/profile');
+    }
+
+    /**
+     * @Given I authorize with email :email and password :password
+     * @param $email
+     * @param $password
+     */
+    public function iAuthorize(string $email, string $password)
+    {
+        $this->sendRequest('POST', '/security/login_check', [], [], [],
+            json_encode([
+                'username' => $email,
+                'password' => $password
+            ]));
+
+        Assertions::assertEquals(200, $this->response->getStatus(), 'You can not authorize with this credentials!');
+
+        $this->iKeepAuthorizationTokenFromRequest();
+    }
+
+    /**
+     * @Given I send http request with method :method on relative url :path with content:
+     *
+     * @param $method
+     * @param $path
+     * @param $content
+     */
+    public function iSendRequestWithContent(string $method, string $path, PyStringNode $content)
+    {
+        $this->sendRequest($method, $path, [], [], [], $content);
+    }
+
+    /**
+     * @Then I hold last note
+     */
+    public function iHoldLastNote()
+    {
+        $data = json_decode($this->response->getContent(), true);
+        $this->lastNote = $data['note'];
     }
 }

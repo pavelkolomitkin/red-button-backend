@@ -63,9 +63,6 @@ abstract class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
-     *
-     * @JMSSerializer\Groups({"private"})
-     * @JMSSerializer\Expose
      */
     private $roles = [];
 
@@ -111,6 +108,10 @@ abstract class User implements UserInterface
 
     /**
      * @see UserInterface
+     *
+     * @JMSSerializer\VirtualProperty(name="roles")
+     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Expose
      */
     public function getRoles(): array
     {
