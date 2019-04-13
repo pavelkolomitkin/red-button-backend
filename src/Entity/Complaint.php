@@ -4,14 +4,20 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ComplaintRepository")
  * @ORM\Table(name="complaint")
+ *
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  */
 class Complaint
 {
+    use SerializeTimestampableTrait;
     use GeoLocationTrait;
+    use SoftDeleteableEntity;
 
     /**
      * @ORM\Id()
@@ -67,10 +73,18 @@ class Complaint
      */
     private $region;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\ComplaintPicture", mappedBy="complaint", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $pictures;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->complaintConfirmations = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +176,35 @@ class Complaint
     public function setRegion(Region $region): self
     {
         $this->region = $region;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPictures()
+    {
+        return $this->pictures;
+    }
+
+    public function addPicture(ComplaintPicture $picture): self
+    {
+        if (!$this->pictures->contains($picture))
+        {
+            $this->pictures[] = $picture;
+            $picture->setComplaint($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(ComplaintPicture $picture): self
+    {
+        if ($this->pictures->contains($picture))
+        {
+            $this->pictures->removeElement($picture);
+        }
+
         return $this;
     }
 }

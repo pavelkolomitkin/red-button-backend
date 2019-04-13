@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ServiceType
 {
+    use SerializeTimestampableTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

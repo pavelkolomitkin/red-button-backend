@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ComplaintTag
 {
+    use SerializeTimestampableTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

@@ -3,13 +3,20 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ComplaintConfirmationRepository")
  * @ORM\Table(name="complaint_confirmation")
+ *
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  */
 class ComplaintConfirmation
 {
+    use SerializeTimestampableTrait;
+    use SoftDeleteableEntity;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
