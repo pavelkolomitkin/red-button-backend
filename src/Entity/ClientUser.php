@@ -3,6 +3,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -48,6 +49,26 @@ class ClientUser extends User
     private $confirmationKey;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Complaint", mappedBy="client", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $complaints;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Issue", mappedBy="client", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $issues;
+
+    public function __construct()
+    {
+        $this->complaints = new ArrayCollection();
+        $this->issues = new ArrayCollection();
+    }
+
+    /**
      * @return mixed
      */
     public function getPhoneNumber()
@@ -91,6 +112,61 @@ class ClientUser extends User
     {
         $this->confirmationKey = $confirmationKey;
         $confirmationKey->setClient($this);
+
+        return $this;
+    }
+
+    public function getComplaints()
+    {
+        return $this->complaints;
+    }
+
+    public function addComplaint(Complaint $complaint): self
+    {
+        if (!$this->complaints->contains($complaint))
+        {
+            $this->complaints[] = $complaint;
+            $complaint->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComplaint(Complaint $complaint): self
+    {
+        if ($this->complaints->contains($complaint))
+        {
+            $this->complaints->removeElement($complaint);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getIssues()
+    {
+        return $this->issues;
+    }
+
+    public function addIssue(Issue $issue): self
+    {
+        if (!$this->issues->contains($issue))
+        {
+            $this->issues[] = $issue;
+            $issue->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIssue(Issue $issue): self
+    {
+        if ($this->issues->contains($issue))
+        {
+            $this->issues->removeElement($issue);
+        }
 
         return $this;
     }
