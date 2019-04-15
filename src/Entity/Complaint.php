@@ -80,11 +80,19 @@ class Complaint
      */
     private $pictures;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="complaint")
+     */
+    private $videos;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->complaintConfirmations = new ArrayCollection();
         $this->pictures = new ArrayCollection();
+        $this->videos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -203,6 +211,36 @@ class Complaint
         if ($this->pictures->contains($picture))
         {
             $this->pictures->removeElement($picture);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getVideos()
+    {
+        return $this->videos;
+    }
+
+    public function addVideo(VideoMaterial $video): self
+    {
+        if (!$this->videos->contains($video))
+        {
+            $this->videos[] = $video;
+            $video->setComplaint($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideo(VideoMaterial $video): self
+    {
+        if ($this->videos->contains($video))
+        {
+            $this->videos->removeElement($video);
+            $video->setComplaint(null);
         }
 
         return $this;
