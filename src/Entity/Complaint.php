@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use App\Validator\Constraints\ComplaintPictureOwnerConstraint;
+use App\Validator\Constraints\ComplaintVideoOwnerConstraint;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ComplaintRepository")
@@ -28,7 +31,11 @@ class Complaint
 
     /**
      * @var string
-     * @ORM\Column(type="text", nullable=false)
+     *
+     * @ORM\Column(name="message", type="text", nullable=false)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(max="5000")
      */
     private $message;
 
@@ -76,12 +83,20 @@ class Complaint
     /**
      * @var ArrayCollection
      *
+     * @Assert\All(
+     *     @ComplaintPictureOwnerConstraint()
+     * )
+     *
      * @ORM\OneToMany(targetEntity="App\Entity\ComplaintPicture", mappedBy="complaint", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     private $pictures;
 
     /**
      * @var ArrayCollection
+     *
+     * @Assert\All(
+     *     @ComplaintVideoOwnerConstraint()
+     * )
      *
      * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="complaint")
      */
@@ -98,6 +113,24 @@ class Complaint
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $message
+     * @return Complaint
+     */
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
+        return $this;
     }
 
     /**
@@ -133,12 +166,20 @@ class Complaint
     public function setServiceType(ServiceType $serviceType = null): self
     {
         $this->serviceType = $serviceType;
+
         return $this;
     }
 
     public function getTags()
     {
         return $this->tags;
+    }
+
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+
+        return $this;
     }
 
     public function addTag(ComplaintTag $tag): self
@@ -195,6 +236,13 @@ class Complaint
         return $this->pictures;
     }
 
+    public function setPictures($pictures)
+    {
+        $this->pictures = $pictures;
+
+        return $this;
+    }
+
     public function addPicture(ComplaintPicture $picture): self
     {
         if (!$this->pictures->contains($picture))
@@ -222,6 +270,13 @@ class Complaint
     public function getVideos()
     {
         return $this->videos;
+    }
+
+    public function setVideos($videos)
+    {
+        $this->videos = $videos;
+
+        return $videos;
     }
 
     public function addVideo(VideoMaterial $video): self

@@ -53,3 +53,20 @@ services:
                   - '@security.token_storage'
         tags:
             - { name: kernel.event_listener, event: kernel.request }
+
+    App\Validator\Constraints\ComplaintPictureOwnerValidator:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+        tags:
+            - { name: validator.constraint_validator }
+
+    App\Validator\Constraints\ComplaintVideoOwnerValidator:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+        tags:
+            - { name: validator.constraint_validator }
+

@@ -3,16 +3,22 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use JMS\Serializer\Annotation as JMSSerializer;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VideoMaterialRepository")
  * @ORM\Table(name="video_material")
  *
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  * @JMSSerializer\ExclusionPolicy("all")
  */
-abstract class VideoMaterial
+class VideoMaterial
 {
+    use SerializeTimestampableTrait;
+    use SoftDeleteableEntity;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -47,6 +53,14 @@ abstract class VideoMaterial
      * @ORM\JoinColumn(name="issue_id", nullable=true, onDelete="SET NULL")
      */
     private $issue;
+
+    /**
+     * @var ClientUser
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\ClientUser", inversedBy="videos")
+     * @ORM\JoinColumn(name="owner_id", nullable=false)
+     */
+    private $owner;
 
     public function getId(): ?int
     {
@@ -122,6 +136,24 @@ abstract class VideoMaterial
     public function setIssue(Issue $issue = null): self
     {
         $this->issue = $issue;
+        return $this;
+    }
+
+    /**
+     * @return ClientUser
+     */
+    public function getOwner(): ClientUser
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param ClientUser $owner
+     * @return VideoMaterial
+     */
+    public function setOwner(ClientUser $owner): self
+    {
+        $this->owner = $owner;
         return $this;
     }
 }

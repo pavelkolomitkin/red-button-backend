@@ -65,6 +65,14 @@ class ComplaintPicture
      */
     private $complaint;
 
+    /**
+     * @var ClientUser
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\ClientUser", inversedBy="complaintUploadPictures")
+     * @ORM\JoinColumn(name="owner_id", nullable=false)
+     */
+    private $owner;
+
     public function __construct()
     {
         $this->image = new EmbeddedFile();
@@ -74,7 +82,6 @@ class ComplaintPicture
     {
         return $this->id;
     }
-
 
     /**
      *
@@ -134,4 +141,21 @@ class ComplaintPicture
         return $this;
     }
 
+    /**
+     * @return ClientUser
+     */
+    public function getOwner(): ClientUser
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param ClientUser $owner
+     * @return ComplaintPicture
+     */
+    public function setOwner(ClientUser $owner): self
+    {
+        $this->owner = $owner;
+        return $this;
+    }
 }
