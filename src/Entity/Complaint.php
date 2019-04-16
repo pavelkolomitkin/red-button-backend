@@ -19,7 +19,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Complaint
 {
     use SerializeTimestampableTrait;
-    use GeoLocationTrait;
     use SoftDeleteableEntity;
 
     /**
@@ -102,12 +101,23 @@ class Complaint
      */
     private $videos;
 
+    /**
+     * @var OSMAddress
+     * @ORM\Embedded(class="App\Entity\OSMAddress")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     */
+    private $address;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->complaintConfirmations = new ArrayCollection();
         $this->pictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
+
+        $this->address = new OSMAddress();
     }
 
     public function getId(): ?int
@@ -298,6 +308,24 @@ class Complaint
             $video->setComplaint(null);
         }
 
+        return $this;
+    }
+
+    /**
+     * @return OSMAddress
+     */
+    public function getAddress(): OSMAddress
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param OSMAddress $address
+     * @return Complaint
+     */
+    public function setAddress(OSMAddress $address): self
+    {
+        $this->address = $address;
         return $this;
     }
 }
