@@ -42,13 +42,13 @@ class ExternalVideoProvider implements IExternalVideoProvider
             throw new ProvideVideoException('The external service is not available!');
         }
 
-        $data = json_decode($response->getBody()->getContents(), true);
-        if (empty($data))
+        $result = json_decode($response->getBody()->getContents(), true);
+        if (empty($result))
         {
             throw new ProvideVideoException('Cannot to receive data by link!');
         }
 
-        return $data;
+        return $result;
     }
 
     protected function initMaterialWithData(VideoMaterial $material, array $data)
