@@ -3,14 +3,16 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\VideoMaterialRepository")
- * @ORM\Table(name="video_material")
- *
+ * @ORM\Table(name="video_material", uniqueConstraints={
+ *     @UniqueConstraint(name="user_video_unique_key", columns={"external_id", "owner_id"})
+ *     })
  * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  * @JMSSerializer\ExclusionPolicy("all")
  */
@@ -25,6 +27,20 @@ class VideoMaterial
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=500, nullable=true)
+     */
+    private $title;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="external_id", type="string", length=50, nullable=false)
+     */
+    private $externalId;
 
     /**
      * @var string
@@ -65,6 +81,42 @@ class VideoMaterial
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     * @return VideoMaterial
+     */
+    public function setTitle(string $title = null): self
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExternalId(): string
+    {
+        return $this->externalId;
+    }
+
+    /**
+     * @param string $externalId
+     * @return VideoMaterial
+     */
+    public function setExternalId(string $externalId): self
+    {
+        $this->externalId = $externalId;
+        return $this;
     }
 
     /**

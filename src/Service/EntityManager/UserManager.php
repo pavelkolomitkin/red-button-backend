@@ -5,7 +5,6 @@ namespace App\Service\EntityManager;
 use App\Entity\ClientUser;
 use App\Entity\User;
 use App\Entity\ClientConfirmationKey;
-use App\Form\ClientUserRegisterType;
 use App\Service\EntityManager\Exception\ManageEntityException;
 use App\Service\Mailer;
 use Doctrine\DBAL\LockMode;
@@ -105,7 +104,7 @@ class UserManager extends CommonEntityManager
 
     protected function getCreationForm(): FormInterface
     {
-        return $this->formFactory->create(ClientUserRegisterType::class);
+        return $this->formFactory->create(\App\Form\Client\ClientUserRegisterType::class);
     }
 
     protected function getUpdatingForm(): FormInterface

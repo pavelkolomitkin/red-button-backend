@@ -54,6 +54,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request }
 
+    app.video_link.manager:
+        class: App\Service\Video\VideoLinkManager
+
+    app.external_video.provider:
+        class: App\Service\Video\ExternalVideoProvider
+
     App\Validator\Constraints\ComplaintPictureOwnerValidator:
         calls:
             - method: setTokenStorage
@@ -69,4 +75,16 @@ services:
                   - '@security.token_storage'
         tags:
             - { name: validator.constraint_validator }
+
+    App\Service\EntityManager\Client\VideoMaterialManager:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+            - method: setLinkManager
+              arguments:
+                  - '@app.video_link.manager'
+            - method: setExternalVideoProvider
+              arguments:
+                  - '@app.external_video.provider'
 
