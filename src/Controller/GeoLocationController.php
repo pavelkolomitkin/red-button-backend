@@ -22,7 +22,7 @@ class GeoLocationController extends CommonController
      * @Route(name="geo_get", path="/geo/get", methods={"GET"})
      * @throws ManageEntityException
      */
-    public function get($latitude, $longitude, GeoLocationService $locationService, RegionRepository $repository)
+    public function getRegion($latitude, $longitude, GeoLocationService $locationService, RegionRepository $repository)
     {
         try
         {

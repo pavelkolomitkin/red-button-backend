@@ -25,6 +25,9 @@ class VideoMaterial
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
@@ -32,6 +35,9 @@ class VideoMaterial
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=500, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $title;
 
@@ -39,12 +45,16 @@ class VideoMaterial
      * @var string
      *
      * @ORM\Column(name="external_id", type="string", length=50, nullable=false)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $externalId;
 
     /**
      * @var string
      * @ORM\Column(name="originalLink", type="string", nullable=false)
+     * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose
      */
     private $originalLink;
@@ -53,6 +63,8 @@ class VideoMaterial
      * @var array
      *
      * @ORM\Column(name="meta_data", type="json", nullable=false)
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $metaData;
 

@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Complaint;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,32 +21,26 @@ class ComplaintRepository extends ServiceEntityRepository
         parent::__construct($registry, Complaint::class);
     }
 
-    // /**
-    //  * @return Complaint[] Returns an array of Complaint objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Complaint
+    public function getSearchQuery(array $criteria = []): Query
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $builder = $this->createQueryBuilder('complaint');
+
+        $this->handOwnerParameter($builder, $criteria);
+
+        return $builder->getQuery();
     }
-    */
+
+    private function handOwnerParameter(QueryBuilder $builder, array $criteria)
+    {
+        if (isset($criteria['owner']))
+        {
+            $builder
+                ->andWhere('complaint.client = :client')
+                ->setParameter('client', $criteria['owner']);
+        }
+
+        return $builder;
+    }
+
 }

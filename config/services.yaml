@@ -60,6 +60,12 @@ services:
     app.external_video.provider:
         class: App\Service\Video\ExternalVideoProvider
 
+    app.geo_location.service:
+        class: App\Service\Geo\TestEnvGeoLocationService
+
+    app.complaint_tag.manager:
+        class: App\Service\EntityManager\Client\ComplaintTagManager
+
     App\Validator\Constraints\ComplaintPictureOwnerValidator:
         calls:
             - method: setTokenStorage
@@ -87,4 +93,21 @@ services:
             - method: setExternalVideoProvider
               arguments:
                   - '@app.external_video.provider'
+
+    App\Service\EntityManager\Client\ComplaintManager:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+
+            - method: setGeoLocationService
+              argument:
+                  - '@app.geo_location.service'
+
+            - method: setTagManager
+              arguments:
+                  - '@app.complaint_tag.manager'
+
+
+
 

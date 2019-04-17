@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\FederalDistrictRepository")
  * @ORM\Table(name="federal_district")
+ *
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class FederalDistrict
 {
@@ -15,6 +18,9 @@ class FederalDistrict
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
@@ -22,6 +28,9 @@ class FederalDistrict
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $title;
 

@@ -24,6 +24,23 @@ class ComplaintManager extends CommonEntityManager
      */
     private $locationService;
 
+    /**
+     * @var ComplaintTagManager
+     */
+    private $tagManager;
+
+    public function setTagManager(ComplaintTagManager $tagManager): self
+    {
+        $this->tagManager = $tagManager;
+        return $this;
+    }
+
+    public function setGeoLocationService(IGeoLocationService $locationService): self
+    {
+        $this->locationService = $locationService;
+        return $this;
+    }
+
     protected function getCreationForm(): FormInterface
     {
         $entity = new Complaint();
@@ -35,12 +52,6 @@ class ComplaintManager extends CommonEntityManager
     protected function getUpdatingForm(): FormInterface
     {
         return $this->formFactory->create(ComplaintType::class);
-    }
-
-    protected function setGeoLocationService(IGeoLocationService $locationService)
-    {
-        $this->locationService = $locationService;
-        return $this;
     }
 
     /**
@@ -84,5 +95,12 @@ class ComplaintManager extends CommonEntityManager
 
 
         // process tags
+        $entity->getTags()->clear();
+
+        if (!empty($data['tags']))
+        {
+            $tags = $this->tagManager->processTags($data['tags']);
+            $entity->setTags($tags);
+        }
     }
 }

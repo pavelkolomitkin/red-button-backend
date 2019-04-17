@@ -9,12 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ComplaintRepository")
  * @ORM\Table(name="complaint")
  *
  * @Gedmo\SoftDeleteable(fieldName="deletedAt")
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class Complaint
 {
@@ -25,6 +27,9 @@ class Complaint
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
@@ -35,6 +40,9 @@ class Complaint
      *
      * @Assert\NotBlank()
      * @Assert\Length(max="5000")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $message;
 
@@ -51,6 +59,9 @@ class Complaint
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\ServiceType", inversedBy="complaints")
      * @ORM\JoinColumn(name="service_type_id", nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $serviceType;
 
@@ -62,6 +73,9 @@ class Complaint
      *  joinColumns={@ORM\JoinColumn(name="complaint_id", referencedColumnName="id")},
      *  inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
      *     )
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $tags;
 
@@ -76,6 +90,9 @@ class Complaint
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Region", inversedBy="complaints")
      * @ORM\JoinColumn(name="region_id", nullable=false)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $region;
 
@@ -87,6 +104,9 @@ class Complaint
      * )
      *
      * @ORM\OneToMany(targetEntity="App\Entity\ComplaintPicture", mappedBy="complaint", cascade={"persist", "remove"}, orphanRemoval=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $pictures;
 
@@ -98,6 +118,9 @@ class Complaint
      * )
      *
      * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="complaint")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $videos;
 
