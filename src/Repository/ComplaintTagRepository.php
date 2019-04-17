@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\ComplaintTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,32 +21,25 @@ class ComplaintTagRepository extends ServiceEntityRepository
         parent::__construct($registry, ComplaintTag::class);
     }
 
-    // /**
-    //  * @return ComplaintTag[] Returns an array of ComplaintTag objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getSearchQuery(array $criteria)
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $builder = $this->createQueryBuilder('tag');
 
-    /*
-    public function findOneBySomeField($value): ?ComplaintTag
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->handleSearchMask($builder, $criteria);
+
+        return $builder->getQuery();
     }
-    */
+
+    private function handleSearchMask(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (!empty($criteria['search']))
+        {
+            $search = trim($criteria['search']);
+
+            $builder->andWhere('tag.title LIKE :search')
+                ->setParameter('search', $search . '%');
+        }
+
+        return $builder;
+    }
 }

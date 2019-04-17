@@ -31,7 +31,7 @@ class ComplaintRepository extends ServiceEntityRepository
         return $builder->getQuery();
     }
 
-    private function handOwnerParameter(QueryBuilder $builder, array $criteria)
+    private function handOwnerParameter(QueryBuilder $builder, array $criteria): QueryBuilder
     {
         if (isset($criteria['owner']))
         {
