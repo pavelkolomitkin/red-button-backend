@@ -26,8 +26,6 @@ class ComplaintType extends CommonType
                 'class' => ServiceType::class,
                 'multiple' => false
             ])
-            ->add('latitude')
-            ->add('longitude')
             ->add('pictures', EntityType::class, [
                 'class' => ComplaintPicture::class,
                 'multiple' => true,

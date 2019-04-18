@@ -1,8 +1,8 @@
 liip_imagine:
-#  loaders:
-#    default:
-#      filesystem:
-#        data_root: '%upload_directory%'
+  loaders:
+    default:
+      filesystem:
+        data_root: '%upload_directory%'
 
   # configure resolvers
   resolvers:
@@ -18,6 +18,16 @@ liip_imagine:
 
     # use the default cache configuration
     cache: ~
+
+    complaint_picture_preview_middle:
+      quality: 75
+      filters:
+        thumbnail: { size: [100, 100], mode: outbound }
+
+    complaint_picture_normal:
+      quality: 75
+      filters:
+        scale: {dim: [640, 480]}
 
     # for note item list
 #    note_attachment_preview_small:

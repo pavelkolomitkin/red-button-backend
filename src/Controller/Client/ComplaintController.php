@@ -78,7 +78,7 @@ class ComplaintController extends CommonController
      * @param Complaint $complaint
      * @param ComplaintManager $manager
      * @param Request $request
-     * @Route(name="complaint_update", path="/complaint", methods={"PUT"})
+     * @Route(name="complaint_update", path="/complaint/{id}", methods={"PUT"}, requirements={"id"="\d+"})
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
      * @ParamConverter("complaint", class="App\Entity\Complaint")
