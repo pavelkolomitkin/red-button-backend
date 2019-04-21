@@ -83,7 +83,7 @@ class ComplaintManager extends CommonEntityManager
         {
             $errorMessage = 'Cannot identify the region!';
             // throw exception
-            throw new ManageEntityException(['latitude' => $errorMessage, 'longitude' => $errorMessage]);
+            throw new ManageEntityException(['location' => $errorMessage]);
         }
 
 
