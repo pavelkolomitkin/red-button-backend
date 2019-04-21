@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * Class OSMAddress
  * @package App\Entity
  *
  * @ORM\Embeddable
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class OSMAddress
 {
@@ -18,6 +20,9 @@ class OSMAddress
      * @var integer
      *
      * @ORM\Column(name="place_id", type="integer", nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $placeId;
 
@@ -25,6 +30,9 @@ class OSMAddress
      * @var integer
      *
      * @ORM\Column(name="osm_id", type="integer", nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $osmId;
 
@@ -32,6 +40,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="osm_type", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $osmType;
 
@@ -39,6 +50,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="display_name", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $displayName;
 
@@ -46,6 +60,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="road", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $road;
 
@@ -53,6 +70,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="village", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $village;
 
@@ -75,6 +95,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="post_code", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $postCode;
 
@@ -82,6 +105,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="county", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $county;
 
@@ -90,6 +116,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="state", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $state;
 
@@ -97,6 +126,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="country", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $country;
 
@@ -105,6 +137,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="country_code", type="string", length=10, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $countryCode;
 
@@ -112,6 +147,9 @@ class OSMAddress
      * @var string
      *
      * @ORM\Column(name="name_details", type="string", length=255, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $nameDetails;
 

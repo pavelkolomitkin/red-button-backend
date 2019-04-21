@@ -14,18 +14,20 @@ use Symfony\Component\Routing\Annotation\Route;
 class GeoLocationController extends CommonController
 {
     /**
-     * @param float $latitude
-     * @param float $longitude
+     * @param Request $request
      * @param GeoLocationService $locationService
      * @param RegionRepository $repository
      * @return object|void
-     * @Route(name="geo_get", path="/geo/get", methods={"GET"})
      * @throws ManageEntityException
+     * @Route(name="geo_get", path="/geo/get", methods={"GET"})
      */
-    public function getRegion($latitude, $longitude, GeoLocationService $locationService, RegionRepository $repository)
+    public function getRegion(Request $request, GeoLocationService $locationService, RegionRepository $repository)
     {
         try
         {
+            $latitude = $request->query->get('latitude', 0);
+            $longitude = $request->query->get('longitude', 0);
+
             $osmAddress = $locationService->getOSMAddress($latitude, $longitude);
 
             $region = $repository->findOneBy(['title' => $osmAddress->getState()]);

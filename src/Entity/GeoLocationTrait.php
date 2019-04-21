@@ -27,7 +27,7 @@ trait GeoLocationTrait
      */
     public function getLatitude(): float
     {
-        return $this->latitude;
+        return (float) $this->latitude;
     }
 
     /**
@@ -45,7 +45,7 @@ trait GeoLocationTrait
      */
     public function getLongitude(): float
     {
-        return $this->longitude;
+        return (float) $this->longitude;
     }
 
     /**

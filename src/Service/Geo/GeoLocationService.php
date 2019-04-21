@@ -15,7 +15,8 @@ class GeoLocationService implements IGeoLocationService
         'osmType' => 'osm_type',
         'osmId' => 'osm_id',
         'latitude' => 'lat',
-        'longitude' => 'display_name',
+        'longitude' => 'lon',
+        'displayName' => 'display_name'
     ];
 
     protected static $addressFieldMap = [
@@ -56,6 +57,11 @@ class GeoLocationService implements IGeoLocationService
         {
             if (!empty($data[$externalNameField]))
             {
+                if (($classNameField === 'latitude') || ($classNameField === 'longitude'))
+                {
+                    $data[$externalNameField] = (float)$data[$externalNameField];
+                }
+
                 $result->{'set' . ucfirst($classNameField)}($data[$externalNameField]);
             }
         }
