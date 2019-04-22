@@ -58,7 +58,7 @@ class ComplaintPicture
      * @var Complaint
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Complaint", inversedBy="pictures")
-     * @ORM\JoinColumn(name="complaint_id", nullable=false)
+     * @ORM\JoinColumn(name="complaint_id", nullable=true)
      *
      * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose
@@ -135,7 +135,7 @@ class ComplaintPicture
      * @param Complaint $complaint
      * @return ComplaintPicture
      */
-    public function setComplaint(Complaint $complaint): self
+    public function setComplaint(Complaint $complaint = null): self
     {
         $this->complaint = $complaint;
         return $this;

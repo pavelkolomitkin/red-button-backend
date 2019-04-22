@@ -2,9 +2,11 @@
 
 namespace App\Service\EntityManager\Client;
 
+use App\Entity\ComplaintPicture;
 use App\Form\Client\ComplaintPictureType;
 use App\Service\EntityManager\CommonEntityManager;
 use App\Service\EntityManager\Exception\ManageEntityException;
+use App\Service\UserAwareServiceTrait;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -13,9 +15,14 @@ use Symfony\Component\Form\FormInterface;
  */
 class ComplaintPictureManager extends CommonEntityManager
 {
+    use UserAwareServiceTrait;
+
     protected function getCreationForm(): FormInterface
     {
-        return $this->formFactory->create(ComplaintPictureType::class);
+        $picture = new ComplaintPicture();
+        $picture->setOwner($this->getUser());
+
+        return $this->formFactory->create(ComplaintPictureType::class, $picture);
     }
 
     protected function getUpdatingForm(): FormInterface

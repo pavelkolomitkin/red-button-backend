@@ -66,6 +66,12 @@ services:
     app.complaint_tag.manager:
         class: App\Service\EntityManager\Client\ComplaintTagManager
 
+    App\Service\EntityManager\Client\ComplaintPictureManager:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+
     App\Validator\Constraints\ComplaintPictureOwnerValidator:
         calls:
             - method: setTokenStorage

@@ -5,9 +5,22 @@ echo -n "Stop previous containers..."
 echo -en '\n'
 docker-compose stop
 
-#echo -n "Set permissions to 'uploads' directory..."
-#echo -en '\n'
-#chmod 777 -R ../../uploads
+echo -n "Set permissions to 'uploads' directory..."
+echo -en '\n'
+
+UPLOAD_DIRECTORY=./../../public/uploads
+MEDIA_DIRECTORY=./../../public/media
+
+if [[ ! -d ${UPLOAD_DIRECTORY} ]]; then
+  mkdir -p ${UPLOAD_DIRECTORY};
+fi
+chmod 777 -R ${UPLOAD_DIRECTORY}
+
+if [[ ! -d ${MEDIA_DIRECTORY} ]]; then
+  mkdir -p ${MEDIA_DIRECTORY};
+fi
+chmod 777 -R ${MEDIA_DIRECTORY}
+
 
 # Up docker compose
 echo -n "Up docker compose..."
