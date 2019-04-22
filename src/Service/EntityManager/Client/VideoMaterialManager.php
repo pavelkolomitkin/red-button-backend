@@ -8,7 +8,7 @@ use App\Service\EntityManager\Exception\ManageEntityException;
 use App\Service\Video\Exception\ProvideVideoException;
 use App\Service\UserAwareServiceTrait;
 use App\Service\Video\IExternalVideoProvider;
-use App\Service\VideoLinkManager;
+use App\Service\Video\VideoLinkManager;
 use Symfony\Component\Form\FormInterface;
 
 /**
