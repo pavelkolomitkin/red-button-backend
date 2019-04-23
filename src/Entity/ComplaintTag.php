@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ComplaintTagRepository")
  * @ORM\Table(name="complaint_tag")
+ *
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class ComplaintTag
 {
@@ -17,12 +20,18 @@ class ComplaintTag
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
     /**
      * @var string
      * @ORM\Column(name="title", type="string", length=255, unique=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $title;
 
