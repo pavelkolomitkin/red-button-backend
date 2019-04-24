@@ -69,7 +69,7 @@ class Complaint
      * @var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="App\Entity\ComplaintTag", inversedBy="complaints")
-     * @ORM\JoinTable(name="complain_tag",
+     * @ORM\JoinTable(name="complaint_complaint_tag",
      *  joinColumns={@ORM\JoinColumn(name="complaint_id", referencedColumnName="id")},
      *  inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
      *     )

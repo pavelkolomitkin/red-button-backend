@@ -19,7 +19,7 @@ class OSMAddress
     /**
      * @var integer
      *
-     * @ORM\Column(name="place_id", type="integer", nullable=true)
+     * @ORM\Column(name="place_id", type="bigint", nullable=true)
      *
      * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose
@@ -29,7 +29,7 @@ class OSMAddress
     /**
      * @var integer
      *
-     * @ORM\Column(name="osm_id", type="integer", nullable=true)
+     * @ORM\Column(name="osm_id", type="bigint", nullable=true)
      *
      * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose
@@ -156,7 +156,7 @@ class OSMAddress
     /**
      * @return int
      */
-    public function getPlaceId(): int
+    public function getPlaceId(): ?int
     {
         return $this->placeId;
     }
@@ -165,7 +165,7 @@ class OSMAddress
      * @param int $placeId
      * @return OSMAddress
      */
-    public function setPlaceId(int $placeId): OSMAddress
+    public function setPlaceId(?int $placeId = null): OSMAddress
     {
         $this->placeId = $placeId;
         return $this;
@@ -174,7 +174,7 @@ class OSMAddress
     /**
      * @return int
      */
-    public function getOsmId(): int
+    public function getOsmId(): ?int
     {
         return $this->osmId;
     }
@@ -183,7 +183,7 @@ class OSMAddress
      * @param int $osmId
      * @return OSMAddress
      */
-    public function setOsmId(int $osmId): OSMAddress
+    public function setOsmId(?int $osmId = null): OSMAddress
     {
         $this->osmId = $osmId;
         return $this;
@@ -192,7 +192,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getOsmType(): string
+    public function getOsmType(): ?string
     {
         return $this->osmType;
     }
@@ -201,7 +201,7 @@ class OSMAddress
      * @param string $osmType
      * @return OSMAddress
      */
-    public function setOsmType(string $osmType): OSMAddress
+    public function setOsmType(?string $osmType = null): OSMAddress
     {
         $this->osmType = $osmType;
         return $this;
@@ -210,7 +210,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getDisplayName(): string
+    public function getDisplayName(): ?string
     {
         return $this->displayName;
     }
@@ -219,7 +219,7 @@ class OSMAddress
      * @param string $displayName
      * @return OSMAddress
      */
-    public function setDisplayName(string $displayName): OSMAddress
+    public function setDisplayName(?string $displayName = null): OSMAddress
     {
         $this->displayName = $displayName;
         return $this;
@@ -228,7 +228,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getRoad(): string
+    public function getRoad(): ?string
     {
         return $this->road;
     }
@@ -237,7 +237,7 @@ class OSMAddress
      * @param string $road
      * @return OSMAddress
      */
-    public function setRoad(string $road): OSMAddress
+    public function setRoad(?string $road = null): OSMAddress
     {
         $this->road = $road;
         return $this;
@@ -246,7 +246,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getVillage(): string
+    public function getVillage(): ?string
     {
         return $this->village;
     }
@@ -255,7 +255,7 @@ class OSMAddress
      * @param string $village
      * @return OSMAddress
      */
-    public function setVillage(string $village): OSMAddress
+    public function setVillage(?string $village = null): OSMAddress
     {
         $this->village = $village;
         return $this;
@@ -264,7 +264,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getStateDistrict(): string
+    public function getStateDistrict(): ?string
     {
         return $this->stateDistrict;
     }
@@ -273,7 +273,7 @@ class OSMAddress
      * @param string $stateDistrict
      * @return OSMAddress
      */
-    public function setStateDistrict(string $stateDistrict): OSMAddress
+    public function setStateDistrict(?string $stateDistrict = null): OSMAddress
     {
         $this->stateDistrict = $stateDistrict;
         return $this;
@@ -282,7 +282,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getCity(): string
+    public function getCity(): ?string
     {
         return $this->city;
     }
@@ -291,7 +291,7 @@ class OSMAddress
      * @param string $city
      * @return OSMAddress
      */
-    public function setCity(string $city): OSMAddress
+    public function setCity(?string $city = null): OSMAddress
     {
         $this->city = $city;
         return $this;
@@ -300,7 +300,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getPostCode(): string
+    public function getPostCode(): ?string
     {
         return $this->postCode;
     }
@@ -309,7 +309,7 @@ class OSMAddress
      * @param string $postCode
      * @return OSMAddress
      */
-    public function setPostCode(string $postCode): OSMAddress
+    public function setPostCode(?string $postCode = null): OSMAddress
     {
         $this->postCode = $postCode;
         return $this;
@@ -318,7 +318,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getCounty(): string
+    public function getCounty(): ?string
     {
         return $this->county;
     }
@@ -327,7 +327,7 @@ class OSMAddress
      * @param string $county
      * @return OSMAddress
      */
-    public function setCounty(string $county): OSMAddress
+    public function setCounty(?string $county = null): OSMAddress
     {
         $this->county = $county;
         return $this;
@@ -336,7 +336,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getState(): string
+    public function getState(): ?string
     {
         return $this->state;
     }
@@ -345,7 +345,7 @@ class OSMAddress
      * @param string $state
      * @return OSMAddress
      */
-    public function setState(string $state): OSMAddress
+    public function setState(?string $state = null): OSMAddress
     {
         $this->state = $state;
         return $this;
@@ -354,7 +354,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getCountry(): string
+    public function getCountry(): ?string
     {
         return $this->country;
     }
@@ -363,7 +363,7 @@ class OSMAddress
      * @param string $country
      * @return OSMAddress
      */
-    public function setCountry(string $country): OSMAddress
+    public function setCountry(?string $country = null): OSMAddress
     {
         $this->country = $country;
         return $this;
@@ -372,7 +372,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getCountryCode(): string
+    public function getCountryCode(): ?string
     {
         return $this->countryCode;
     }
@@ -381,7 +381,7 @@ class OSMAddress
      * @param string $countryCode
      * @return OSMAddress
      */
-    public function setCountryCode(string $countryCode): OSMAddress
+    public function setCountryCode(?string $countryCode = null): OSMAddress
     {
         $this->countryCode = $countryCode;
         return $this;
@@ -390,7 +390,7 @@ class OSMAddress
     /**
      * @return string
      */
-    public function getNameDetails(): string
+    public function getNameDetails(): ?string
     {
         return $this->nameDetails;
     }
@@ -399,7 +399,7 @@ class OSMAddress
      * @param string $nameDetails
      * @return OSMAddress
      */
-    public function setNameDetails(string $nameDetails): OSMAddress
+    public function setNameDetails(?string $nameDetails = null): OSMAddress
     {
         $this->nameDetails = $nameDetails;
         return $this;
