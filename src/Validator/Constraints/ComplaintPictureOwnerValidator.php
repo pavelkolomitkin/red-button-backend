@@ -28,11 +28,5 @@ class ComplaintPictureOwnerValidator extends ConstraintValidator
             $this->context->addViolation('You can use only pictures uploaded by your own!');
             return;
         }
-
-        if ($value->getComplaint() !== null)
-        {
-            $this->context->addViolation('This picture is already related to another your complaint!');
-            return;
-        }
     }
 }

@@ -151,7 +151,7 @@ class Complaint
     /**
      * @return string
      */
-    public function getMessage(): string
+    public function getMessage(): ?string
     {
         return $this->message;
     }
@@ -178,7 +178,7 @@ class Complaint
      * @param ClientUser $client
      * @return Complaint
      */
-    public function setClient(ClientUser $client): Complaint
+    public function setClient(ClientUser $client): self
     {
         $this->client = $client;
         return $this;
@@ -187,7 +187,7 @@ class Complaint
     /**
      * @return ServiceType
      */
-    public function getServiceType(): ServiceType
+    public function getServiceType(): ?ServiceType
     {
         return $this->serviceType;
     }
@@ -246,7 +246,7 @@ class Complaint
     /**
      * @return Region
      */
-    public function getRegion(): Region
+    public function getRegion(): ?Region
     {
         return $this->region;
     }
@@ -337,7 +337,7 @@ class Complaint
     /**
      * @return OSMAddress
      */
-    public function getAddress(): OSMAddress
+    public function getAddress(): ?OSMAddress
     {
         return $this->address;
     }

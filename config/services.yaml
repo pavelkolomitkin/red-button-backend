@@ -60,8 +60,10 @@ services:
     app.external_video.provider:
         class: App\Service\Video\ExternalVideoProvider
 
+    App\Service\Geo\IGeoLocationService: '@App\Service\Geo\GeoLocationService'
+
     app.geo_location.service:
-        class: App\Service\Geo\TestEnvGeoLocationService
+        class: App\Service\Geo\GeoLocationService
 
     app.complaint_tag.manager:
         class: App\Service\EntityManager\Client\ComplaintTagManager

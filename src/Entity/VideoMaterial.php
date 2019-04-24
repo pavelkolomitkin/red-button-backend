@@ -220,4 +220,9 @@ class VideoMaterial
         $this->owner = $owner;
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->getTitle();
+    }
 }

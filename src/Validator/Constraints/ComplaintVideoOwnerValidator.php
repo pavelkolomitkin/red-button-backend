@@ -28,11 +28,5 @@ class ComplaintVideoOwnerValidator extends ConstraintValidator
             $this->context->addViolation('You can use only your own linked videos!');
             return;
         }
-
-        if ($value->getComplaint() !== null)
-        {
-            $this->context->addViolation('You have already linked this video to another complain!');
-            return;
-        }
     }
 }
