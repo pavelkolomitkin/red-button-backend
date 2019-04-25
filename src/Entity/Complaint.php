@@ -51,6 +51,9 @@ class Complaint
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\ClientUser", inversedBy="complaints")
      * @ORM\JoinColumn(name="client_id", nullable=false)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $client;
 
