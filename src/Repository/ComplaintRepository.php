@@ -28,6 +28,8 @@ class ComplaintRepository extends ServiceEntityRepository
 
         $this->handOwnerParameter($builder, $criteria);
 
+        $builder->addOrderBy('complaint.createdAt', 'DESC');
+
         return $builder->getQuery();
     }
 

@@ -117,7 +117,7 @@ class Complaint
      *     @ComplaintVideoOwnerConstraint()
      * )
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="complaint")
+     * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="complaint", cascade={"persist"})
      *
      * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose

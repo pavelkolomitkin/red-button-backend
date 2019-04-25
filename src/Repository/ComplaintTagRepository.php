@@ -27,6 +27,8 @@ class ComplaintTagRepository extends ServiceEntityRepository
 
         $this->handleSearchMask($builder, $criteria);
 
+        $builder->addOrderBy('tag.title', 'ASC');
+
         return $builder->getQuery();
     }
 
@@ -36,7 +38,7 @@ class ComplaintTagRepository extends ServiceEntityRepository
         {
             $search = trim($criteria['search']);
 
-            $builder->andWhere('tag.title LIKE :search')
+            $builder->andWhere('lower(tag.title) LIKE lower(:search)')
                 ->setParameter('search', $search . '%');
         }
 

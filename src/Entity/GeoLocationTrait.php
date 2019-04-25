@@ -3,14 +3,24 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 
-
+/**
+ * Trait GeoLocationTrait
+ * @package App\Entity
+ *
+ * @JMSSerializer\ExclusionPolicy("all")
+ */
 trait GeoLocationTrait
 {
     /**
      * @var double
      *
      * @ORM\Column(type="decimal", scale=9, precision=12)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     * @JMSSerializer\Type(name="float")
      */
     private $latitude;
 
@@ -19,6 +29,10 @@ trait GeoLocationTrait
      * @var double
      *
      * @ORM\Column(type="decimal", scale=9, precision=12)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     * @JMSSerializer\Type(name="float")
      */
     private $longitude;
 

@@ -20,6 +20,10 @@ class ComplaintPictureSerializeSubscriber implements EventSubscriberInterface
             'source' => 'previewMiddle',
             'filter' => 'complaint_picture_preview_middle',
         ],
+        [
+            'source' => 'previewSmall',
+            'filter' => 'complaint_picture_preview_small',
+        ]
 
     ];
 
@@ -76,6 +80,8 @@ class ComplaintPictureSerializeSubscriber implements EventSubscriberInterface
 
         $originalAsset = $this->uploaderHelper->asset($attachment, 'imageFile');
         $sources = [];
+
+        $sources['original'] = $originalAsset;
 
         if (!empty($originalAsset))
         {
