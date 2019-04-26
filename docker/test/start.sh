@@ -20,7 +20,7 @@ echo -n "Stop previous containers..."
 echo -en '\n'
 docker-compose down
 docker-compose --rm --force -v
-docker volume rm test_postgres_data_volume_test -f
+docker volume rm test_postgres_red_button_data_volume_test -f
 
 
 if [[ $isJenkins = 1 ]]
@@ -72,6 +72,6 @@ echo -n "Stop containers..."
 echo -en '\n'
 docker-compose down
 docker-compose --rm --force -v
-docker volume rm test_postgres_data_volume_test -f
+docker volume rm test_postgres_red_button_data_volume_test -f
 
 exit 0
