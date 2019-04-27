@@ -57,13 +57,9 @@ services:
     app.video_link.manager:
         class: App\Service\Video\VideoLinkManager
 
-    App\Service\Video\IExternalVideoProvider:
-        class: 'App\Service\Video\ExternalVideoProvider'
-        public: true
+    App\Service\Video\IExternalVideoProvider: '@App\Service\Video\ExternalVideoProvider'
 
-    App\Service\Geo\IGeoLocationService:
-        class: 'App\Service\Geo\GeoLocationService'
-        public: true
+    App\Service\Geo\IGeoLocationService: '@App\Service\Geo\GeoLocationService'
 
     app.complaint_tag.manager:
         class: App\Service\EntityManager\Client\ComplaintTagManager

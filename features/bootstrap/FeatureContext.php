@@ -57,9 +57,6 @@ class FeatureContext extends MinkContext
     {
         $this->kernel = $kernel;
         $this->entityManager = $entityManager;
-
-        $this->kernel->getContainer()->set(App\Service\Geo\IGeoLocationService::class, new \App\Service\Geo\TestEnvGeoLocationService());
-        $this->kernel->getContainer()->set(App\Service\Video\IExternalVideoProvider::class, new \App\Service\Video\TestEnvExternalVideoProvider());
     }
 
     /**
@@ -278,6 +275,29 @@ class FeatureContext extends MinkContext
 
         $this->uploadedComplaintPictures = [];
         $this->videos = [];
+    }
+
+    /**
+     * @param \Behat\Gherkin\Node\TableNode $data
+     * @param $id
+     *
+     * @Given I edit my complaint :id with data:
+     */
+    public function iUpdateComplaint(\Behat\Gherkin\Node\TableNode $data, $id)
+    {
+        $formFields = $data->getHash()[0];
+
+        $formData = [
+            'message' => $formFields['message'],
+            'tags' => explode(',', $formFields['tags']),
+            'serviceType' => $formFields['serviceType'],
+            'latitude' => $formFields['latitude'],
+            'longitude' => $formFields['longitude'],
+            'pictures' => array_values($this->uploadedComplaintPictures),
+            'videos' => array_values($this->videos)
+        ];
+
+        $this->sendRequest('PUT', '/client/complaint/' . $id, [], [], [], json_encode($formData));
     }
 
     /**

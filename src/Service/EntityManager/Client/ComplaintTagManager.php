@@ -50,10 +50,18 @@ class ComplaintTagManager extends CommonEntityManager
 
     private function cleanTags(array $tags)
     {
-        $result = array_unique($tags);
-        $result = array_filter($result, function ($tag){
-            return trim($tag !== '');
-        });
+        $result = [];
+
+        foreach ($tags as $tag)
+        {
+            $tag = trim($tag);
+            if (!empty($tag))
+            {
+                $result[] = $tag;
+            }
+        }
+
+        $result = array_unique($result);
 
         return $result;
     }
