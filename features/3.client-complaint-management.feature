@@ -90,3 +90,41 @@ Feature:
     And the JSON node "complaint.videos" should exist
     And the JSON node "complaint.videos" should have 0 elements
 
+
+  Scenario: User get a list of their complaints
+    Given I authorize with email "test@example.com" and password "1234567"
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+
+    Given I send http request with method "GET" on relative url "/client/complaint/my/list" with content:
+    """
+    """
+    Then the response status code should be 200
+    And the JSON node "complaints" should exist
+    And the JSON node "complaints" should have 1 elements
+    And the JSON node "total" should exist
+    And the JSON node "total" should be equal to the number 1
+
+
+  Scenario: User delete their complaint
+    Given I authorize with email "test@example.com" and password "1234567"
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+
+    Given I send http request with method "DELETE" on relative url "/client/complaint/1" with content:
+    """
+    """
+    Then the response status code should be 200
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+
+    Given I send http request with method "GET" on relative url "/client/complaint/my/list" with content:
+    """
+    """
+    Then the response status code should be 200
+    And the JSON node "complaints" should have 0 elements
+    And the JSON node "total" should be equal to the number 0
+
+
+
