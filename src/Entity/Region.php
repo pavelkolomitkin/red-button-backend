@@ -48,6 +48,13 @@ class Region
     /**
      * @var ArrayCollection
      *
+     * @ORM\OneToMany(targetEntity="App\Entity\AdministrativeUnit", mappedBy="region", cascade={"persist", "remove"})
+     */
+    private $administrativeUnits;
+
+    /**
+     * @var ArrayCollection
+     *
      * @ORM\OneToMany(targetEntity="App\Entity\Complaint", mappedBy="region")
      */
     private $complaints;
@@ -63,6 +70,7 @@ class Region
     {
         $this->complaints = new ArrayCollection();
         $this->issues = new ArrayCollection();
+        $this->administrativeUnits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -106,6 +114,44 @@ class Region
         return $this;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getAdministrativeUnits()
+    {
+        return $this->administrativeUnits;
+    }
+
+    /**
+     * @param ArrayCollection $administrativeUnits
+     * @return Region
+     */
+    public function setAdministrativeUnits($administrativeUnits): self
+    {
+        $this->administrativeUnits = $administrativeUnits;
+        return $this;
+    }
+
+    public function addAdministrativeUnit(AdministrativeUnit $administrativeUnit): self
+    {
+        if (!$this->administrativeUnits->contains($administrativeUnit))
+        {
+            $this->administrativeUnits[] = $administrativeUnit;
+            $administrativeUnit->setRegion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdministrativeUnit(AdministrativeUnit $administrativeUnit): self
+    {
+        if ($this->administrativeUnits->contains($administrativeUnit))
+        {
+            $this->administrativeUnits->removeElement($administrativeUnit);
+        }
+
+        return $this;
+    }
     /**
      * @return ArrayCollection
      */
