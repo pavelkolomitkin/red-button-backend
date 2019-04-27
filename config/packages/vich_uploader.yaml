@@ -1,11 +1,19 @@
 vich_uploader:
   db_driver: orm # or mongodb or propel or phpcr
 
-#  mappings:
-#    note_attachment:
-#      uri_prefix: /uploads/note_attachment
-#      upload_destination: '%upload_directory%/note_attachment'
-#      inject_on_load: true
-#      delete_on_update: true
-#      delete_on_remove: false
-#      namer:            vich_uploader.namer_uniqid
+  mappings:
+    complaint_picture:
+      uri_prefix: /uploads/complaint_picture
+      upload_destination: '%upload_directory%/complaint_picture'
+      inject_on_load: true
+      delete_on_update: true
+      delete_on_remove: false
+      namer:            vich_uploader.namer_uniqid
+
+    issue_picture:
+      uri_prefix: /uploads/issue_picture
+      upload_destination: '%upload_directory%/issue_picture'
+      inject_on_load: true
+      delete_on_update: true
+      delete_on_remove: false
+      namer:            vich_uploader.namer_uniqid

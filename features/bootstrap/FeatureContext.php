@@ -41,11 +41,14 @@ class FeatureContext extends MinkContext
     private $registerConfirmationKey;
 
     /**
-     * @var null | array
+     * @var array [fileName => pictureId]
      */
-    private $lastNote = null;
+    private $uploadedComplaintPictures = [];
 
-
+    /**
+     * @var array array of video ids
+     */
+    private $videos = [];
 
     public function __construct(
         KernelInterface $kernel,
@@ -212,5 +215,100 @@ class FeatureContext extends MinkContext
     {
         $data = json_decode($this->response->getContent(), true);
         $this->lastNote = $data['note'];
+    }
+
+    /**
+     * @Given I upload a complaint picture :fileName on server
+     * @param $fileName
+     */
+    public function iUploadComplaintPicture($fileName)
+    {
+        $client = $this->getClient();
+        $client->removeHeader('Content-Type');
+
+        $file = new \Symfony\Component\HttpFoundation\File\UploadedFile(
+            __DIR__ . '/../pictures/' . $fileName .'.jpg',
+            'file_1.jpg',
+            'image/jpeg',
+            null
+        );
+
+        $this->uploadFiles(['imageFile' => $file],'POST', '/client/complaint-picture/create');
+
+        $data = json_decode($this->response->getContent(), true);
+        $this->uploadedComplaintPictures[$fileName] = $data['picture']['id'];
+    }
+
+    /**
+     * @param $url
+     *
+     * @Given I create a new video with link :url
+     */
+    public function iCreateVideo($url)
+    {
+        $this->sendRequest('POST', '/client/video-material/create', [], [], [], json_encode(['url' => $url]));
+
+        $data = json_decode($this->response->getContent(), true);
+        $this->videos[] = $data['video']['id'];
+    }
+
+    /**
+     * @When I create a new complaint with uploaded pictures and created videos and data:
+     * @param \Behat\Gherkin\Node\TableNode $data
+     */
+    public function iCreateComplaint(\Behat\Gherkin\Node\TableNode $data)
+    {
+        $formFields = $data->getHash()[0];
+
+        $formData = [
+            'message' => $formFields['message'],
+            'tags' => explode(',', $formFields['tags']),
+            'serviceType' => $formFields['serviceType'],
+            'latitude' => $formFields['latitude'],
+            'longitude' => $formFields['longitude'],
+            'pictures' => array_values($this->uploadedComplaintPictures),
+            'videos' => array_values($this->videos)
+        ];
+
+
+        $this->sendRequest('POST', '/client/complaint', [], [], [], json_encode($formData));
+
+        $this->uploadedComplaintPictures = [];
+        $this->videos = [];
+    }
+
+    /**
+     * @param \Behat\Gherkin\Node\TableNode $data
+     * @param $id
+     *
+     * @Given I edit my complaint :id with data:
+     */
+    public function iUpdateComplaint(\Behat\Gherkin\Node\TableNode $data, $id)
+    {
+        $formFields = $data->getHash()[0];
+
+        $formData = [
+            'message' => $formFields['message'],
+            'tags' => explode(',', $formFields['tags']),
+            'serviceType' => $formFields['serviceType'],
+            'latitude' => $formFields['latitude'],
+            'longitude' => $formFields['longitude'],
+            'pictures' => array_values($this->uploadedComplaintPictures),
+            'videos' => array_values($this->videos)
+        ];
+
+        $this->sendRequest('PUT', '/client/complaint/' . $id, [], [], [], json_encode($formData));
+    }
+
+    /**
+     * @param $method
+     * @param $url
+     * @param $params
+     * @param \Symfony\Component\HttpFoundation\File\UploadedFile[] $files
+     * @return \Symfony\Component\BrowserKit\Response|null
+     */
+    protected function uploadFiles(array $files, string $method, string $url, array $params = [])
+    {
+        return $this->sendRequest($method, $url, $params, $files, [], null, []);
     }
 }

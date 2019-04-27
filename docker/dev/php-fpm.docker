@@ -16,7 +16,6 @@ RUN apt-get install git -y \
                --with-png-dir=/usr/include \
                --with-jpeg-dir=/usr/include \
     && docker-php-ext-install gd \
-#    && docker-php-ext-enable gd \
     && pecl install xdebug-2.6.0 \
     && docker-php-ext-enable xdebug \
     && echo "xdebug.default_enable" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \

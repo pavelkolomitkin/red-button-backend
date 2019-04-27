@@ -29,3 +29,8 @@
 .phpunit
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+###> uploads ###
+/public/uploads
+/public/media
+###> uploads ###

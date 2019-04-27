@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 use JMS\Serializer\Annotation as JMSSerializer;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 trait SerializeTimestampableTrait
 {

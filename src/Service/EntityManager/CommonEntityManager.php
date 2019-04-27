@@ -55,6 +55,8 @@ abstract class CommonEntityManager
 
         $entity = $form->getData();
 
+        $this->postValidate($entity, $data);
+
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
@@ -84,6 +86,8 @@ abstract class CommonEntityManager
 
         $entity = $form->getData();
 
+        $this->postValidate($entity, $data);
+
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
@@ -105,6 +109,11 @@ abstract class CommonEntityManager
         {
             throw new ManageEntityException(['Cannot delete item'], ManageEntityException::DELETE_ENTITY_ERROR_TYPE);
         }
+    }
+
+    protected function postValidate($entity, $data)
+    {
+
     }
 
     abstract protected function getCreationForm(): FormInterface;

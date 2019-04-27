@@ -1,0 +1,6 @@
+services:
+  App\Service\Video\IExternalVideoProvider: '@App\Service\Video\TestEnvExternalVideoProvider'
+
+  App\Service\Geo\IGeoLocationService: '@App\Service\Geo\TestEnvGeoLocationService'
+
+

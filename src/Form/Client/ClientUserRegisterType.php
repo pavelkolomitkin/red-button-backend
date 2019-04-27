@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Client;
 
 use App\Entity\ClientUser;
 use App\Entity\User;
-use libphonenumber\PhoneNumber;
+use App\Form\CommonType;
 use libphonenumber\PhoneNumberUtil;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -65,17 +64,6 @@ class ClientUserRegisterType extends CommonType
                     ]
                 ]
             ]);
-
-//        $builder->get('phoneNumber')->addModelTransformer(new CallbackTransformer(
-//            function ($number) {
-//                return (string) $number;
-//            },
-//            function ($number) {
-//
-//                return $this->phoneNumberUtil->parse($number);
-//
-//            }
-//        ));
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var User $user */

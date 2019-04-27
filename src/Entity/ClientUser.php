@@ -3,6 +3,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -46,6 +47,43 @@ class ClientUser extends User
      * @ORM\OneToOne(targetEntity="App\Entity\ClientConfirmationKey", mappedBy="client", cascade={"persist", "remove"})
      */
     private $confirmationKey;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Complaint", mappedBy="client", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $complaints;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Issue", mappedBy="client", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $issues;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\ComplaintPicture", mappedBy="owner")
+     */
+    private $complaintUploadPictures;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="owner")
+     */
+    private $videos;
+
+    public function __construct()
+    {
+        $this->complaints = new ArrayCollection();
+        $this->issues = new ArrayCollection();
+
+        $this->complaintUploadPictures = new ArrayCollection();
+        $this->videos = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -93,5 +131,76 @@ class ClientUser extends User
         $confirmationKey->setClient($this);
 
         return $this;
+    }
+
+    public function getComplaints()
+    {
+        return $this->complaints;
+    }
+
+    public function addComplaint(Complaint $complaint): self
+    {
+        if (!$this->complaints->contains($complaint))
+        {
+            $this->complaints[] = $complaint;
+            $complaint->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComplaint(Complaint $complaint): self
+    {
+        if ($this->complaints->contains($complaint))
+        {
+            $this->complaints->removeElement($complaint);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getIssues()
+    {
+        return $this->issues;
+    }
+
+    public function addIssue(Issue $issue): self
+    {
+        if (!$this->issues->contains($issue))
+        {
+            $this->issues[] = $issue;
+            $issue->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIssue(Issue $issue): self
+    {
+        if ($this->issues->contains($issue))
+        {
+            $this->issues->removeElement($issue);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getComplaintUploadPictures()
+    {
+        return $this->complaintUploadPictures;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getVideos()
+    {
+        return $this->videos;
     }
 }

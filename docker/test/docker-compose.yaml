@@ -23,6 +23,7 @@ services:
       - postgres_db
     volumes:
       - ../../:/app
+      - ../../public/uploads:/app/public/uploads
     environment:
       APP_ENV: "test"
 
@@ -33,11 +34,11 @@ services:
     ports:
       - '7779:5432'
     volumes:
-      - postgres_data_volume_test:/var/lib/postgresql/data
+      - postgres_red_button_data_volume_test:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: 1234
       POSTGRES_USER: postgres
       POSTGRES_DB: red-button-test
 
 volumes:
-  postgres_data_volume_test:
+  postgres_red_button_data_volume_test:

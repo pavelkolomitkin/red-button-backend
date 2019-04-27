@@ -7,6 +7,7 @@ parameters:
     locale: 'en'
     noreply_mail: '%env(NO_REPLY_MAIL)%'
     email_link_host: '%env(MAIL_LINK_HOST)%'
+    upload_directory: '%env(UPLOAD_DIRECTORY)%'
 
 services:
     # default configuration for services in *this* file
@@ -52,3 +53,71 @@ services:
                   - '@security.token_storage'
         tags:
             - { name: kernel.event_listener, event: kernel.request }
+
+    app.video_link.manager:
+        class: App\Service\Video\VideoLinkManager
+
+    App\Service\Video\IExternalVideoProvider: '@App\Service\Video\ExternalVideoProvider'
+
+    App\Service\Geo\IGeoLocationService: '@App\Service\Geo\GeoLocationService'
+
+    app.complaint_tag.manager:
+        class: App\Service\EntityManager\Client\ComplaintTagManager
+
+    App\Service\EntityManager\Client\ComplaintPictureManager:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+
+    App\Validator\Constraints\ComplaintPictureOwnerValidator:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+        tags:
+            - { name: validator.constraint_validator }
+
+    App\Validator\Constraints\ComplaintVideoOwnerValidator:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+        tags:
+            - { name: validator.constraint_validator }
+
+    App\Service\EntityManager\Client\VideoMaterialManager:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+            - method: setLinkManager
+              arguments:
+                  - '@app.video_link.manager'
+            - method: setExternalVideoProvider
+              arguments:
+                  - '@App\Service\Video\IExternalVideoProvider'
+
+    App\Service\EntityManager\Client\ComplaintManager:
+        calls:
+            - method: setTokenStorage
+              arguments:
+                  - '@security.token_storage'
+
+            - method: setGeoLocationService
+              argument:
+                  - '@App\Service\Geo\IGeoLocationService'
+
+            - method: setTagManager
+              arguments:
+                  - '@app.complaint_tag.manager'
+
+    App\Event\Subscriber\ComplaintPictureSerializeSubscriber:
+        arguments:
+            - '@vich_uploader.templating.helper.uploader_helper'
+            - '@liip_imagine.cache.manager'
+        public: true
+        tags: [jms_serializer.event_subscriber]
+
+
+

@@ -2,3 +2,8 @@ controllers:
     resource: ../../src/Controller/
     type: annotation
     prefix: /api
+
+client_controllers:
+    resource: ../../src/Controller/Client/
+    type: annotation
+    prefix: /api/client
