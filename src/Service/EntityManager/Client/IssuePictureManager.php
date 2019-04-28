@@ -2,31 +2,31 @@
 
 namespace App\Service\EntityManager\Client;
 
-use App\Entity\ComplaintPicture;
-use App\Form\Client\ComplaintPictureType;
+use App\Entity\IssuePicture;
+use App\Form\Client\IssuePictureType;
 use App\Service\EntityManager\CommonEntityManager;
 use App\Service\EntityManager\Exception\ManageEntityException;
 use App\Service\UserAwareServiceTrait;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * Class ComplaintPictureManager
+ * Class IssuePictureManager
  * @package App\Service\EntityManager\Client
  */
-class ComplaintPictureManager extends CommonEntityManager
+class IssuePictureManager extends CommonEntityManager
 {
     use UserAwareServiceTrait;
 
     protected function getCreationForm(): FormInterface
     {
-        $picture = new ComplaintPicture();
+        $picture = new IssuePicture();
         $picture->setOwner($this->getUser());
 
-        return $this->formFactory->create(ComplaintPictureType::class, $picture);
+        return $this->formFactory->create(IssuePictureType::class, $picture);
     }
 
     protected function getUpdatingForm(): FormInterface
     {
-        throw new ManageEntityException(['You can not edit complaint picture!'],ManageEntityException::UPDATE_ENTITY_ERROR_TYPE);
+        throw new ManageEntityException(['You can not edit issue picture!'],ManageEntityException::UPDATE_ENTITY_ERROR_TYPE);
     }
 }

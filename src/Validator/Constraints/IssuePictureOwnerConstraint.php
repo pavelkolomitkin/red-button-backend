@@ -7,10 +7,10 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @Annotation
  */
-class ComplaintPictureOwnerConstraint extends Constraint
+class IssuePictureOwnerConstraint extends Constraint
 {
     public function validatedBy()
     {
-        return ComplaintPictureOwnerValidator::class;
+        return IssuePictureOwnerValidator::class;
     }
 }

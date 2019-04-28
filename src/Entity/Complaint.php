@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Validator\Constraints\ComplaintPictureOwnerConstraint;
-use App\Validator\Constraints\ComplaintVideoOwnerConstraint;
+use App\Validator\Constraints\VideoOwnerConstraint;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -117,7 +117,7 @@ class Complaint
      * @var ArrayCollection
      *
      * @Assert\All(
-     *     @ComplaintVideoOwnerConstraint()
+     *     @VideoOwnerConstraint()
      * )
      *
      * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="complaint", cascade={"persist"})

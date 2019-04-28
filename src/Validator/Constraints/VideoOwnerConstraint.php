@@ -11,6 +11,6 @@ class VideoOwnerConstraint extends Constraint
 {
     public function validatedBy()
     {
-        return ComplaintVideoOwnerValidator::class;
+        return VideoOwnerValidator::class;
     }
 }

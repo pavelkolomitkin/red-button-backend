@@ -2,16 +2,21 @@
 
 namespace App\Entity;
 
+use App\Validator\Constraints\IssuePictureOwnerConstraint;
+use App\Validator\Constraints\VideoOwnerConstraint;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\IssueRepository")
  * @ORM\Table(name="issue")
  *
  * @Gedmo\SoftDeleteable(fieldName="deletedAt")
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class Issue
 {
@@ -22,6 +27,9 @@ class Issue
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
@@ -29,14 +37,44 @@ class Issue
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\ComplaintConfirmation", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $complaintConfirmations;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="message", type="text", nullable=false)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(max="10000")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     */
+    private $message;
+
+    /**
+     * @var ServiceType
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\ServiceType", inversedBy="issues")
+     * @ORM\JoinColumn(name="service_type_id", nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     */
+    private $serviceType;
 
     /**
      * @var ClientUser
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\ClientUser", inversedBy="issues")
      * @ORM\JoinColumn(name="client_id", nullable=false)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $client;
 
@@ -45,6 +83,9 @@ class Issue
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="issues")
      * @ORM\JoinColumn(name="company_id", nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $company;
 
@@ -53,28 +94,55 @@ class Issue
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Region", inversedBy="issues")
      * @ORM\JoinColumn(name="region_id", nullable=false)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $region;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\IssuePicture", mappedBy="issue")
+     * @Assert\All(
+     *     @IssuePictureOwnerConstraint()
+     * )
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\IssuePicture", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $pictures;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="issue")
+     * @Assert\All(
+     *     @VideoOwnerConstraint()
+     * )
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="issue", cascade={"persist"})
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $videos;
+
+    /**
+     * @var OSMAddress
+     * @ORM\Embedded(class="App\Entity\OSMAddress")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     */
+    private $address;
 
     public function __construct()
     {
         $this->complaintConfirmations = new ArrayCollection();
         $this->pictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
+        $this->address = new OSMAddress();
     }
 
     public function getId(): ?int
@@ -133,7 +201,7 @@ class Issue
     /**
      * @return Company
      */
-    public function getCompany(): Company
+    public function getCompany(): ?Company
     {
         return $this->company;
     }
@@ -151,7 +219,7 @@ class Issue
     /**
      * @return Region
      */
-    public function getRegion(): Region
+    public function getRegion(): ?Region
     {
         return $this->region;
     }
@@ -222,6 +290,60 @@ class Issue
             $video->setIssue(null);
         }
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $message
+     * @return Issue
+     */
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
+        return $this;
+    }
+
+    /**
+     * @return ServiceType
+     */
+    public function getServiceType(): ServiceType
+    {
+        return $this->serviceType;
+    }
+
+    /**
+     * @param ServiceType $serviceType
+     * @return Issue
+     */
+    public function setServiceType(ServiceType $serviceType): self
+    {
+        $this->serviceType = $serviceType;
+        return $this;
+    }
+
+    /**
+     * @return OSMAddress
+     */
+    public function getAddress(): ?OSMAddress
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param OSMAddress $address
+     * @return Issue
+     */
+    public function setAddress(OSMAddress $address): self
+    {
+        $this->address = $address;
         return $this;
     }
 }

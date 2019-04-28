@@ -43,9 +43,17 @@ class ServiceType
      */
     private $complaints;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Issue", mappedBy="serviceType")
+     */
+    private $issues;
+
     public function __construct()
     {
         $this->complaints = new ArrayCollection();
+        $this->issues = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,5 +85,13 @@ class ServiceType
     public function getComplaints()
     {
         return $this->complaints;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getIssues()
+    {
+        return $this->issues;
     }
 }

@@ -3,26 +3,26 @@
 namespace App\Controller\Client;
 
 use App\Controller\CommonController;
-use App\Service\EntityManager\Client\ComplaintPictureManager;
+use App\Service\EntityManager\Client\IssuePictureManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class ComplaintPictureController
+ * Class IssuePictureController
  * @package App\Controller\Client
  */
-class ComplaintPictureController extends CommonController
+class IssuePictureController extends CommonController
 {
     /**
      * @param Request $request
-     * @param ComplaintPictureManager $manager
+     * @param IssuePictureManager $manager
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
      *
-     * @Route(name="complaint_picture_create", path="/complaint-picture/create", methods={"POST"})
+     * @Route(name="issue_picture_create", path="/issue-picture/create", methods={"POST"})
      */
-    public function create(Request $request, ComplaintPictureManager $manager)
+    public function create(Request $request, IssuePictureManager $manager)
     {
         $result = $manager->create($request->files->all());
 

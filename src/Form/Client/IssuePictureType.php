@@ -2,17 +2,17 @@
 
 namespace App\Form\Client;
 
-use App\Entity\ComplaintPicture;
+use App\Entity\IssuePicture;
 use App\Form\CommonType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class ComplaintPictureType
+ * Class IssuePictureType
  * @package App\Form\Client
  */
-class ComplaintPictureType extends CommonType
+class IssuePictureType extends CommonType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -24,7 +24,7 @@ class ComplaintPictureType extends CommonType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'data_class' => ComplaintPicture::class,
+            'data_class' => IssuePicture::class,
             'allow_extra_fields' => true
         ]);
     }

@@ -31,6 +31,9 @@ class IssuePicture
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
@@ -55,9 +58,17 @@ class IssuePicture
      * @var Issue
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Issue", inversedBy="pictures")
-     * @ORM\JoinColumn(name="issue_id", nullable=false)
+     * @ORM\JoinColumn(name="issue_id", nullable=true)
      */
     private $issue;
+
+    /**
+     * @var ClientUser
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\ClientUser", inversedBy="issueUploadPictures")
+     * @ORM\JoinColumn(name="owner_id", nullable=false)
+     */
+    private $owner;
 
     public function __construct()
     {
@@ -121,9 +132,27 @@ class IssuePicture
      * @param Issue $issue
      * @return IssuePicture
      */
-    public function setIssue(Issue $issue): self
+    public function setIssue(Issue $issue = null): self
     {
         $this->issue = $issue;
+        return $this;
+    }
+
+    /**
+     * @return ClientUser
+     */
+    public function getOwner(): ClientUser
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param ClientUser $owner
+     * @return IssuePicture
+     */
+    public function setOwner(ClientUser $owner): self
+    {
+        $this->owner = $owner;
         return $this;
     }
 }

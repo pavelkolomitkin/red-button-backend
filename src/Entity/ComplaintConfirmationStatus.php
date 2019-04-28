@@ -4,10 +4,12 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ComplaintConfirmationStatusRepository")
  * @ORM\Table(name="complaint_confirmation_status")
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class ComplaintConfirmationStatus
 {
@@ -15,6 +17,9 @@ class ComplaintConfirmationStatus
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
@@ -22,6 +27,9 @@ class ComplaintConfirmationStatus
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $title;
 

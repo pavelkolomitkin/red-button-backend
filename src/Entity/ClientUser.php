@@ -72,6 +72,13 @@ class ClientUser extends User
     /**
      * @var ArrayCollection
      *
+     * @ORM\OneToMany(targetEntity="App\Entity\IssuePicture", mappedBy="owner")
+     */
+    private $issueUploadPictures;
+
+    /**
+     * @var ArrayCollection
+     *
      * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="owner")
      */
     private $videos;
@@ -82,6 +89,7 @@ class ClientUser extends User
         $this->issues = new ArrayCollection();
 
         $this->complaintUploadPictures = new ArrayCollection();
+        $this->issueUploadPictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
     }
 
@@ -195,6 +203,15 @@ class ClientUser extends User
     {
         return $this->complaintUploadPictures;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getIssueUploadPictures()
+    {
+        return $this->issueUploadPictures;
+    }
+
 
     /**
      * @return ArrayCollection
