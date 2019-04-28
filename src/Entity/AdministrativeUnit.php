@@ -36,7 +36,11 @@ class AdministrativeUnit
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Company", mappedBy="administrativeUnit", cascade={"persist", "remove"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Company", inversedBy="administrativeUnits", cascade={"persist"})
+     * @ORM\JoinTable(name="administrative_unit_company",
+     *  joinColumns={@ORM\JoinColumn(name="administrative_unit_id", referencedColumnName="id")},
+     *  inverseJoinColumns={@ORM\JoinColumn(name="company_id", referencedColumnName="id")}
+     *     )
      */
     private $companies;
 
@@ -69,6 +73,8 @@ class AdministrativeUnit
     }
 
     /**
+     * Get region
+     *
      * @return Region
      */
     public function getRegion(): Region
@@ -77,6 +83,8 @@ class AdministrativeUnit
     }
 
     /**
+     * Set region
+     *
      * @param Region $region
      * @return AdministrativeUnit
      */
@@ -99,7 +107,6 @@ class AdministrativeUnit
         if (!$this->companies->contains($company))
         {
             $this->companies[] = $company;
-            $company->setAdministrativeUnit($this);
         }
 
         return $this;

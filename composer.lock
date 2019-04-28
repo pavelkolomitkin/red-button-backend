@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a9aa6affa91510d3e919920d9ccb6b5",
+    "content-hash": "cb16c3096a26408e96869800a50a4011",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -9068,7 +9068,7 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v4.2.5",
+            "version": "v4.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",

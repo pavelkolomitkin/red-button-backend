@@ -44,9 +44,16 @@ class Company
      * @var CompanyLegalForm
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\CompanyLegalForm", inversedBy="companies")
-     * @ORM\JoinColumn(name="legal_form_id", nullable=false)
+     * @ORM\JoinColumn(name="legal_form_id", nullable=true)
      */
     private $legalForm;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="legal_form_text", type="string", length=255, nullable=true)
+     */
+    private $legalFormText;
 
     /**
      * @var string
@@ -102,7 +109,7 @@ class Company
     /**
      * @var string
      *
-     * @ORM\Column(name="office_hours", type="string", length=255, nullable=true)
+     * @ORM\Column(name="office_hours", type="text", length=255, nullable=true)
      */
     private $officeHours;
 
@@ -142,16 +149,16 @@ class Company
     private $issues;
 
     /**
-     * @var AdministrativeUnit
+     * @var ArrayCollection
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\AdministrativeUnit", inversedBy="companies")
-     * @ORM\JoinColumn(name="administrative_unit_id", nullable=false)
+     * @ORM\ManyToMany(targetEntity="App\Entity\AdministrativeUnit", inversedBy="companies")
      */
-    private $administrativeUnit;
+    private $administrativeUnits;
 
     public function __construct()
     {
         $this->issues = new ArrayCollection();
+        $this->administrativeUnits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -185,23 +192,7 @@ class Company
         return $this;
     }
 
-    /**
-     * @return AdministrativeUnit
-     */
-    public function getAdministrativeUnit(): AdministrativeUnit
-    {
-        return $this->administrativeUnit;
-    }
 
-    /**
-     * @param AdministrativeUnit $administrativeUnit
-     * @return Company
-     */
-    public function setAdministrativeUnit(AdministrativeUnit $administrativeUnit): self
-    {
-        $this->administrativeUnit = $administrativeUnit;
-        return $this;
-    }
 
     /**
      * @return string
@@ -224,7 +215,7 @@ class Company
     /**
      * @return CompanyLegalForm
      */
-    public function getLegalForm(): CompanyLegalForm
+    public function getLegalForm(): ?CompanyLegalForm
     {
         return $this->legalForm;
     }
@@ -233,9 +224,27 @@ class Company
      * @param CompanyLegalForm $legalForm
      * @return Company
      */
-    public function setLegalForm(CompanyLegalForm $legalForm): self
+    public function setLegalForm(?CompanyLegalForm $legalForm = null): self
     {
         $this->legalForm = $legalForm;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLegalFormText(): ?string
+    {
+        return $this->legalFormText;
+    }
+
+    /**
+     * @param string $legalFormText
+     * @return Company
+     */
+    public function setLegalFormText(?string $legalFormText = null): self
+    {
+        $this->legalFormText = $legalFormText;
         return $this;
     }
 
@@ -454,5 +463,24 @@ class Company
         $this->surface = $surface;
         return $this;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAdministrativeUnits()
+    {
+        return $this->administrativeUnits;
+    }
+
+    /**
+     * @param ArrayCollection $administrativeUnits
+     * @return Company
+     */
+    public function setAdministrativeUnits($administrativeUnits): self
+    {
+        $this->administrativeUnits = $administrativeUnits;
+        return $this;
+    }
+
 
 }
