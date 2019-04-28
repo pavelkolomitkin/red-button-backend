@@ -11,7 +11,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  * Class ComplaintVideoOwnerValidator
  * @package App\Validator\Constraints
  */
-class ComplaintVideoOwnerValidator extends ConstraintValidator
+class VideoOwnerValidator extends ConstraintValidator
 {
     use UserAwareServiceTrait;
 
