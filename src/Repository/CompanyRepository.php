@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Company;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,32 +21,38 @@ class CompanyRepository extends ServiceEntityRepository
         parent::__construct($registry, Company::class);
     }
 
-    // /**
-    //  * @return Company[] Returns an array of Company objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getSearchCompanyQuery(array $criteria): Query
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $builder = $this->createQueryBuilder('company');
 
-    /*
-    public function findOneBySomeField($value): ?Company
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->handleRegionParameter($builder, $criteria);
+        $this->handleNameParameter($builder, $criteria);
+
+        $builder->orderBy('company.title', 'ASC');
+
+        return $builder->getQuery();
     }
-    */
+
+    private function handleRegionParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (isset($criteria['regionId']))
+        {
+            $builder->join('company.administrativeUnits', 'unit', 'WITH', 'unit.region = :region')
+                ->setParameter('region', $criteria['regionId']);
+        }
+
+        return $builder;
+    }
+
+    private function handleNameParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (!empty(trim($criteria['name'])))
+        {
+            $builder->andWhere('lower(company.title) LIKE lower(:name)')
+                ->setParameter('name', '%' . trim($criteria['name']) . '%');
+        }
+
+        return $builder;
+    }
+
 }

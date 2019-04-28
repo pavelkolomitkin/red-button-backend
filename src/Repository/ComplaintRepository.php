@@ -26,14 +26,14 @@ class ComplaintRepository extends ServiceEntityRepository
     {
         $builder = $this->createQueryBuilder('complaint');
 
-        $this->handOwnerParameter($builder, $criteria);
+        $this->handleOwnerParameter($builder, $criteria);
 
         $builder->addOrderBy('complaint.createdAt', 'DESC');
 
         return $builder->getQuery();
     }
 
-    private function handOwnerParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    private function handleOwnerParameter(QueryBuilder $builder, array $criteria): QueryBuilder
     {
         if (isset($criteria['owner']))
         {
