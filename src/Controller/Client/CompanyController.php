@@ -19,7 +19,7 @@ class CompanyController extends CommonController
      * @param Request $request
      * @param CompanyRepository $repository
      * @param PaginatorInterface $paginator
-     * @Route(name="company_search", path="/company_search", methods={"GET"}, requirements={"regionId"="\d+"})
+     * @Route(name="company_search", path="/company-search", methods={"GET"}, requirements={"regionId"="\d+"})
      * @return Response
      */
     public function search(Request $request, CompanyRepository $repository, PaginatorInterface $paginator)

@@ -23,21 +23,29 @@ class ComplaintController extends CommonController
     /**
      * @param Request $request
      * @param ComplaintRepository $repository
-     * @Route(name="complaint_search", path="/complaint/search", methods={"GET"})
+     * @Route(name="complaint_geo_search", path="/complaint/geo/search", methods={"GET"})
      * @return Response
      * @throws \Exception
      */
-    public function search(Request $request, ComplaintRepository $repository)
+    public function geoSearch(Request $request, ComplaintRepository $repository)
     {
-        $criteria = array_merge(
-            $request->query->all(),
+        $searchCriteria = $request->query->all();
+        if (!$repository->hasGeoCriteria($searchCriteria))
+        {
+            return $this->getResponse(
+                ['complaints' => []]
+            );
+        }
+
+        $searchCriteria = array_merge(
+            $searchCriteria,
             [
                 'timeStart' => new \DateTime('-1 month'),
                 'timeEnd' => new \DateTime('now')
             ]
         );
 
-        $complaints = $repository->getSearchQuery($criteria)->getResult();
+        $complaints = $repository->getSearchQuery($searchCriteria)->getResult();
 
         return $this->getResponse(
             ['complaints' => $complaints]

@@ -28,7 +28,7 @@ services:
       APP_ENV: "test"
 
   postgres_db:
-    image: postgres:10.6
+    image: mdillon/postgis:10
     container_name: 'postgres-db-container-test'
     restart: always
     ports:

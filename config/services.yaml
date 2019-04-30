@@ -8,6 +8,7 @@ parameters:
     noreply_mail: '%env(NO_REPLY_MAIL)%'
     email_link_host: '%env(MAIL_LINK_HOST)%'
     upload_directory: '%env(UPLOAD_DIRECTORY)%'
+    searching_radius_km: '%env(SEARCHING_RADIUS_KM)%'
 
 services:
     # default configuration for services in *this* file
@@ -108,6 +109,17 @@ services:
             - '@liip_imagine.cache.manager'
         public: true
         tags: [jms_serializer.event_subscriber]
+
+    Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
+    App\Repository\ComplaintRepository:
+        calls:
+            - method: setSearchingRadius
+              arguments:
+                  - '%searching_radius_km%'
+
 
 
 
