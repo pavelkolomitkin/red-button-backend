@@ -13,6 +13,10 @@ use JMS\Serializer\Annotation as JMSSerializer;
  */
 class ComplaintConfirmationStatus
 {
+    const STATUS_PENDING = 'pending';
+    const STATUS_CONFIRMED = 'confirmed';
+    const STATUS_REJECTED = 'rejected';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -37,6 +41,8 @@ class ComplaintConfirmationStatus
      * @var string
      *
      * @ORM\Column(name="code", type="string", length=15)
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $code;
 
@@ -99,5 +105,10 @@ class ComplaintConfirmationStatus
     public function getConfirmations()
     {
         return $this->confirmations;
+    }
+
+    public function __toString()
+    {
+        return $this->getTitle();
     }
 }

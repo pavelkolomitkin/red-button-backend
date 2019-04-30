@@ -1,31 +1,31 @@
 <?php
 
-namespace App\Validator\Constraints;
+namespace App\Validator\Constraints\Client;
 
-use App\Entity\VideoMaterial;
+use App\Entity\ComplaintPicture;
 use App\Service\UserAwareServiceTrait;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 /**
- * Class ComplaintVideoOwnerValidator
+ * Class ComplaintPictureOwnerValidator
  * @package App\Validator\Constraints
  */
-class VideoOwnerValidator extends ConstraintValidator
+class ComplaintPictureOwnerValidator extends ConstraintValidator
 {
     use UserAwareServiceTrait;
 
     /**
      * Checks if the passed value is valid.
      *
-     * @param VideoMaterial $value The value that should be validated
+     * @param ComplaintPicture $value The value that should be validated
      * @param Constraint $constraint The constraint for the validation
      */
     public function validate($value, Constraint $constraint)
     {
         if ($value->getOwner() !== $this->getUser())
         {
-            $this->context->addViolation('You can use only your own linked videos!');
+            $this->context->addViolation('You can use only pictures uploaded by your own!');
             return;
         }
     }

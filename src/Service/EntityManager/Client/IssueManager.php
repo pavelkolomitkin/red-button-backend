@@ -4,6 +4,9 @@
 namespace App\Service\EntityManager\Client;
 
 
+use App\Entity\Complaint;
+use App\Entity\ComplaintConfirmation;
+use App\Entity\ComplaintConfirmationStatus;
 use App\Entity\Issue;
 use App\Form\Client\IssueType;
 use App\Service\EntityManager\CommonEntityManager;
@@ -88,5 +91,33 @@ class IssueManager extends CommonEntityManager
         $entity
             ->setAddress($address)
             ->setRegion($region);
+    }
+
+    public function addComplaintConfirmation(Issue $issue, Complaint $complaint)
+    {
+        $confirmationRepository = $this->entityManager->getRepository('App\Entity\ComplaintConfirmation');
+        $result = $confirmationRepository->findOneBy([
+            'complaint' => $complaint,
+            'issue' => $issue
+        ]);
+
+        if ($result)
+        {
+            return $result;
+        }
+
+        $statusRepository = $this->entityManager->getRepository('App\Entity\ComplaintConfirmationStatus');
+        $status = $statusRepository->findOneBy(['code' => ComplaintConfirmationStatus::STATUS_PENDING]);
+
+        $result = new ComplaintConfirmation();
+        $result
+            ->setIssue($issue)
+            ->setComplaint($complaint)
+            ->setStatus($status);
+
+        $this->entityManager->persist($result);
+        $this->entityManager->flush($result);
+
+        return $result;
     }
 }

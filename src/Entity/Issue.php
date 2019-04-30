@@ -368,4 +368,9 @@ class Issue
         $this->address = $address;
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->getMessage();
+    }
 }

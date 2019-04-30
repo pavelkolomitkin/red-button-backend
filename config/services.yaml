@@ -65,15 +65,23 @@ services:
     app.complaint_tag.manager:
         class: App\Service\EntityManager\Client\ComplaintTagManager
 
-    App\Validator\Constraints\ComplaintPictureOwnerValidator:
+    App\Validator\Constraints\Client\ComplaintPictureOwnerValidator:
         tags:
             - { name: validator.constraint_validator }
 
-    App\Validator\Constraints\IssuePictureOwnerValidator:
+    App\Validator\Constraints\Client\IssuePictureOwnerValidator:
         tags:
             - { name: validator.constraint_validator }
 
-    App\Validator\Constraints\VideoOwnerValidator:
+    App\Validator\Constraints\Client\VideoOwnerValidator:
+        tags:
+            - { name: validator.constraint_validator }
+
+    App\Validator\Constraints\Client\IssueComplaintMaxDistanceValidator:
+        calls:
+            - method: setMaxDistance
+              arguments:
+                  - '%searching_radius_km%'
         tags:
             - { name: validator.constraint_validator }
 
