@@ -144,6 +144,23 @@ class Issue
      */
     private $comments;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="like_number", type="integer", nullable=false, options={"default": 0})
+     */
+    private $likeNumber = 0;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\ClientUser", inversedBy="likeIssues")
+     * @ORM\JoinTable(name="user_like_issue",
+     *     joinColumns={@ORM\JoinColumn(name="issue_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="client_id", referencedColumnName="id")})
+     */
+    private $likes;
+
     public function __construct()
     {
         $this->complaintConfirmations = new ArrayCollection();
@@ -151,6 +168,7 @@ class Issue
         $this->videos = new ArrayCollection();
         $this->address = new OSMAddress();
         $this->comments = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -415,6 +433,46 @@ class Issue
 
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getLikeNumber(): int
+    {
+        return $this->likeNumber;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+
+    public function addLike(ClientUser $user): self
+    {
+        if (!$this->likes->contains($user))
+        {
+            $this->likes[] = $user;
+            $this->likeNumber++;
+        }
+
+        return $this;
+    }
+
+    public function removeLike(ClientUser $user): self
+    {
+        if ($this->likes->contains($user))
+        {
+            $this->likes->removeElement($user);
+            $this->likeNumber--;
+        }
+
+        return $this;
+    }
+
 
     public function __toString()
     {

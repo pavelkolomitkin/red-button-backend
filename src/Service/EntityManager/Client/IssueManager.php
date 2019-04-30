@@ -4,11 +4,14 @@
 namespace App\Service\EntityManager\Client;
 
 
+use App\Entity\ClientUser;
 use App\Entity\Complaint;
 use App\Entity\ComplaintConfirmation;
 use App\Entity\ComplaintConfirmationStatus;
 use App\Entity\Issue;
 use App\Form\Client\IssueType;
+use App\Repository\ClientUserRepository;
+use App\Repository\IssueRepository;
 use App\Service\EntityManager\CommonEntityManager;
 use App\Service\EntityManager\Exception\ManageEntityException;
 use App\Service\Geo\Exception\GeoLocationException;
@@ -119,5 +122,72 @@ class IssueManager extends CommonEntityManager
         $this->entityManager->flush($result);
 
         return $result;
+    }
+
+    public function addLike(Issue $issue, ClientUser $user)
+    {
+        $this->entityManager->beginTransaction();
+
+        try
+        {
+            if ($this->hasUserLike($issue, $user))
+            {
+                throw new ManageEntityException(['user' => 'You have already liked this issue!']);
+            }
+
+            $issue->addLike($user);
+
+            $this->entityManager->persist($issue);
+            $this->entityManager->flush();
+
+            $this->entityManager->commit();
+        }
+        catch (\Exception $exception)
+        {
+            $this->entityManager->rollback();
+            throw $exception;
+        }
+    }
+
+    public function removeLike(Issue $issue, ClientUser $user)
+    {
+        $this->entityManager->beginTransaction();
+
+        try
+        {
+            if (!$this->hasUserLike($issue, $user))
+            {
+                throw new ManageEntityException(['user' => 'You have not liked this issue!']);
+            }
+
+            $issue->removeLike($user);
+
+            $this->entityManager->persist($issue);
+            $this->entityManager->flush();
+
+            $this->entityManager->commit();
+        }
+        catch (\Exception $exception)
+        {
+            $this->entityManager->rollback();
+            throw $exception;
+        }
+    }
+
+    private function hasUserLike(Issue $issue, ClientUser $user)
+    {
+        /** @var ClientUserRepository $repository */
+        $repository = $this->entityManager->getRepository('App\Entity\ClientUser');
+
+        $liker = $repository
+            ->createQueryBuilder('client_user')
+            ->join('client_user.likeIssues', 'issue', 'WITH', 'issue = :currentIssue')
+            ->setParameter('currentIssue', $issue)
+            ->andWhere('client_user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return !empty($liker);
     }
 }

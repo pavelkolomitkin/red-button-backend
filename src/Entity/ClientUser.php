@@ -83,6 +83,13 @@ class ClientUser extends User
      */
     private $videos;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Issue", mappedBy="likes")
+     */
+    private $likeIssues;
+
     public function __construct()
     {
         $this->complaints = new ArrayCollection();
@@ -91,6 +98,8 @@ class ClientUser extends User
         $this->complaintUploadPictures = new ArrayCollection();
         $this->issueUploadPictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
+
+        $this->likeIssues = new ArrayCollection();
     }
 
     /**
@@ -219,5 +228,13 @@ class ClientUser extends User
     public function getVideos()
     {
         return $this->videos;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getLikeIssues()
+    {
+        return $this->likeIssues;
     }
 }
