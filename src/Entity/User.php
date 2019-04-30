@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -78,6 +79,18 @@ abstract class User implements UserInterface
      * @ORM\Column(name="is_active", type="boolean", nullable=false)
      */
     private $isActive = false;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\IssueComment", mappedBy="author")
+     */
+    private $issueComments;
+
+    public function __construct()
+    {
+        $this->issueComments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -194,6 +207,24 @@ abstract class User implements UserInterface
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getIssueComments()
+    {
+        return $this->issueComments;
+    }
+
+    /**
+     * @param ArrayCollection $issueComments
+     * @return User
+     */
+    public function setIssueComments($issueComments): self
+    {
+        $this->issueComments = $issueComments;
         return $this;
     }
 }

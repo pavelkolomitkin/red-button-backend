@@ -24,7 +24,7 @@ class CompanyController extends CommonController
      */
     public function search(Request $request, CompanyRepository $repository, PaginatorInterface $paginator)
     {
-        $query = $repository->getSearchCompanyQuery($request->query->all());
+        $query = $repository->getSearchQuery($request->query->all());
 
         $pagination = $paginator->paginate(
             $query,

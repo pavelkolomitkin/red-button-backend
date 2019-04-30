@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Validator\Constraints\ComplaintPictureOwnerConstraint;
-use App\Validator\Constraints\VideoOwnerConstraint;
+use App\Validator\Constraints\Client\ComplaintPictureOwnerConstraint;
+use App\Validator\Constraints\Client\VideoOwnerConstraint;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;

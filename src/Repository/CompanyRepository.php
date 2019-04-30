@@ -21,7 +21,7 @@ class CompanyRepository extends ServiceEntityRepository
         parent::__construct($registry, Company::class);
     }
 
-    public function getSearchCompanyQuery(array $criteria): Query
+    public function getSearchQuery(array $criteria): Query
     {
         $builder = $this->createQueryBuilder('company');
 

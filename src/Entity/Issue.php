@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Validator\Constraints\IssuePictureOwnerConstraint;
-use App\Validator\Constraints\VideoOwnerConstraint;
+use App\Validator\Constraints\Client\IssuePictureOwnerConstraint;
+use App\Validator\Constraints\Client\VideoOwnerConstraint;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -137,12 +137,20 @@ class Issue
      */
     private $address;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\IssueComment", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    private $comments;
+
     public function __construct()
     {
         $this->complaintConfirmations = new ArrayCollection();
         $this->pictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
         $this->address = new OSMAddress();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -366,6 +374,45 @@ class Issue
     public function setAddress(OSMAddress $address): self
     {
         $this->address = $address;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param ArrayCollection $comments
+     * @return Issue
+     */
+    public function setComments($comments): self
+    {
+        $this->comments = $comments;
+        return $this;
+    }
+
+    public function addComment(IssueComment $comment): self
+    {
+        if (!$this->comments->contains($comment))
+        {
+            $this->comments[] = $comment;
+            $comment->setIssue($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(IssueComment $comment): self
+    {
+        if ($this->comments->contains($comment))
+        {
+            $this->comments->removeElement($comment);
+        }
+
         return $this;
     }
 
