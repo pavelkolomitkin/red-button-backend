@@ -19,6 +19,31 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ComplaintController extends CommonController
 {
+
+    /**
+     * @param Request $request
+     * @param ComplaintRepository $repository
+     * @Route(name="complaint_search", path="/complaint/search", methods={"GET"})
+     * @return Response
+     * @throws \Exception
+     */
+    public function search(Request $request, ComplaintRepository $repository)
+    {
+        $criteria = array_merge(
+            $request->query->all(),
+            [
+                'timeStart' => new \DateTime('-1 month'),
+                'timeEnd' => new \DateTime('now')
+            ]
+        );
+
+        $complaints = $repository->getSearchQuery($criteria)->getResult();
+
+        return $this->getResponse(
+            ['complaints' => $complaints]
+        );
+    }
+
     /**
      * @param Request $request
      * @param ComplaintRepository $repository
