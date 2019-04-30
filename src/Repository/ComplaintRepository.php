@@ -48,7 +48,7 @@ class ComplaintRepository extends ServiceEntityRepository
     {
         $builder = $this->createQueryBuilder('complaint');
 
-        $this->handleOwnerParameter($builder, $criteria);
+        $this->handleClientParameter($builder, $criteria);
         $this->handleNearPointParameter($builder, $criteria);
         $this->handleGeoBoundariesParameters($builder, $criteria);
         $this->handleServiceTypeParameter($builder, $criteria);
@@ -142,13 +142,13 @@ class ComplaintRepository extends ServiceEntityRepository
         return $builder;
     }
 
-    private function handleOwnerParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    private function handleClientParameter(QueryBuilder $builder, array $criteria): QueryBuilder
     {
-        if (isset($criteria['owner']))
+        if (isset($criteria['client']))
         {
             $builder
                 ->andWhere('complaint.client = :client')
-                ->setParameter('client', $criteria['owner']);
+                ->setParameter('client', $criteria['client']);
         }
 
         return $builder;

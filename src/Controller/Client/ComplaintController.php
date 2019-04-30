@@ -62,7 +62,7 @@ class ComplaintController extends CommonController
     public function getUserComplaints(Request $request, ComplaintRepository $repository, PaginatorInterface $paginator)
     {
         $searchCriteria = [
-            'owner' => $this->getUser()
+            'client' => $this->getUser()
         ];
 
         $query = $repository->getSearchQuery($searchCriteria);

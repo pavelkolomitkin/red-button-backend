@@ -242,6 +242,17 @@ class Issue
         return $this->pictures;
     }
 
+    /**
+     * @param ArrayCollection $pictures
+     * @return $this
+     */
+    public function setPictures($pictures)
+    {
+        $this->pictures = $pictures;
+
+        return $this;
+    }
+
     public function addPicture(IssuePicture $picture): self
     {
         if (!$this->pictures->contains($picture))
@@ -269,6 +280,17 @@ class Issue
     public function getVideos()
     {
         return $this->videos;
+    }
+
+    /**
+     * @param ArrayCollection $videos
+     * @return $this
+     */
+    public function setVideos($videos)
+    {
+        $this->videos = $videos;
+
+        return $this;
     }
 
     public function addVideo(VideoMaterial $video): self
