@@ -26,7 +26,7 @@ class IssueController extends CommonController
      * @param PaginatorInterface $paginator
      * @return Response
      *
-     * @Route(name="issue_my_list", path="/issue/my/list", methods={"GET"})
+     * @Route(name="client_issue_my_list", path="/issue/my/list", methods={"GET"})
      */
     public function getUserIssues(Request $request, IssueRepository $repository, PaginatorInterface $paginator)
     {

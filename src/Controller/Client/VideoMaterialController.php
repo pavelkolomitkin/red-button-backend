@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class VideoMaterialController extends CommonController
 {
     /**
-     * @Route(name="video_material", path="/video-material/create", methods={"POST"})
+     * @Route(name="client_video_material", path="/video-material/create", methods={"POST"})
      * @param Request $request
      * @param VideoMaterialManager $manager
      * @return Response

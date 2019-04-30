@@ -19,7 +19,7 @@ class ComplaintTagController extends CommonController
      * @param ComplaintTagRepository $repository
      * @param PaginatorInterface $paginator
      * @return \Symfony\Component\HttpFoundation\Response
-     * @Route(name="complaint_tag_list", path="/complaint-tag/list", methods={"GET"})
+     * @Route(name="client_complaint_tag_list", path="/complaint-tag/list", methods={"GET"})
      */
     public function search(Request $request, ComplaintTagRepository $repository, PaginatorInterface $paginator)
     {

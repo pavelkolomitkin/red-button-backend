@@ -20,7 +20,7 @@ class IssuePictureController extends CommonController
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
      *
-     * @Route(name="issue_picture_create", path="/issue-picture/create", methods={"POST"})
+     * @Route(name="client_issue_picture_create", path="/issue-picture/create", methods={"POST"})
      */
     public function create(Request $request, IssuePictureManager $manager)
     {

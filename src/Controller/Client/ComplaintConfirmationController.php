@@ -27,7 +27,7 @@ class ComplaintConfirmationController extends CommonController
      * @param ComplaintConfirmationRepository $repository
      * @param PaginatorInterface $paginator
      * @Route(
-     *     name="complaint_confirmation_request_list",
+     *     name="client_complaint_confirmation_request_list",
      *     path="/complaint-confirmation/request/list",
      *     methods={"GET"}
      * )
@@ -60,7 +60,7 @@ class ComplaintConfirmationController extends CommonController
      * @return Response
      *
      * @Route(
-     *     name="complaint_confirmation_change_status",
+     *     name="client_complaint_confirmation_change_status",
      *     path="/complaint-confirmation/create/{issueId}/{complaintId}",
      *     methods={"POST"},
      *     requirements={"issueId"="\d+", "complaintId"="\d+"}
@@ -88,7 +88,7 @@ class ComplaintConfirmationController extends CommonController
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
      * @Route(
-     *     name="complaint_confirmation_change_status",
+     *     name="client_complaint_confirmation_change_status",
      *     path="/complaint-confirmation/{id}",
      *     methods={"PUT"},
      *     requirements={"id"="\d+"}
@@ -109,7 +109,7 @@ class ComplaintConfirmationController extends CommonController
      * @param ComplaintConfirmationManager $manager
      *
      * @Route(
-     *     name="complaint_confirmation_remove",
+     *     name="client_complaint_confirmation_remove",
      *     path="/complaint-confirmation/{id}",
      *     methods={"DELETE"},
      *     requirements={"id"="\d+"}

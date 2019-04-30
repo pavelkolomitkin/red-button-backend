@@ -20,7 +20,7 @@ class ComplaintPictureController extends CommonController
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
      *
-     * @Route(name="complaint_picture_create", path="/complaint-picture/create", methods={"POST"})
+     * @Route(name="client_complaint_picture_create", path="/complaint-picture/create", methods={"POST"})
      */
     public function create(Request $request, ComplaintPictureManager $manager)
     {
