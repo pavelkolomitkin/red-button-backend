@@ -19,6 +19,37 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ComplaintController extends CommonController
 {
+    /**
+     * @param Request $request
+     * @param ComplaintRepository $repository
+     * @Route(name="client_complaint_geo_tag_search", path="/complaint/geo-tag/search", methods={"GET"})
+     * @return Response
+     * @throws \Exception
+     */
+    public function tagGeoSearch(Request $request, ComplaintRepository $repository)
+    {
+        $searchCriteria = $request->query->all();
+        if (!$repository->hasGeoCriteria($searchCriteria))
+        {
+            return $this->getResponse(
+                ['complaints' => []]
+            );
+        }
+
+        $searchCriteria = array_merge(
+            $searchCriteria,
+            [
+                'timeStart' => new \DateTime('-1 month'),
+                'timeEnd' => new \DateTime('now')
+            ]
+        );
+
+        $tags = $repository->getTagSearchQuery($searchCriteria)->getResult();
+
+        return $this->getResponse([
+            'tags' => $tags
+        ]);
+    }
 
     /**
      * @param Request $request

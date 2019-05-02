@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Complaint;
+use App\Entity\ComplaintTag;
+use App\Repository\ComplaintTagRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -18,6 +20,11 @@ class ComplaintRepository extends ServiceEntityRepository
 {
     private $searchingRadius;
 
+    /**
+     * @var ComplaintTagRepository
+     */
+    private $complaintTagRepository;
+
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Complaint::class);
@@ -26,6 +33,16 @@ class ComplaintRepository extends ServiceEntityRepository
     public function setSearchingRadius($radius)
     {
         $this->searchingRadius = $radius;
+    }
+
+    /**
+     * @param \App\Repository\ComplaintTagRepository $complaintTagRepository
+     *
+     * @required
+     */
+    public function setComplaintTagRepository(ComplaintTagRepository $complaintTagRepository)
+    {
+        $this->complaintTagRepository = $complaintTagRepository;
     }
 
     public function hasGeoCriteria(array $criteria)
@@ -42,6 +59,32 @@ class ComplaintRepository extends ServiceEntityRepository
     public function hasGeoNearCriteria(array $criteria)
     {
         return isset($criteria['centerLatitude']) && isset($criteria['centerLongitude']);
+    }
+
+    public function getTagSearchQuery(array $criteria): Query
+    {
+
+        /** @var ComplaintTagRepository $tagRepository */
+        $tagRepository = $this->getEntityManager()->getRepository(ComplaintTag::class);
+
+        $builder = $tagRepository->createQueryBuilder('t')
+            ->select('t as tag, COUNT(complaint) as complaintNumber')
+            ->join('t.complaints', 'complaint')
+        ;
+
+        $this->handleNearPointParameter($builder, $criteria);
+        $this->handleGeoBoundariesParameters($builder, $criteria);
+        $this->handleServiceTypeParameter($builder, $criteria);
+        $this->handleTimePeriodParameters($builder, $criteria);
+
+
+        $builder
+            ->groupBy('t')
+            ->orderBy('complaintNumber', 'DESC')
+        ;
+
+
+        return $builder->getQuery();
     }
 
     public function getSearchQuery(array $criteria = []): Query
@@ -102,11 +145,13 @@ class ComplaintRepository extends ServiceEntityRepository
 
     private function handleTagsParameter(QueryBuilder $builder, array $criteria): QueryBuilder
     {
-        if (!empty($criteria['tags']))
+        $tags = !empty($criteria['tags']) ? explode(',', $criteria['tags']) : [];
+
+        if (!empty($tags))
         {
             $builder->join('complaint.tags', 'tag')
-                ->andWhere('tag.title IN (:tags)')
-                ->setParameter('tags', $criteria['tags']);
+                ->andWhere('tag.id IN (:tags)')
+                ->setParameter('tags', $tags);
         }
 
         return $builder;

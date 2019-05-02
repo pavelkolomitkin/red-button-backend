@@ -77,4 +77,15 @@ class ComplaintTag
     {
         return $this->complaints;
     }
+
+    /**
+     * @param $complaints
+     * @return $this
+     */
+    public function setComplaints($complaints)
+    {
+        $this->complaints = $complaints;
+
+        return $this;
+    }
 }
