@@ -19,6 +19,11 @@ liip_imagine:
     # use the default cache configuration
     cache: ~
 
+    complaint_picture_preview_extra_small:
+      quality: 75
+      filters:
+        thumbnail: { size: [25, 25], mode: outbound }
+
     complaint_picture_preview_small:
       quality: 75
       filters:

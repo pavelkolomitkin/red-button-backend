@@ -54,34 +54,6 @@ class ComplaintConfirmationController extends CommonController
     }
 
     /**
-     * @param Issue $issue
-     * @param Complaint $complaint
-     * @param ComplaintConfirmationManager $manager
-     * @return Response
-     *
-     * @Route(
-     *     name="client_complaint_confirmation_change_status",
-     *     path="/complaint-confirmation/create/{issueId}/{complaintId}",
-     *     methods={"POST"},
-     *     requirements={"issueId"="\d+", "complaintId"="\d+"}
-     * )
-     * @ParamConverter("issue", class="App\Entity\Issue", options={"id" = "issueId"})
-     * @ParamConverter("complaint", class="App\Entity\Complaint", options={"id" = "issueId"})
-     * @throws \App\Service\EntityManager\Exception\ManageEntityException
-     */
-    public function create(Issue $issue, Complaint $complaint, ComplaintConfirmationManager $manager)
-    {
-        $confirmation = $manager->create([
-            'issue' => $issue,
-            'complaint' => $complaint
-        ]);
-
-        return $this->getResponse([
-            'confirmation' => $confirmation
-        ], Response::HTTP_CREATED);
-    }
-
-    /**
      * @param ComplaintConfirmation $confirmation
      * @param ComplaintConfirmationManager $manager
      * @param Request $request

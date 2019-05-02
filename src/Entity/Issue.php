@@ -148,6 +148,9 @@ class Issue
      * @var int
      *
      * @ORM\Column(name="like_number", type="integer", nullable=false, options={"default": 0})
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $likeNumber = 0;
 
@@ -184,6 +187,12 @@ class Issue
         return $this->complaintConfirmations;
     }
 
+    public function setComplaintConfirmations($confirmations): self
+    {
+        $this->complaintConfirmations = $confirmations;
+
+        return $this;
+    }
 
     public function addComplaintConfirmation(ComplaintConfirmation $confirmation): self
     {

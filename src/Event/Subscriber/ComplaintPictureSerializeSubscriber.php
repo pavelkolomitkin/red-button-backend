@@ -23,8 +23,11 @@ class ComplaintPictureSerializeSubscriber implements EventSubscriberInterface
         [
             'source' => 'previewSmall',
             'filter' => 'complaint_picture_preview_small',
+        ],
+        [
+            'source' => 'previewExtraSmall',
+            'filter' => 'complaint_picture_preview_extra_small',
         ]
-
     ];
 
     /**
