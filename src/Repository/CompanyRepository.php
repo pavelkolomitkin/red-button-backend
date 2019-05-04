@@ -37,8 +37,10 @@ class CompanyRepository extends ServiceEntityRepository
     {
         if (isset($criteria['regionId']))
         {
-            $builder->join('company.administrativeUnits', 'unit', 'WITH', 'unit.region = :region')
-                ->setParameter('region', $criteria['regionId']);
+            $builder->join('company.administrativeUnits', 'unit')
+                ->join('unit.region', 'region')
+                ->andWhere('region.id = :regionId')
+                ->setParameter('regionId', $criteria['regionId']);
         }
 
         return $builder;

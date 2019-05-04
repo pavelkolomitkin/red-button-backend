@@ -201,7 +201,7 @@ class Company
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="App\Entity\AdministrativeUnit", inversedBy="companies")
+     * @ORM\ManyToMany(targetEntity="App\Entity\AdministrativeUnit", mappedBy="companies")
      *
      * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose

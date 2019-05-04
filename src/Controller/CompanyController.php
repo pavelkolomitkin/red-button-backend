@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Controller\Client;
+namespace App\Controller;
 
-use App\Controller\CommonController;
 use App\Repository\CompanyRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +18,7 @@ class CompanyController extends CommonController
      * @param Request $request
      * @param CompanyRepository $repository
      * @param PaginatorInterface $paginator
-     * @Route(name="client_company_search", path="/company-search", methods={"GET"}, requirements={"regionId"="\d+"})
+     * @Route(name="company_search", path="/company/search", methods={"GET"}, requirements={"regionId"="\d+"})
      * @return Response
      */
     public function search(Request $request, CompanyRepository $repository, PaginatorInterface $paginator)
