@@ -51,21 +51,31 @@ class UserController extends CommonController
         /** @var ComplaintConfirmationRepository $complaintConfirmationRepository */
         $complaintConfirmationRepository = $entityManager->getRepository('App\Entity\ComplaintConfirmation');
 
-        $confirmationNumber = $complaintConfirmationRepository
-            ->createQueryBuilder('confirmation')
-//            ->addSelect('confirmation')
-            ->select('COUNT(confirmation) as newConfirmationNumber')
+
+        $newConfirmationQueryBuilder = $complaintConfirmationRepository->createQueryBuilder('confirmation')
             ->leftJoin('confirmation.complaint', 'complaint', 'WITH', 'complaint.client = :client')
             ->join('confirmation.status', 'status', 'WITH', 'status.code = :statusCode')
             ->setParameter('client', $user)
             ->setParameter('statusCode', ComplaintConfirmationStatus::STATUS_PENDING)
+            ;
+
+        $confirmationItemsQueryBuilder = clone $newConfirmationQueryBuilder;
+
+        $newConfirmations = $confirmationItemsQueryBuilder
+            ->orderBy('confirmation.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $confirmationNumber = $newConfirmationQueryBuilder
+            ->select('COUNT(confirmation) as newConfirmationNumber')
             ->getQuery()
             ->getArrayResult();
 
         $result = [
             'complaintNumber' => $complaintNumber[0]['complaintNumber'],
             'issueNumber' => $issueNumber[0]['issueNumber'],
-            'confirmationNumber' => $confirmationNumber[0]['newConfirmationNumber']
+            'confirmationNumber' => $confirmationNumber[0]['newConfirmationNumber'],
+            'confirmations' => $newConfirmations
         ];
 
         return $this->getResponse($result);
