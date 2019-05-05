@@ -118,6 +118,13 @@ services:
         public: true
         tags: [jms_serializer.event_subscriber]
 
+    App\Event\Subscriber\IssuePictureSerializeSubscriber:
+        arguments:
+            - '@vich_uploader.templating.helper.uploader_helper'
+            - '@liip_imagine.cache.manager'
+        public: true
+        tags: [jms_serializer.event_subscriber]
+
     Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
         tags:
             - { name: doctrine.event_subscriber, connection: default }
@@ -128,6 +135,9 @@ services:
               arguments:
                   - '%searching_radius_km%'
 
+    App\Event\Subscriber\ComplaintConfirmationSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
 
 
 

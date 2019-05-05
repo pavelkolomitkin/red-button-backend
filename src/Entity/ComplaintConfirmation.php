@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Validator\Constraints\Client\IssueComplaintMaxDistanceConstraint;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Doctrine\ORM\Mapping\UniqueConstraint;
@@ -14,13 +13,11 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
  * @ORM\Table(name="complaint_confirmation", uniqueConstraints={
  *     @UniqueConstraint(name="ussue_complaint_unique_key", columns={"complaint_id", "issue_id"})
  *     })
- * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  * @JMSSerializer\ExclusionPolicy("all")
  */
 class ComplaintConfirmation
 {
     use SerializeTimestampableTrait;
-    use SoftDeleteableEntity;
 
     /**
      * @ORM\Id()
@@ -46,7 +43,7 @@ class ComplaintConfirmation
     /**
      * @var Complaint
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Complaint", inversedBy="complaintConfirmations")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Complaint", inversedBy="complaintConfirmations", fetch="EAGER")
      * @ORM\JoinColumn(name="complaint_id", nullable=false)
      *
      * @JMSSerializer\Groups({"default"})
@@ -93,7 +90,7 @@ class ComplaintConfirmation
     /**
      * @return Complaint
      */
-    public function getComplaint(): Complaint
+    public function getComplaint(): ?Complaint
     {
         return $this->complaint;
     }

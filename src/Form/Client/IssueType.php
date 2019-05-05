@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Form\Client;
-
 
 use App\Entity\Company;
 use App\Entity\Issue;
+use App\Entity\IssuePicture;
 use App\Entity\ServiceType;
 use App\Entity\VideoMaterial;
 use App\Form\CommonType;
@@ -31,7 +30,7 @@ class IssueType extends CommonType
                 'multiple' => false
             ])
             ->add('pictures', EntityType::class, [
-                'class' => IssuePictureType::class,
+                'class' => IssuePicture::class,
                 'multiple' => true,
                 'by_reference' => false,
                 'expanded' => true
@@ -46,10 +45,7 @@ class IssueType extends CommonType
                 'by_reference' => false,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'entry_type' => ComplaintConfirmationType::class,
-                'entry_options' => [
-                    'validation_groups' => ['create']
-                ]
+                'entry_type' => ComplaintConfirmationType::class
             ])
             ;
     }

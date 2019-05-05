@@ -196,7 +196,7 @@ class Issue
 
     public function addComplaintConfirmation(ComplaintConfirmation $confirmation): self
     {
-        if (!$this->complaintConfirmations->contains($confirmation))
+        if (!$this->findConfirmation($confirmation))
         {
             $this->complaintConfirmations[] = $confirmation;
             $confirmation->setIssue($this);
@@ -207,12 +207,30 @@ class Issue
 
     public function removeComplaintConfirmation(ComplaintConfirmation $confirmation): self
     {
-        if ($this->complaintConfirmations->contains($confirmation))
+        if ($item = $this->findConfirmation($confirmation))
         {
-            $this->complaintConfirmations->removeElement($confirmation);
+            $this->complaintConfirmations->removeElement($item);
         }
 
         return $this;
+    }
+
+    public function findConfirmation(ComplaintConfirmation $confirmation)
+    {
+        $items = $this->complaintConfirmations->filter(
+            function ($element, $key) use ($confirmation) {
+
+                return $element->getComplaint()->getId() === $confirmation->getComplaint()->getId();
+            });
+
+        $result = null;
+
+        if ($items->count() > 0)
+        {
+            $result = $items->first();
+        }
+
+        return $result;
     }
 
     /**
@@ -353,7 +371,7 @@ class Issue
     /**
      * @return string
      */
-    public function getMessage(): string
+    public function getMessage(): ?string
     {
         return $this->message;
     }
@@ -371,7 +389,7 @@ class Issue
     /**
      * @return ServiceType
      */
-    public function getServiceType(): ServiceType
+    public function getServiceType(): ?ServiceType
     {
         return $this->serviceType;
     }
@@ -380,7 +398,7 @@ class Issue
      * @param ServiceType $serviceType
      * @return Issue
      */
-    public function setServiceType(ServiceType $serviceType): self
+    public function setServiceType(ServiceType $serviceType = null): self
     {
         $this->serviceType = $serviceType;
         return $this;

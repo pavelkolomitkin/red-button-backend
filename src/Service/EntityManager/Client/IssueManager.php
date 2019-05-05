@@ -11,7 +11,6 @@ use App\Entity\ComplaintConfirmationStatus;
 use App\Entity\Issue;
 use App\Form\Client\IssueType;
 use App\Repository\ClientUserRepository;
-use App\Repository\IssueRepository;
 use App\Service\EntityManager\CommonEntityManager;
 use App\Service\EntityManager\Exception\ManageEntityException;
 use App\Service\Geo\Exception\GeoLocationException;
@@ -94,6 +93,17 @@ class IssueManager extends CommonEntityManager
         $entity
             ->setAddress($address)
             ->setRegion($region);
+    }
+
+    /**
+     * @param Issue $entity
+     * @throws ManageEntityException
+     */
+    public function remove($entity)
+    {
+        $entity->getComplaintConfirmations()->clear();
+
+        parent::remove($entity);
     }
 
     public function addComplaintConfirmation(Issue $issue, Complaint $complaint)
