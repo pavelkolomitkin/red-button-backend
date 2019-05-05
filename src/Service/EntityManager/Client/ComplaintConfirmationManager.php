@@ -2,9 +2,10 @@
 
 namespace App\Service\EntityManager\Client;
 
-use App\Form\Client\ComplaintConfirmationType;
+use App\Entity\ComplaintConfirmation;
 use App\Service\EntityManager\CommonEntityManager;
 use App\Service\EntityManager\Exception\ManageEntityException;
+use Proxies\__CG__\App\Entity\ComplaintConfirmationStatus;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -20,6 +21,31 @@ class ComplaintConfirmationManager extends CommonEntityManager
 
     protected function getUpdatingForm(): FormInterface
     {
-        return $this->formFactory->create(ComplaintConfirmationType::class);
+        throw new ManageEntityException(['message' => 'You cannot update confirmation directly!']);
+    }
+
+    public function changeStatus(ComplaintConfirmation $confirmation, $statusCode)
+    {
+        if ($statusCode === ComplaintConfirmationStatus::STATUS_PENDING)
+        {
+            throw new ManageEntityException(['status' => 'The status is not allowed!']);
+        }
+
+        $status = $this
+            ->entityManager
+            ->getRepository('App\Entity\ComplaintConfirmationStatus')
+            ->findOneBy(['code' => $statusCode]);
+        if (!$status || ($status->getCode() === ComplaintConfirmationStatus::STATUS_PENDING))
+        {
+            throw new ManageEntityException(['status' => 'The status is not allowed!']);
+        }
+
+
+        $confirmation->setStatus($status);
+
+        $this->entityManager->persist($confirmation);
+        $this->entityManager->flush($confirmation);
+
+        return $confirmation;
     }
 }

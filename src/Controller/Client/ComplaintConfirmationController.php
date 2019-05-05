@@ -69,37 +69,15 @@ class ComplaintConfirmationController extends CommonController
      */
     public function changeStatus(ComplaintConfirmation $confirmation, ComplaintConfirmationManager $manager, Request $request)
     {
-        $confirmation = $manager->update($confirmation, $request->request->all());
-
-        return $this->getResponse([
-            'confirmation' => $confirmation
-        ]);
-    }
-
-    /**
-     * @param ComplaintConfirmation $confirmation
-     * @param ComplaintConfirmationManager $manager
-     *
-     * @Route(
-     *     name="client_complaint_confirmation_remove",
-     *     path="/complaint-confirmation/{id}",
-     *     methods={"DELETE"},
-     *     requirements={"id"="\d+"}
-     * )
-     *
-     * @ParamConverter("confirmation", class="App\Entity\ComplaintConfirmation")
-     * @return Response
-     * @throws \App\Service\EntityManager\Exception\ManageEntityException
-     */
-    public function delete(ComplaintConfirmation $confirmation, ComplaintConfirmationManager $manager)
-    {
-        if ($confirmation->getIssue()->getClient() !== $this->getUser())
+        if ($confirmation->getComplaint()->getClient() !== $this->getUser())
         {
             throw new AccessDeniedException();
         }
 
-        $manager->remove($confirmation);
+        $confirmation = $manager->changeStatus($confirmation, $request->request->get('status'));
 
-        return $this->getResponse();
+        return $this->getResponse([
+            'confirmation' => $confirmation
+        ]);
     }
 }
