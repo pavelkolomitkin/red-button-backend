@@ -31,9 +31,16 @@ class UserController extends CommonController
         /** @var ClientUserRepository $userRepository */
         $userRepository = $entityManager->getRepository('App\Entity\ClientUser');
 
-        $numbers = $userRepository->createQueryBuilder('client_user')
-            ->select('COUNT(complaints) as complaintNumber, COUNT(issues) as issueNumber')
+        $complaintNumber = $userRepository->createQueryBuilder('client_user')
+            ->select('COUNT(complaints) as complaintNumber')
             ->leftJoin('client_user.complaints', 'complaints')
+            ->where('client_user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getArrayResult();
+
+        $issueNumber = $userRepository->createQueryBuilder('client_user')
+            ->select('COUNT(issues) as issueNumber')
             ->leftJoin('client_user.issues', 'issues')
             ->where('client_user = :user')
             ->setParameter('user', $user)
@@ -44,18 +51,23 @@ class UserController extends CommonController
         /** @var ComplaintConfirmationRepository $complaintConfirmationRepository */
         $complaintConfirmationRepository = $entityManager->getRepository('App\Entity\ComplaintConfirmation');
 
-        $confirmationInfo = $complaintConfirmationRepository
+        $confirmationNumber = $complaintConfirmationRepository
             ->createQueryBuilder('confirmation')
-            ->addSelect('confirmation')
-            ->addSelect('COUNT(confirmation) as newConfirmationNumber')
+//            ->addSelect('confirmation')
+            ->select('COUNT(confirmation) as newConfirmationNumber')
             ->leftJoin('confirmation.complaint', 'complaint', 'WITH', 'complaint.client = :client')
             ->join('confirmation.status', 'status', 'WITH', 'status.code = :statusCode')
             ->setParameter('client', $user)
             ->setParameter('statusCode', ComplaintConfirmationStatus::STATUS_PENDING)
             ->getQuery()
-            ->getResult();
+            ->getArrayResult();
 
+        $result = [
+            'complaintNumber' => $complaintNumber[0]['complaintNumber'],
+            'issueNumber' => $issueNumber[0]['issueNumber'],
+            'confirmationNumber' => $confirmationNumber[0]['newConfirmationNumber']
+        ];
 
-        return $this->getResponse(array_merge($numbers, $confirmationInfo));
+        return $this->getResponse($result);
     }
 }
