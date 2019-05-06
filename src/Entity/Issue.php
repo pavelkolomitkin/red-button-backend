@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Validator\Constraints\Client\IssueComplaintConfirmationUniqueUserListConstraint;
 use App\Validator\Constraints\Client\IssuePictureOwnerConstraint;
 use App\Validator\Constraints\Client\VideoOwnerConstraint;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -38,6 +39,7 @@ class Issue
      *
      * @ORM\OneToMany(targetEntity="App\Entity\ComplaintConfirmation", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
      *
+     * @IssueComplaintConfirmationUniqueUserListConstraint()
      * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose
      */
