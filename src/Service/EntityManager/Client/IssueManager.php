@@ -184,7 +184,7 @@ class IssueManager extends CommonEntityManager
         }
     }
 
-    private function hasUserLike(Issue $issue, ClientUser $user)
+    public function hasUserLike(Issue $issue, ClientUser $user)
     {
         /** @var ClientUserRepository $repository */
         $repository = $this->entityManager->getRepository('App\Entity\ClientUser');

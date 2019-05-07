@@ -52,14 +52,18 @@ class IssueController extends CommonController
 
     /**
      * @param Issue $issue
+     * @param IssueManager $manager
+     * @return Response
      * @Route(name="issue_details", path="/issue/{id}", methods={"GET"}, requirements={"id"="\d+"})
      * @ParamConverter("issue", class="App\Entity\Issue")
-     * @return Response
      */
-    public function details(Issue $issue)
+    public function details(Issue $issue, IssueManager $manager)
     {
+        $hasLike = $manager->hasUserLike($issue, $this->getUser());
+
         return $this->getResponse([
-            'issue' => $issue
+            'issue' => $issue,
+            'hasLike' => $hasLike
         ]);
     }
 
@@ -134,7 +138,8 @@ class IssueController extends CommonController
         $manager->addLike($issue, $this->getUser());
 
         return $this->getResponse([
-            'issue' => $issue
+            'issue' => $issue,
+            'hasLike' => true
         ]);
     }
 
@@ -153,7 +158,8 @@ class IssueController extends CommonController
         $manager->removeLike($issue, $this->getUser());
 
         return $this->getResponse([
-            'issue' => $issue
+            'issue' => $issue,
+            'hasLike' => false
         ]);
     }
 }
