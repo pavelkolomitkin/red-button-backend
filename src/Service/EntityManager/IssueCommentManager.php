@@ -2,6 +2,7 @@
 
 namespace App\Service\EntityManager;
 
+use App\Entity\Issue;
 use App\Entity\IssueComment;
 use App\Form\IssueCommentType;
 use App\Service\UserAwareServiceTrait;
@@ -26,5 +27,15 @@ class IssueCommentManager extends CommonEntityManager
     protected function getUpdatingForm(): FormInterface
     {
         return $this->formFactory->create(IssueCommentType::class);
+    }
+
+    public function addComment(Issue $issue, array $commentData)
+    {
+        $comment = new IssueComment();
+        $comment
+            ->setIssue($issue)
+            ->setAuthor($this->getUser());
+
+        return $this->update($comment, $commentData);
     }
 }

@@ -2,10 +2,8 @@
 
 namespace App\Form;
 
-
 use App\Entity\Issue;
 use App\Entity\IssueComment;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,12 +16,7 @@ class IssueCommentType extends CommonType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('message')
-            ->add('issue', EntityType::class, [
-                'class' => Issue::class,
-                'required' => true,
-                'multiple' => false
-            ]);
+            ->add('message');
     }
 
     public function configureOptions(OptionsResolver $resolver)

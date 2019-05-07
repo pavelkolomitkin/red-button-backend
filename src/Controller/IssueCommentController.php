@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Controller\CommonController;
-
 use App\Entity\Issue;
 use App\Entity\IssueComment;
 use App\Repository\IssueCommentRepository;
@@ -48,22 +46,23 @@ class IssueCommentController extends CommonController
         );
 
         return $this->getResponse([
-            'companies' => $pagination->getItems(),
+            'comments' => $pagination->getItems(),
             'total' => $pagination->getTotalItemCount()
         ]);
     }
 
     /**
-     * @param Request $request
+     * @param Issue $issue
      * @param IssueCommentManager $manager
+     * @param Request $request
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
-     *
-     * @Route(name="issue_comment_create", path="/issue-comment", methods={"POST"})
+     * @Route(name="issue_comment_create", path="/issue-comment/{id}", methods={"POST"}, requirements={"id"="\d+"})
+     * @ParamConverter("issue", class="App\Entity\Issue")
      */
-    public function create(Request $request, IssueCommentManager $manager)
+    public function create(Issue $issue, IssueCommentManager $manager, Request $request)
     {
-        $comment = $manager->create($request->request->all());
+        $comment = $manager->addComment($issue, $request->request->all());
 
         return $this->getResponse([
             'comment' => $comment
