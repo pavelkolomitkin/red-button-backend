@@ -32,10 +32,22 @@ class IssueCommentManager extends CommonEntityManager
     public function addComment(Issue $issue, array $commentData)
     {
         $comment = new IssueComment();
-        $comment
-            ->setIssue($issue)
-            ->setAuthor($this->getUser());
+        $comment->setAuthor($this->getUser());
+
+        $issue->addComment($comment);
 
         return $this->update($comment, $commentData);
+    }
+
+    /**
+     * @param IssueComment $entity
+     * @throws Exception\ManageEntityException
+     */
+    public function remove($entity)
+    {
+        $issue = $entity->getIssue();
+        $issue->removeComment($entity);
+
+        parent::remove($entity);
     }
 }

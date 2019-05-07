@@ -140,6 +140,16 @@ class Issue
     private $address;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="comment_number", type="integer", nullable=false, options={"default": 0})
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     */
+    private $commentNumber = 0;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\IssueComment", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
@@ -448,6 +458,8 @@ class Issue
         {
             $this->comments[] = $comment;
             $comment->setIssue($this);
+
+            $this->commentNumber++;
         }
 
         return $this;
@@ -458,6 +470,8 @@ class Issue
         if ($this->comments->contains($comment))
         {
             $this->comments->removeElement($comment);
+
+            $this->commentNumber--;
         }
 
         return $this;

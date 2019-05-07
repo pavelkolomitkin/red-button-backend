@@ -140,11 +140,6 @@ class IssueManager extends CommonEntityManager
 
         try
         {
-            if ($this->hasUserLike($issue, $user))
-            {
-                throw new ManageEntityException(['user' => 'You have already liked this issue!']);
-            }
-
             $issue->addLike($user);
 
             $this->entityManager->persist($issue);
@@ -165,11 +160,6 @@ class IssueManager extends CommonEntityManager
 
         try
         {
-            if (!$this->hasUserLike($issue, $user))
-            {
-                throw new ManageEntityException(['user' => 'You have not liked this issue!']);
-            }
-
             $issue->removeLike($user);
 
             $this->entityManager->persist($issue);
