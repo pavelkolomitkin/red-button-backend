@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# get flag --jenkins
-isJenkins=0
+# get flag --rebuild
+rebuild=0
 while [ -n "$1" ]
 do
     case "$1" in
-    --jenkins) isJenkins=1
+    --rebuild) rebuild=1
         break
      ;;
     esac
@@ -23,7 +23,7 @@ docker-compose --rm --force -v
 docker volume rm test_postgres_red_button_data_volume_test -f
 
 
-if [[ $isJenkins = 1 ]]
+if [[ $rebuild = 1 ]]
     then
         echo -n "Rebuild images..."
         echo -en '\n'

@@ -8,6 +8,7 @@ parameters:
 doctrine:
     dbal:
         # configure these for your database server
+        server_version: '10.7'
         driver: 'pdo_pgsql'
         charset: utf8
         url: '%env(DATABASE_URL)%'
