@@ -31,10 +31,12 @@ services:
     image: mdillon/postgis:10
     container_name: 'postgres-db-container-test'
     restart: always
+    working_dir: /app
     ports:
       - '7779:5432'
     volumes:
       - postgres_red_button_data_volume_test:/var/lib/postgresql/data
+      - ./:/app
     environment:
       POSTGRES_PASSWORD: 1234
       POSTGRES_USER: postgres
