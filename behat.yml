@@ -5,6 +5,7 @@ default:
                 - FeatureContext:
                       kernel: '@kernel'
                       entityManager: '@doctrine.orm.entity_manager'
+                      passwordEncoder: '@security.user_password_encoder.generic'
                 - Behatch\Context\JsonContext
                 - behatch:context:json
                 - behatch:context:rest

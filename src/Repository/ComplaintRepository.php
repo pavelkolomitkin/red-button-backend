@@ -81,6 +81,7 @@ class ComplaintRepository extends ServiceEntityRepository
         $builder
             ->groupBy('t')
             ->orderBy('complaintNumber', 'DESC')
+            ->addOrderBy('t.title', 'ASC')
         ;
 
 

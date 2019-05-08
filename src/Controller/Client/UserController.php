@@ -53,7 +53,7 @@ class UserController extends CommonController
 
 
         $newConfirmationQueryBuilder = $complaintConfirmationRepository->createQueryBuilder('confirmation')
-            ->leftJoin('confirmation.complaint', 'complaint', 'WITH', 'complaint.client = :client')
+            ->join('confirmation.complaint', 'complaint', 'WITH', 'complaint.client = :client')
             ->join('confirmation.status', 'status', 'WITH', 'status.code = :statusCode')
             ->setParameter('client', $user)
             ->setParameter('statusCode', ComplaintConfirmationStatus::STATUS_PENDING)

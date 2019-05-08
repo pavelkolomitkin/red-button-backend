@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use phpDocumentor\Reflection\Types\Static_;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as JMSSerializer;
@@ -184,7 +185,7 @@ abstract class User implements UserInterface
 
     /**
      * @param string $fullName
-     * @return User
+     * @return $this
      */
     public function setFullName(string $fullName): self
     {

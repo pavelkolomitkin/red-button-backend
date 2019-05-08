@@ -71,7 +71,7 @@ docker exec -i postgres-db-container-test psql -U postgres red-button-test < dum
 echo -en '\n'
 echo -n "Run behat tests..."
 echo -en '\n'
-docker exec php-fpm-container-test vendor/bin/behat --colors
+docker exec php-fpm-container-test vendor/bin/behat --colors --stop-on-failure
 
 # Stop previous containers
 echo -n "Stop containers..."

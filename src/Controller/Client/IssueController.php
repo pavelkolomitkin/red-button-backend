@@ -54,7 +54,7 @@ class IssueController extends CommonController
      * @param Issue $issue
      * @param IssueManager $manager
      * @return Response
-     * @Route(name="issue_details", path="/issue/{id}", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route(name="client_issue_details", path="/issue/{id}", methods={"GET"}, requirements={"id"="\d+"})
      * @ParamConverter("issue", class="App\Entity\Issue")
      */
     public function details(Issue $issue, IssueManager $manager)
@@ -72,7 +72,7 @@ class IssueController extends CommonController
      * @param IssueManager $manager
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
-     * @Route(name="issue_create", path="/issue", methods={"POST"})
+     * @Route(name="client_issue_create", path="/issue", methods={"POST"})
      */
     public function create(Request $request, IssueManager $manager)
     {
@@ -87,7 +87,7 @@ class IssueController extends CommonController
      * @param Request $request
      * @param Issue $issue
      * @param IssueManager $manager
-     * @Route(name="issue_edit", path="/issue/{id}", methods={"PUT"}, requirements={"id"="\d+"})
+     * @Route(name="client_issue_edit", path="/issue/{id}", methods={"PUT"}, requirements={"id"="\d+"})
      * @ParamConverter("issue", class="App\Entity\Issue")
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
@@ -109,7 +109,7 @@ class IssueController extends CommonController
      * @param Issue $issue
      * @param IssueManager $manager
      *
-     * @Route(name="issue_delete", path="/issue/{id}", methods={"DELETE"}, requirements={"id"="\d+"})
+     * @Route(name="client_issue_delete", path="/issue/{id}", methods={"DELETE"}, requirements={"id"="\d+"})
      * @ParamConverter("issue", class="App\Entity\Issue")
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
@@ -131,7 +131,7 @@ class IssueController extends CommonController
      * @return Response
      * @throws \Exception
      * @ParamConverter("issue", class="App\Entity\Issue")
-     * @Route(name="issue_like_add", path="/issue/{id}/add-like", methods={"POST"}, requirements={"id"="\d+"})
+     * @Route(name="client_issue_like_add", path="/issue/{id}/add-like", methods={"POST"}, requirements={"id"="\d+"})
      */
     public function addLike(Issue $issue, IssueManager $manager)
     {
@@ -151,7 +151,7 @@ class IssueController extends CommonController
      *
      * @ParamConverter("issue", class="App\Entity\Issue")
      *
-     * @Route(name="issue_like_remove", path="/issue/{id}/remove-like", methods={"POST"}, requirements={"id"="\d+"})
+     * @Route(name="client_issue_like_remove", path="/issue/{id}/remove-like", methods={"POST"}, requirements={"id"="\d+"})
      */
     public function removeLike(Issue $issue, IssueManager $manager)
     {

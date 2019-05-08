@@ -1,7 +1,7 @@
 Feature:
   A client manages their complaints
 
-  Scenario: User creates their new complaint
+  Scenario: A user creates their new complaint
     Given I authorize with email "test@example.com" and password "1234567"
 
     When I add "Content-Type" header equal to "application/json"
@@ -47,8 +47,8 @@ Feature:
     Then the JSON node "total" should be equal to the number 0
 
     When I create a new complaint with uploaded pictures and created videos and data:
-    | message        | tags                                       | serviceType | latitude          | longitude         |
-    | Test complaint | emergency, urgent, there is no water       | 1           | 48.73173803702099 | 44.47196960449219 |
+    | message        | tags                                 | serviceType | latitude          | longitude         |
+    | Test complaint | emergency, urgent, there is no water | 1           | 48.73173803702099 | 44.47196960449219 |
 
     Then the response status code should be 201
     And the JSON node "complaint.id" should exist
