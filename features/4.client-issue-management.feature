@@ -544,3 +544,30 @@ Feature:
     And the JSON node "total" should be equal to the number 0
 
 
+  Scenario: A user deletes their issue
+    Given I authorize with email "test@example.com" and password "1234567"
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "DELETE" on relative url "/client/issue/1" with content:
+    """
+    """
+    Then the response status code should be 200
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/my/list" with content:
+    """
+    """
+    Then the response status code should be 200
+    And the JSON node "issues" should have 0 elements
+    And the JSON node "total" should be equal to the number 0
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/common-info" with content:
+    """
+    """
+    Then the response status code should be 200
+    Then the JSON node "issueNumber" should exist
+    Then the JSON node "issueNumber" should be equal to the number 0
