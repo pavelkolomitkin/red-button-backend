@@ -255,6 +255,14 @@ Feature:
     | message             | serviceType           | latitude          | longitude         |
     | Test issue message  | Горячее водоснабжение | 48.8201034046395  | 44.63231205940246 |
 
+    Then the response status code should be 201
+    And the JSON node "issue" should exist
+    And the JSON node "issue.id" should be equal to the number 1
+    And the JSON node "issue.complaintConfirmations" should have 2 elements
+    And the JSON node "issue.serviceType.id" should be equal to the number 4
+    And the JSON node "issue.message" should be equal to the string "Test issue message"
+    And the JSON node "issue.pictures" should have 1 elements
+    And the JSON node "issue.videos" should have 1 elements
 
     # Get client profile common info - numbers and complaint signature requests
     When I add "Content-Type" header equal to "application/json"
@@ -334,8 +342,36 @@ Feature:
     And the complaint of the user "Test Client 2" should have status "confirmed"
 
 
+  Scenario: A user edits their issue
 
+    Given I authorize with email "test@example.com" and password "1234567"
 
+    # Getting information of an existing issue
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/1" with content:
+    """
+    """
+    Then the response status code should be 200
+
+    And I keep last issue
+
+    # Editing the issue with id and data
+    Given I edit the issue with id 1 and data:
+    | message                      | serviceType            | latitude          | longitude         |
+    | Test issue message - edited  | Холодное водоснабжение | 48.8201034046395  | 44.63231205940246 |
+
+#    And print last JSON response
+
+    # Checking the issue
+    Then the response status code should be 200
+    And the JSON node "issue" should exist
+    And the JSON node "issue.id" should be equal to the number 1
+    And the JSON node "issue.complaintConfirmations" should have 2 elements
+    And the JSON node "issue.serviceType.id" should be equal to the number 5
+    And the JSON node "issue.message" should be equal to the string "Test issue message - edited"
+    And the JSON node "issue.pictures" should have 1 elements
+    And the JSON node "issue.videos" should have 1 elements
 
 
 

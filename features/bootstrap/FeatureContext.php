@@ -82,6 +82,8 @@ class FeatureContext extends MinkContext
 
     private $keptClientCommonInfo = null;
 
+    private $keptIssue = null;
+
     public function __construct(
         KernelInterface $kernel,
         EntityManagerInterface $entityManager,
@@ -344,6 +346,15 @@ class FeatureContext extends MinkContext
     {
         $data = json_decode($this->response->getContent(), true);
         $this->keptClientCommonInfo = $data;
+    }
+
+    /**
+     * @Then I keep last issue
+     */
+    public function iKeepLastIssue()
+    {
+        $data = json_decode($this->response->getContent(), true);
+        $this->keptIssue = $data['issue'];
     }
 
     /**
@@ -612,7 +623,7 @@ class FeatureContext extends MinkContext
      *
      * @Given I edit my complaint :id with data:
      */
-    public function iUpdateComplaint(\Behat\Gherkin\Node\TableNode $data, $id)
+    public function iUpdateComplaint($id, \Behat\Gherkin\Node\TableNode $data)
     {
         $formFields = $data->getHash()[0];
 
@@ -657,6 +668,49 @@ class FeatureContext extends MinkContext
 
         $this->uploadedIssuePictures = [];
         $this->videos = [];
+    }
+
+    /**
+     * @param $id
+     * @param \Behat\Gherkin\Node\TableNode $data
+     *
+     * @Given I edit the issue with id :id and data:
+     */
+    public function iEditIssueWithData($id, \Behat\Gherkin\Node\TableNode $data)
+    {
+        $formFields = $data->getHash()[0];
+
+        $serviceType = $this->getServiceTypeByTitle($formFields['serviceType']);
+
+        $pictureIds = array_map(function($item) {
+                return $item['id'];
+            }, $this->keptIssue['pictures']);
+
+        $videoIds = array_map(function ($item) {
+                return $item['id'];
+            }, $this->keptIssue['videos']);
+
+        $confirmations = array_map(function ($item) {
+
+            return [
+                'id' => $item['id'],
+                'complaint' => $item['complaint']['id']
+            ];
+
+        }, $this->keptIssue['complaintConfirmations']);
+
+        $formData = [
+            'message' => $formFields['message'],
+            'serviceType' => $serviceType->getId(),
+            'latitude' => $formFields['latitude'],
+            'longitude' => $formFields['longitude'],
+            'pictures' => $pictureIds,
+            'videos' => $videoIds,
+            'complaintConfirmations' => $confirmations,
+            'company' => !empty($this->keptIssue['company']) ? $this->keptIssue['company']['id'] : null
+        ];
+
+        $this->sendRequest('PUT', '/client/issue/' . $id, [], [], [], json_encode($formData));
     }
 
     /**
