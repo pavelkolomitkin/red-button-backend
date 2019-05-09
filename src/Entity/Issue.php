@@ -40,7 +40,7 @@ class Issue
      * @ORM\OneToMany(targetEntity="App\Entity\ComplaintConfirmation", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
      *
      * @IssueComplaintConfirmationUniqueUserListConstraint()
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $complaintConfirmations;
@@ -53,7 +53,7 @@ class Issue
      * @Assert\NotBlank()
      * @Assert\Length(max="10000")
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $message;
@@ -64,7 +64,7 @@ class Issue
      * @ORM\ManyToOne(targetEntity="App\Entity\ServiceType", inversedBy="issues")
      * @ORM\JoinColumn(name="service_type_id", nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $serviceType;
@@ -75,7 +75,7 @@ class Issue
      * @ORM\ManyToOne(targetEntity="App\Entity\ClientUser", inversedBy="issues")
      * @ORM\JoinColumn(name="client_id", nullable=false)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $client;
@@ -86,7 +86,7 @@ class Issue
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="issues")
      * @ORM\JoinColumn(name="company_id", nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $company;
@@ -97,7 +97,7 @@ class Issue
      * @ORM\ManyToOne(targetEntity="App\Entity\Region", inversedBy="issues")
      * @ORM\JoinColumn(name="region_id", nullable=false)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $region;
@@ -111,7 +111,7 @@ class Issue
      *
      * @ORM\OneToMany(targetEntity="App\Entity\IssuePicture", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $pictures;
@@ -125,7 +125,7 @@ class Issue
      *
      * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="issue", cascade={"persist"})
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $videos;
@@ -144,7 +144,7 @@ class Issue
      *
      * @ORM\Column(name="comment_number", type="integer", nullable=false, options={"default": 0})
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $commentNumber = 0;
@@ -161,7 +161,7 @@ class Issue
      *
      * @ORM\Column(name="like_number", type="integer", nullable=false, options={"default": 0})
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
      * @JMSSerializer\Expose
      */
     private $likeNumber = 0;

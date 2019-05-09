@@ -52,14 +52,6 @@ class Company
     private $fullName;
 
     /**
-     * @var CompanyLegalForm
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\CompanyLegalForm", inversedBy="companies")
-     * @ORM\JoinColumn(name="legal_form_id", nullable=true)
-     */
-    private $legalForm;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="legal_form_text", type="string", length=255, nullable=true)
