@@ -14,11 +14,11 @@ Feature:
 
     # Create a base stuff of client complaints
     Given I add a client complaint stuff with data:
-    | clientEmail             | latitude           | longitude         | tags                     | serviceType            | region                | message                                                      |
+    | clientEmail             | latitude           | longitude     | tags                     | serviceType            | region                | message                                                      |
     | testclient1@example.com | 48.819368292       | 44.635679696  | Water, water shut-off    | Горячее водоснабжение  | Волгоградская область | They turn off water constantly                               |
     | testclient2@example.com | 48.818231250       | 44.631640195  | water shut-off, emergency| Горячее водоснабжение  | Волгоградская область | It is too bad without water                                  |
     | testclient3@example.com | 48.821487750       | 44.627803931  | Hot water                | Горячее водоснабжение  | Волгоградская область | Please, solve the problem immediately                        |
-    | testclient4@example.com | 48.802063200       | 44.605316100        | Hot water, emergency     | Холодное водоснабжение | Волгоградская область | They turn off water constantly and without any warn messages |
+    | testclient4@example.com | 48.802063200       | 44.605316100  | Hot water, emergency     | Холодное водоснабжение | Волгоградская область | They turn off water constantly and without any warn messages |
 
     Given I authorize with email "test@example.com" and password "1234567"
 
@@ -263,7 +263,7 @@ Feature:
     """
     """
 
-    And print last JSON response
+#    And print last JSON response
 
     Then the response status code should be 200
     Then the JSON node "complaintNumber" should exist
@@ -274,6 +274,67 @@ Feature:
     Then the JSON node "issueNumber" should be equal to the number 1
     Then the JSON node "confirmations" should exist
     Then the JSON node "confirmations" should have 0 elements
+
+
+
+  Scenario: A user confirms a requested signature
+
+    Given I authorize with email "testclient2@example.com" and password "123456"
+
+    # Check income confirmation requests
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/common-info" with content:
+    """
+    """
+    Then the response status code should be 200
+    Then the JSON node "complaintNumber" should exist
+    Then the JSON node "complaintNumber" should be equal to the number 1
+    Then the JSON node "confirmationNumber" should exist
+    Then the JSON node "confirmationNumber" should be equal to the number 1
+    Then the JSON node "issueNumber" should exist
+    Then the JSON node "issueNumber" should be equal to the number 0
+    Then the JSON node "confirmations" should exist
+    Then the JSON node "confirmations" should have 1 elements
+
+    And I keep last common info
+
+    # Confirm the request
+    Given I confirm the first incoming confirmation request
+
+    # The amount of confirmation requests should be zero
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/common-info" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    Then the JSON node "complaintNumber" should exist
+    Then the JSON node "complaintNumber" should be equal to the number 1
+    Then the JSON node "confirmationNumber" should exist
+    Then the JSON node "confirmationNumber" should be equal to the number 0
+    Then the JSON node "issueNumber" should exist
+    Then the JSON node "issueNumber" should be equal to the number 0
+    Then the JSON node "confirmations" should exist
+    Then the JSON node "confirmations" should have 0 elements
+
+    # Get details of the issue that was created above
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/1" with content:
+    """
+    """
+
+#    And print last JSON response
+
+    Then the response status code should be 200
+
+    # The confirmation of the user testclient2@example.com should have status "confirmed"
+    And the complaint of the user "Test Client 2" should have status "confirmed"
+
+
+
 
 
 

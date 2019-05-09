@@ -80,6 +80,8 @@ class FeatureContext extends MinkContext
 
     private $keptCompany = null;
 
+    private $keptClientCommonInfo = null;
+
     public function __construct(
         KernelInterface $kernel,
         EntityManagerInterface $entityManager,
@@ -333,6 +335,15 @@ class FeatureContext extends MinkContext
     {
         $data = json_decode($this->response->getContent(), true);
         $this->keptCompany = $data['companies'][$number];
+    }
+
+    /**
+     * @Then I keep last common info
+     */
+    public function iKeepLastCommonClientInfo()
+    {
+        $data = json_decode($this->response->getContent(), true);
+        $this->keptClientCommonInfo = $data;
     }
 
     /**
@@ -646,6 +657,46 @@ class FeatureContext extends MinkContext
 
         $this->uploadedIssuePictures = [];
         $this->videos = [];
+    }
+
+    /**
+     * @Given I confirm the first incoming confirmation request
+     */
+    public function iConfirmLastIncomingComplaint()
+    {
+        $confirmationId = $this->keptClientCommonInfo['confirmations'][0]['id'];
+
+        $formData = [
+            'status' => 'confirmed'
+        ];
+
+        $this->sendRequest('PUT', '/client/complaint-confirmation/' .  $confirmationId, [], [], [], json_encode($formData));
+    }
+
+    /**
+     * @param $userFullName
+     * @param $statusCode
+     *
+     * @Then the complaint of the user :userFullName should have status :statusCode
+     * @throws Exception
+     */
+    public function complaintConfirmationShouldHaveStatus($userFullName, $statusCode)
+    {
+        $data = json_decode($this->response->getContent(), true);
+
+        $confirmations = $data['issue']['complaintConfirmations'];
+
+        foreach ($confirmations as $confirmation)
+        {
+            if ($confirmation['complaint']['client']['fullName'] === $userFullName)
+            {
+                Assertions::assertEquals($statusCode, $confirmation['status']['code']);
+
+                return;
+            }
+        }
+
+        throw new Exception('The confirmation was not found!');
     }
 
     /**
