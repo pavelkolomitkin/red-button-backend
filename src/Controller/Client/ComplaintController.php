@@ -79,7 +79,10 @@ class ComplaintController extends CommonController
         $complaints = $repository->getSearchQuery($searchCriteria)->getResult();
 
         return $this->getResponse(
-            ['complaints' => $complaints]
+            ['complaints' => $complaints],
+            Response::HTTP_OK, [], [
+                'client_complaint_list'
+            ]
         );
     }
 
@@ -106,7 +109,12 @@ class ComplaintController extends CommonController
         return $this->getResponse([
             'complaints' => $pagination->getItems(),
             'total' => $pagination->getTotalItemCount()
-        ]);
+        ],
+            Response::HTTP_OK, [], [
+                'client_complaint_list',
+                'client_complaint_details',
+                'client_complaint_details_tags'
+            ]);
     }
 
     /**
@@ -119,7 +127,12 @@ class ComplaintController extends CommonController
     {
         return $this->getResponse([
             'complaint' => $complaint
-        ]);
+        ],
+            Response::HTTP_OK, [], [
+
+                'client_complaint_details',
+                'client_complaint_details_tags'
+            ]);
     }
 
     /**
@@ -135,7 +148,11 @@ class ComplaintController extends CommonController
 
         return $this->getResponse([
             'complaint' => $complaint
-        ], Response::HTTP_CREATED);
+        ], Response::HTTP_CREATED, [], [
+
+            'client_complaint_details',
+            'client_complaint_details_tags'
+        ]);
     }
 
     /**
@@ -158,6 +175,9 @@ class ComplaintController extends CommonController
 
         return $this->getResponse([
             'complaint' => $complaint
+        ], Response::HTTP_OK, [], [
+            'client_complaint_details',
+            'client_complaint_details_tags'
         ]);
     }
 

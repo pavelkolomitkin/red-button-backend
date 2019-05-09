@@ -78,6 +78,15 @@ class UserController extends CommonController
             'confirmations' => $newConfirmations
         ];
 
-        return $this->getResponse($result);
+        return $this->getResponse($result
+            ,
+            Response::HTTP_OK,
+            [],
+            [
+                self::SERIALIZE_GROUP_DEFAULT,
+                'client_complaint_incoming_confirmations',
+                'client_issue_incoming_confirmation'
+            ]
+            );
     }
 }

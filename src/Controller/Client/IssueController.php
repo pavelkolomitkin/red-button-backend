@@ -67,7 +67,7 @@ class IssueController extends CommonController
             'issue' => $issue,
             'hasLike' => $hasLike
         ], Response::HTTP_OK, [], [
-            'client_issue_details'
+            'client_issue_details', 'client_complaint_details'
         ]);
     }
 

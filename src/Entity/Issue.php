@@ -75,7 +75,10 @@ class Issue
      * @ORM\ManyToOne(targetEntity="App\Entity\ClientUser", inversedBy="issues")
      * @ORM\JoinColumn(name="client_id", nullable=false)
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details",
+     *     "client_issue_incoming_confirmation"})
      * @JMSSerializer\Expose
      */
     private $client;

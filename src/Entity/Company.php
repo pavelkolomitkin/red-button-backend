@@ -255,24 +255,6 @@ class Company
     }
 
     /**
-     * @return CompanyLegalForm
-     */
-    public function getLegalForm(): ?CompanyLegalForm
-    {
-        return $this->legalForm;
-    }
-
-    /**
-     * @param CompanyLegalForm $legalForm
-     * @return Company
-     */
-    public function setLegalForm(?CompanyLegalForm $legalForm = null): self
-    {
-        $this->legalForm = $legalForm;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getLegalFormText(): ?string

@@ -52,7 +52,12 @@ class Complaint
      * @ORM\ManyToOne(targetEntity="App\Entity\ClientUser", inversedBy="complaints")
      * @ORM\JoinColumn(name="client_id", nullable=false)
      *
-     * @JMSSerializer\Groups({"client_complaint_list", "client_complaint_details", "client_issue_list"})
+     * @JMSSerializer\Groups({
+     *     "client_complaint_list",
+     *     "client_complaint_details",
+     *     "client_issue_list",
+     *     "client_complaint_incoming_confirmations"
+     * })
      * @JMSSerializer\Expose
      */
     private $client;
@@ -77,7 +82,7 @@ class Complaint
      *  inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
      *     )
      *
-     * @JMSSerializer\Groups({"client_complaint_list", "client_complaint_details"})
+     * @JMSSerializer\Groups({"client_complaint_details_tags"})
      * @JMSSerializer\Expose
      */
     private $tags;
