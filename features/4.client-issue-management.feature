@@ -389,6 +389,55 @@ Feature:
     And the JSON node "total" should be equal to the number 1
 
 
+  Scenario: A user add their like to the issue
+    Given I authorize with email "testclient2@example.com" and password "123456"
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/1" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    And the JSON node "issue.likeNumber" should be equal to the number 0
+
+#    And print last JSON response
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "POST" on relative url "/client/issue/1/add-like" with content:
+    """
+    """
+
+#    And print last JSON response
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/1" with content:
+    """
+    """
+
+#    And print last JSON response
+
+    Then the response status code should be 200
+    And the JSON node "issue.likeNumber" should be equal to the number 1
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "POST" on relative url "/client/issue/1/remove-like" with content:
+    """
+    """
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/1" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    And the JSON node "issue.likeNumber" should be equal to the number 0
+
 
 
 
