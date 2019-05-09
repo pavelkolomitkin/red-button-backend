@@ -26,7 +26,7 @@ class IssueCommentController extends CommonController
      * @param Request $request
      * @param PaginatorInterface $paginator
      * @return Response
-     * @Route(name="issue_comment_issue_comment_list", path="/issue-comment/{id}/list", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route(name="issue_comment_list", path="/issue-comment/{id}/list", methods={"GET"}, requirements={"id"="\d+"})
      * @ParamConverter("issue", class="App\Entity\Issue")
      */
     public function issueComments(Issue $issue, IssueCommentRepository $repository, Request $request, PaginatorInterface $paginator)

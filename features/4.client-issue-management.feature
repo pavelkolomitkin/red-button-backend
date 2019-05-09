@@ -439,6 +439,108 @@ Feature:
     And the JSON node "issue.likeNumber" should be equal to the number 0
 
 
+  Scenario: A user manages issue comments
 
+    Given I authorize with email "test@example.com" and password "1234567"
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/1" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    And the JSON node "issue.commentNumber" should be equal to the number 0
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/issue-comment/1/list" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    And the JSON node "comments" should have 0 elements
+    And the JSON node "total" should be equal to the number 0
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "POST" on relative url "/issue-comment/1" with content:
+    """
+    {
+      "message": "Test comment"
+    }
+    """
+
+    Then the response status code should be 201
+    And the JSON node "comment" should exist
+    And the JSON node "comment.message" should be equal to the string "Test comment"
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/1" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    And the JSON node "issue.commentNumber" should be equal to the number 1
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/issue-comment/1/list" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    And the JSON node "comments" should have 1 elements
+    And the JSON node "comments[0].message" should be equal to the string "Test comment"
+    And the JSON node "total" should be equal to the number 1
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "PUT" on relative url "/issue-comment/1" with content:
+    """
+    {
+      "message": "Test comment - edited"
+    }
+    """
+
+    Then the response status code should be 200
+    And the JSON node "comment" should exist
+    And the JSON node "comment.message" should be equal to the string "Test comment - edited"
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "DELETE" on relative url "/issue-comment/1" with content:
+    """
+    """
+
+    Then the response status code should be 200
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/client/issue/1" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    And the JSON node "issue.commentNumber" should be equal to the number 0
+
+
+    When I add "Content-Type" header equal to "application/json"
+    And I add "Accept" header equal to "application/json"
+    Given I send http request with method "GET" on relative url "/issue-comment/1/list" with content:
+    """
+    """
+
+    Then the response status code should be 200
+    And the JSON node "comments" should have 0 elements
+    And the JSON node "total" should be equal to the number 0
 
 
