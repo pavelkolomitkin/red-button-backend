@@ -30,7 +30,7 @@ services:
       APP_ENV: "dev"
 
   postgres_db:
-    image: postgres:10.6
+    image: mdillon/postgis:10
     container_name: 'postgres-db-container-dev'
     restart: always
     ports:

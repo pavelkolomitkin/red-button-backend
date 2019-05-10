@@ -8,11 +8,21 @@ parameters:
 doctrine:
     dbal:
         # configure these for your database server
+        server_version: '10.7'
         driver: 'pdo_pgsql'
         charset: utf8
         url: '%env(DATABASE_URL)%'
         types:
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
+            geography:
+                class: 'Jsor\Doctrine\PostGIS\Types\GeographyType'
+                commented: false
+            geometry:
+                class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
+                commented: false
+            raster:
+                class: 'Jsor\Doctrine\PostGIS\Types\RasterType'
+                commented: false
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore
@@ -24,6 +34,11 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+        dql:
+            string_functions:
+                ST_Distance: Jsor\Doctrine\PostGIS\Functions\ST_Distance
+                ST_Point: Jsor\Doctrine\PostGIS\Functions\ST_Point
+                Geography: Jsor\Doctrine\PostGIS\Functions\Geography
 
         filters:
             softdeleteable:

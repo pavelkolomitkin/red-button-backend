@@ -7,6 +7,9 @@ use PHPUnit\Framework\Assert as Assertions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
+use App\Entity\ClientUser;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use \Doctrine\ORM\EntityManagerInterface;
 
 /**
  * This context class contains the definitions of the steps used by the demo 
@@ -24,6 +27,11 @@ class FeatureContext extends MinkContext
      * @var \Doctrine\ORM\EntityManagerInterface
      */
     private $entityManager;
+
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private $passwordEncoder;
 
     /**
      * @var \Symfony\Component\BrowserKit\Response|null
@@ -46,17 +54,341 @@ class FeatureContext extends MinkContext
     private $uploadedComplaintPictures = [];
 
     /**
+     * @var array [fileName => pictureId]
+     */
+    private $uploadedIssuePictures = [];
+
+    /**
+     * @var ClientUser
+     */
+    private $lastCreatedClientUser = null;
+
+    /**
      * @var array array of video ids
      */
     private $videos = [];
 
+    /**
+     * @var array
+     */
+    private $keptComplaints = [];
+
+    /**
+     * @var mixed
+     */
+    private $keptRegion = null;
+
+    private $keptCompany = null;
+
+    private $keptClientCommonInfo = null;
+
+    private $keptIssue = null;
+
     public function __construct(
         KernelInterface $kernel,
-        \Doctrine\ORM\EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        UserPasswordEncoderInterface $passwordEncoder
     )
     {
         $this->kernel = $kernel;
         $this->entityManager = $entityManager;
+        $this->passwordEncoder = $passwordEncoder;
+    }
+
+    /**
+     * @param \Behat\Gherkin\Node\TableNode $data
+     * @Given I add a client user stuff with data:
+     */
+    public function createClientUserStuff(\Behat\Gherkin\Node\TableNode $data)
+    {
+        $rows = $data->getHash();
+        foreach ($rows as $row)
+        {
+            $this->createClientUser($row['email'], $row['password'], $row['fullName'], $row['phoneNumber']);
+        }
+    }
+
+    /**
+     * @param $email
+     * @param $password
+     * @param $fullName
+     * @param $phoneNumber
+     * @return ClientUser
+     *
+     * @Given I add new client user to the database with email :email, password :password, fullName :fullName, phoneNumber :phoneNumber
+     * @throws \libphonenumber\NumberParseException
+     */
+    public function createClientUser($email, $password, $fullName, $phoneNumber)
+    {
+        $phoneNumberUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+        $phone = $phoneNumberUtil->parse($phoneNumber);
+
+        $result = new ClientUser();
+        $result
+            ->setPhoneNumber($phone)
+            ->setEmail($email)
+            ->setFullName($fullName)
+            ->setIsActive(true);
+
+        $passwordHash = $this->passwordEncoder->encodePassword($result, $password);
+        $result->setPassword($passwordHash);
+
+        $this->entityManager->persist($result);
+        $this->entityManager->flush($result);
+
+        $this->lastCreatedClientUser = $result;
+
+        return $result;
+    }
+
+    /**
+     * @param \Behat\Gherkin\Node\TableNode $data
+     *
+     * @Given I add a client complaint stuff with data:
+     * @throws Exception
+     */
+    public function addClientComplaintStuff(\Behat\Gherkin\Node\TableNode $data)
+    {
+        $rows = $data->getHash();
+
+        $startTime = new \DateTime('-1 month');
+        $startTime->setTimestamp($startTime->getTimestamp() + 3600);
+
+        foreach ($rows as $row)
+        {
+            $createdAt = clone $startTime;
+
+            $this->addClientComplaint(
+                $row['clientEmail'],
+                $row['latitude'],
+                $row['longitude'],
+                $row['tags'],
+                $row['serviceType'],
+                $row['region'],
+                $row['message'],
+                $createdAt
+            );
+
+            $startTime->setTimestamp($startTime->getTimestamp() + 1);
+        }
+    }
+
+    private function getTagNames($tagNameString, $separator = ',')
+    {
+        $result = explode($separator, $tagNameString);
+        $result = array_map(function($item) {
+            return trim($item);
+        }, $result);
+        $result = array_filter($result, function($item) {
+            return !empty($item);
+        });
+        $result = array_unique($result);
+
+        return $result;
+    }
+
+    private function getTagsByNames(array $names)
+    {
+        $result = $this->entityManager->getRepository('App\Entity\ComplaintTag')->createQueryBuilder('complaint_tag')
+            ->where('complaint_tag.title in (:tags)')
+            ->setParameter('tags', $names)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
+    private function getServiceTypeByTitle($title)
+    {
+        return $this->entityManager->getRepository('App\Entity\ServiceType')->findOneBy([
+            'title' => trim($title)
+        ]);
+    }
+
+    /**
+     * @param $clientEmail
+     * @param $latitude
+     * @param $tags
+     * @param $longitude
+     * @param $serviceType
+     * @param $region
+     * @param $message
+     * @param \DateTime $createdAt
+     *
+     * @Given I add a new client complaint of client :clientEmail, latitude :latitude, longitude :longitude, tags :tags, serviceType :serviceType, region :region, message :message
+     * @return \App\Entity\Complaint
+     */
+    public function addClientComplaint($clientEmail, $latitude, $longitude, $tags, $serviceType, $region, $message, \DateTime $createdAt)
+    {
+        $user = $this->entityManager->getRepository('App\Entity\ClientUser')->findOneBy(['email' => $clientEmail]);
+        $serviceTypeEntity = $this->entityManager->getRepository('App\Entity\ServiceType')->findOneBy(['title' => $serviceType]);
+
+        $tags = $this->getTagNames($tags);
+
+        /** @var array $tagEntities */
+        $tagEntities = $this->getTagsByNames($tags);
+
+        $newTags = array_filter($tags, function ($item) use ($tagEntities) {
+
+            foreach ($tagEntities as $tagEntity)
+            {
+                if ($tagEntity->getTitle() === $item)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+
+        foreach ($newTags as $newTag)
+        {
+            $newTagEntity = new \App\Entity\ComplaintTag();
+            $newTagEntity->setTitle($newTag);
+
+            $this->entityManager->persist($newTagEntity);
+            $this->entityManager->flush($newTagEntity);
+
+            $tagEntities[] = $newTagEntity;
+        }
+
+        $regionEntity = $this->entityManager->getRepository('App\Entity\Region')->findOneBy(['title' => $region]);
+
+        $result = new \App\Entity\Complaint();
+        $result
+            ->setClient($user)
+            ->setServiceType($serviceTypeEntity)
+            ->setTags($tagEntities)
+            ->setRegion($regionEntity)
+            ->setMessage(trim($message))
+            ->setCreatedAt($createdAt)
+        ;
+
+        $address = new \App\Entity\OSMAddress();
+        $address
+            ->setLatitude($latitude)
+            ->setLongitude($longitude);
+
+        $result->setAddress($address);
+
+        $this->entityManager->persist($result);
+        $this->entityManager->flush($result);
+
+        return $result;
+    }
+
+
+    /**
+     * @param $tagNames
+     *
+     * @Given I select complaints by tags :tagNames and viewBox:
+     */
+    public function iSelectComplaintsByTagsInAViewBox($tagNames, \Behat\Gherkin\Node\TableNode $viewBox)
+    {
+        $tagNames = $this->getTagNames($tagNames);
+        $tags = $this->getTagsByNames($tagNames);
+
+        $tagIds = array_map(function ($tag) {
+            return $tag->getId();
+        }, $tags);
+        $tagIds = implode(',', $tagIds);
+
+        // http://localhost:7777/api/client/complaint/geo/search?tags=23&topLeftLatitude=48.84965060911401&topLeftLongitude=44.47732207576074&bottomRightLatitude=48.78952005168193&bottomRightLongitude=44.804336998856435
+
+        $box = $viewBox->getHash()[0];
+
+        $topLeftLatitude = $box['topLeftLatitude'];
+        $topLeftLongitude = $box['topLeftLongitude'];
+        $bottomRightLatitude = $box['bottomRightLatitude'];
+        $bottomRightLongitude = $box['bottomRightLongitude'];
+
+        $url = '/client/complaint/geo/search?tags=' . $tagIds . '&topLeftLatitude=' . $topLeftLatitude
+            . '&topLeftLongitude=' . $topLeftLongitude
+            . '&bottomRightLatitude=' . $bottomRightLatitude
+            . '&bottomRightLongitude=' . $bottomRightLongitude;
+
+        $this->sendRequest('GET', $url);
+    }
+
+    /**
+     * @Then I keep last found complaints
+     */
+    public function iKeepLastFoundComplaints()
+    {
+        $data = json_decode($this->response->getContent(), true);
+        $this->keptComplaints = $data['complaints'];
+    }
+
+    /**
+     * @Then I keep the found region
+     */
+    public function iKeepFoundRegion()
+    {
+        $data = json_decode($this->response->getContent(), true);
+        $this->keptRegion = $data['region'];
+    }
+
+    /**
+     * @param $number
+     * @Then I keep a found company with number :number
+     */
+    public function iKeepFoundCompanyWithNumber($number)
+    {
+        $data = json_decode($this->response->getContent(), true);
+        $this->keptCompany = $data['companies'][$number];
+    }
+
+    /**
+     * @Then I keep last common info
+     */
+    public function iKeepLastCommonClientInfo()
+    {
+        $data = json_decode($this->response->getContent(), true);
+        $this->keptClientCommonInfo = $data;
+    }
+
+    /**
+     * @Then I keep last issue
+     */
+    public function iKeepLastIssue()
+    {
+        $data = json_decode($this->response->getContent(), true);
+        $this->keptIssue = $data['issue'];
+    }
+
+    /**
+     * @param $name
+     *
+     * @Given I search company by name :name around kept region
+     */
+    public function iSearchCompanyByNameAroundKeptRegion($name)
+    {
+        $url = '/company/search?regionId=' . $this->keptRegion['id'] . '&name=' . $name;
+        $this->sendRequest('GET', $url);
+    }
+
+    /**
+     * @param $tagNames
+     * @param $centerLatitude
+     * @param $centerLongitude
+     *
+     * @Given I select complaints by tags :tagNames and center latitude :centerLatitude and center longitude :centerLongitude
+     */
+    public function iSelectComplaintsByTagsAroundLocation($tagNames, $centerLatitude, $centerLongitude)
+    {
+        $tagNames = $this->getTagNames($tagNames);
+        $tags = $this->getTagsByNames($tagNames);
+
+        $tagIds = array_map(function ($tag) {
+            return $tag->getId();
+        }, $tags);
+        $tagIds = implode(',', $tagIds);
+
+//        http://localhost:7777/api/client/complaint/geo/search?tags=74&centerLatitude=48.8201034046395&centerLongitude=44.632312059402466
+
+        $url = '/client/complaint/geo/search?tags=' . $tagIds . '&centerLatitude=' . $centerLatitude . '&centerLongitude=' . $centerLongitude;
+        $this->sendRequest('GET', $url);
     }
 
     /**
@@ -209,26 +541,14 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Then I hold last note
-     */
-    public function iHoldLastNote()
-    {
-        $data = json_decode($this->response->getContent(), true);
-        $this->lastNote = $data['note'];
-    }
-
-    /**
      * @Given I upload a complaint picture :fileName on server
      * @param $fileName
      */
     public function iUploadComplaintPicture($fileName)
     {
-        $client = $this->getClient();
-        $client->removeHeader('Content-Type');
-
         $file = new \Symfony\Component\HttpFoundation\File\UploadedFile(
             __DIR__ . '/../pictures/' . $fileName .'.jpg',
-            'file_1.jpg',
+            $fileName . '.jpg',
             'image/jpeg',
             null
         );
@@ -237,6 +557,26 @@ class FeatureContext extends MinkContext
 
         $data = json_decode($this->response->getContent(), true);
         $this->uploadedComplaintPictures[$fileName] = $data['picture']['id'];
+    }
+
+    /**
+     * @param $fileName
+     *
+     * @Given I upload a issue picture :fileName on server
+     */
+    public function iUploadIssuePicture($fileName)
+    {
+        $file = new \Symfony\Component\HttpFoundation\File\UploadedFile(
+            __DIR__ . '/../pictures/' . $fileName .'.jpg',
+            $fileName . '.jpg',
+            'image/jpeg',
+            null
+        );
+
+        $this->uploadFiles(['imageFile' => $file],'POST', '/client/issue-picture/create');
+
+        $data = json_decode($this->response->getContent(), true);
+        $this->uploadedIssuePictures[$fileName] = $data['picture']['id'];
     }
 
     /**
@@ -283,7 +623,7 @@ class FeatureContext extends MinkContext
      *
      * @Given I edit my complaint :id with data:
      */
-    public function iUpdateComplaint(\Behat\Gherkin\Node\TableNode $data, $id)
+    public function iUpdateComplaint($id, \Behat\Gherkin\Node\TableNode $data)
     {
         $formFields = $data->getHash()[0];
 
@@ -301,6 +641,119 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @Given I create a new issue with data:
+     */
+    public function iCreateIssue(\Behat\Gherkin\Node\TableNode $data)
+    {
+        $formFields = $data->getHash()[0];
+
+        $serviceType = $this->getServiceTypeByTitle($formFields['serviceType']);
+
+        $formData = [
+            'message' => $formFields['message'],
+            'serviceType' => $serviceType->getId(),
+            'latitude' => $formFields['latitude'],
+            'longitude' => $formFields['longitude'],
+            'pictures' => array_values($this->uploadedIssuePictures),
+            'videos' => array_values($this->videos),
+            'complaintConfirmations' => !empty($this->keptComplaints) ? array_map(function($item) {
+                    return [
+                        'complaint' => $item['id']
+                    ];
+                }, $this->keptComplaints) : [],
+            'company' => $this->keptCompany !== null ? $this->keptCompany['id'] : null
+        ];
+
+        $this->sendRequest('POST', '/client/issue', [], [], [], json_encode($formData));
+
+        $this->uploadedIssuePictures = [];
+        $this->videos = [];
+    }
+
+    /**
+     * @param $id
+     * @param \Behat\Gherkin\Node\TableNode $data
+     *
+     * @Given I edit the issue with id :id and data:
+     */
+    public function iEditIssueWithData($id, \Behat\Gherkin\Node\TableNode $data)
+    {
+        $formFields = $data->getHash()[0];
+
+        $serviceType = $this->getServiceTypeByTitle($formFields['serviceType']);
+
+        $pictureIds = array_map(function($item) {
+                return $item['id'];
+            }, $this->keptIssue['pictures']);
+
+        $videoIds = array_map(function ($item) {
+                return $item['id'];
+            }, $this->keptIssue['videos']);
+
+        $confirmations = array_map(function ($item) {
+
+            return [
+                'id' => $item['id'],
+                'complaint' => $item['complaint']['id']
+            ];
+
+        }, $this->keptIssue['complaintConfirmations']);
+
+        $formData = [
+            'message' => $formFields['message'],
+            'serviceType' => $serviceType->getId(),
+            'latitude' => $formFields['latitude'],
+            'longitude' => $formFields['longitude'],
+            'pictures' => $pictureIds,
+            'videos' => $videoIds,
+            'complaintConfirmations' => $confirmations,
+            'company' => !empty($this->keptIssue['company']) ? $this->keptIssue['company']['id'] : null
+        ];
+
+        $this->sendRequest('PUT', '/client/issue/' . $id, [], [], [], json_encode($formData));
+    }
+
+    /**
+     * @Given I confirm the first incoming confirmation request
+     */
+    public function iConfirmLastIncomingComplaint()
+    {
+        $confirmationId = $this->keptClientCommonInfo['confirmations'][0]['id'];
+
+        $formData = [
+            'status' => 'confirmed'
+        ];
+
+        $this->sendRequest('PUT', '/client/complaint-confirmation/' .  $confirmationId, [], [], [], json_encode($formData));
+    }
+
+    /**
+     * @param $userFullName
+     * @param $statusCode
+     *
+     * @Then the complaint of the user :userFullName should have status :statusCode
+     * @throws Exception
+     */
+    public function complaintConfirmationShouldHaveStatus($userFullName, $statusCode)
+    {
+        $data = json_decode($this->response->getContent(), true);
+
+        $confirmations = $data['issue']['complaintConfirmations'];
+
+        foreach ($confirmations as $confirmation)
+        {
+            if ($confirmation['complaint']['client']['fullName'] === $userFullName)
+            {
+                Assertions::assertEquals($statusCode, $confirmation['status']['code']);
+
+                return;
+            }
+        }
+
+        throw new Exception('The confirmation was not found!');
+    }
+
+    /**
      * @param $method
      * @param $url
      * @param $params
@@ -309,6 +762,9 @@ class FeatureContext extends MinkContext
      */
     protected function uploadFiles(array $files, string $method, string $url, array $params = [])
     {
+        $client = $this->getClient();
+        $client->removeHeader('Content-Type');
+
         return $this->sendRequest($method, $url, $params, $files, [], null, []);
     }
 }

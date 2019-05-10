@@ -22,14 +22,81 @@ class ComplaintController extends CommonController
     /**
      * @param Request $request
      * @param ComplaintRepository $repository
+     * @Route(name="client_complaint_geo_tag_search", path="/complaint/geo-tag/search", methods={"GET"})
+     * @return Response
+     * @throws \Exception
+     */
+    public function tagGeoSearch(Request $request, ComplaintRepository $repository)
+    {
+        $searchCriteria = $request->query->all();
+        if (!$repository->hasGeoCriteria($searchCriteria))
+        {
+            return $this->getResponse(
+                ['complaints' => []]
+            );
+        }
+
+        $searchCriteria = array_merge(
+            $searchCriteria,
+            [
+                'timeStart' => new \DateTime('-1 month'),
+                'timeEnd' => new \DateTime('now')
+            ]
+        );
+
+        $tags = $repository->getTagSearchQuery($searchCriteria)->getResult();
+
+        return $this->getResponse([
+            'tags' => $tags
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param ComplaintRepository $repository
+     * @Route(name="client_complaint_geo_search", path="/complaint/geo/search", methods={"GET"})
+     * @return Response
+     * @throws \Exception
+     */
+    public function geoSearch(Request $request, ComplaintRepository $repository)
+    {
+        $searchCriteria = $request->query->all();
+        if (!$repository->hasGeoCriteria($searchCriteria))
+        {
+            return $this->getResponse(
+                ['complaints' => []]
+            );
+        }
+
+        $searchCriteria = array_merge(
+            $searchCriteria,
+            [
+                'timeStart' => new \DateTime('-1 month'),
+                'timeEnd' => new \DateTime('now')
+            ]
+        );
+
+        $complaints = $repository->getSearchQuery($searchCriteria)->getResult();
+
+        return $this->getResponse(
+            ['complaints' => $complaints],
+            Response::HTTP_OK, [], [
+                'client_complaint_list'
+            ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param ComplaintRepository $repository
      * @param PaginatorInterface $paginator
      * @return Response
-     * @Route(name="complaint_my_list", path="/complaint/my/list", methods={"GET"})
+     * @Route(name="client_complaint_my_list", path="/complaint/my/list", methods={"GET"})
      */
     public function getUserComplaints(Request $request, ComplaintRepository $repository, PaginatorInterface $paginator)
     {
         $searchCriteria = [
-            'owner' => $this->getUser()
+            'client' => $this->getUser()
         ];
 
         $query = $repository->getSearchQuery($searchCriteria);
@@ -42,12 +109,17 @@ class ComplaintController extends CommonController
         return $this->getResponse([
             'complaints' => $pagination->getItems(),
             'total' => $pagination->getTotalItemCount()
-        ]);
+        ],
+            Response::HTTP_OK, [], [
+                'client_complaint_list',
+                'client_complaint_details',
+                'client_complaint_details_tags'
+            ]);
     }
 
     /**
      * @param Complaint $complaint
-     * @Route(name="complaint_details", path="/complaint/{id}", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route(name="client_complaint_details", path="/complaint/{id}", methods={"GET"}, requirements={"id"="\d+"})
      * @ParamConverter("complaint", class="App\Entity\Complaint")
      * @return Response
      */
@@ -55,7 +127,12 @@ class ComplaintController extends CommonController
     {
         return $this->getResponse([
             'complaint' => $complaint
-        ]);
+        ],
+            Response::HTTP_OK, [], [
+
+                'client_complaint_details',
+                'client_complaint_details_tags'
+            ]);
     }
 
     /**
@@ -63,7 +140,7 @@ class ComplaintController extends CommonController
      * @param ComplaintManager $manager
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
-     * @Route(name="complaint_create", path="/complaint", methods={"POST"})
+     * @Route(name="client_complaint_create", path="/complaint", methods={"POST"})
      */
     public function create(Request $request, ComplaintManager $manager)
     {
@@ -71,14 +148,18 @@ class ComplaintController extends CommonController
 
         return $this->getResponse([
             'complaint' => $complaint
-        ], Response::HTTP_CREATED);
+        ], Response::HTTP_CREATED, [], [
+
+            'client_complaint_details',
+            'client_complaint_details_tags'
+        ]);
     }
 
     /**
      * @param Complaint $complaint
      * @param ComplaintManager $manager
      * @param Request $request
-     * @Route(name="complaint_update", path="/complaint/{id}", methods={"PUT"}, requirements={"id"="\d+"})
+     * @Route(name="client_complaint_update", path="/complaint/{id}", methods={"PUT"}, requirements={"id"="\d+"})
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
      * @ParamConverter("complaint", class="App\Entity\Complaint")
@@ -94,13 +175,16 @@ class ComplaintController extends CommonController
 
         return $this->getResponse([
             'complaint' => $complaint
+        ], Response::HTTP_OK, [], [
+            'client_complaint_details',
+            'client_complaint_details_tags'
         ]);
     }
 
     /**
      * @param Complaint $complaint
      * @param ComplaintManager $manager
-     * @Route(name="complaint_delete", path="/complaint/{id}", methods={"DELETE"}, requirements={"id"="\d+"})
+     * @Route(name="client_complaint_delete", path="/complaint/{id}", methods={"DELETE"}, requirements={"id"="\d+"})
      * @ParamConverter("complaint", class="App\Entity\Complaint")
      * @return Response
      * @throws \App\Service\EntityManager\Exception\ManageEntityException

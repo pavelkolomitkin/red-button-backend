@@ -19,6 +19,11 @@ liip_imagine:
     # use the default cache configuration
     cache: ~
 
+    complaint_picture_preview_extra_small:
+      quality: 75
+      filters:
+        thumbnail: { size: [25, 25], mode: outbound }
+
     complaint_picture_preview_small:
       quality: 75
       filters:
@@ -34,6 +39,26 @@ liip_imagine:
       filters:
         scale: {dim: [640, 480]}
 
+
+    issue_picture_preview_extra_small:
+      quality: 75
+      filters:
+        thumbnail: { size: [25, 25], mode: outbound }
+
+    issue_picture_preview_small:
+      quality: 75
+      filters:
+        thumbnail: { size: [50, 50], mode: outbound }
+
+    issue_picture_preview_middle:
+      quality: 75
+      filters:
+        thumbnail: { size: [200, 200], mode: outbound }
+
+    issue_picture_normal:
+      quality: 75
+      filters:
+        scale: {dim: [640, 480]}
     # for note item list
 #    note_attachment_preview_small:
 #      cache: uploaded_image_resolver

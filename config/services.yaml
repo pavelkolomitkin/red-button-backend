@@ -8,6 +8,7 @@ parameters:
     noreply_mail: '%env(NO_REPLY_MAIL)%'
     email_link_host: '%env(MAIL_LINK_HOST)%'
     upload_directory: '%env(UPLOAD_DIRECTORY)%'
+    searching_radius_m: '%env(SEARCHING_RADIUS_M)%'
 
 services:
     # default configuration for services in *this* file
@@ -64,25 +65,23 @@ services:
     app.complaint_tag.manager:
         class: App\Service\EntityManager\Client\ComplaintTagManager
 
-    App\Service\EntityManager\Client\ComplaintPictureManager:
-        calls:
-            - method: setTokenStorage
-              arguments:
-                  - '@security.token_storage'
-
-    App\Validator\Constraints\ComplaintPictureOwnerValidator:
-        calls:
-            - method: setTokenStorage
-              arguments:
-                  - '@security.token_storage'
+    App\Validator\Constraints\Client\ComplaintPictureOwnerValidator:
         tags:
             - { name: validator.constraint_validator }
 
-    App\Validator\Constraints\ComplaintVideoOwnerValidator:
+    App\Validator\Constraints\Client\IssuePictureOwnerValidator:
+        tags:
+            - { name: validator.constraint_validator }
+
+    App\Validator\Constraints\Client\VideoOwnerValidator:
+        tags:
+            - { name: validator.constraint_validator }
+
+    App\Validator\Constraints\Client\IssueComplaintMaxDistanceValidator:
         calls:
-            - method: setTokenStorage
+            - method: setMaxDistance
               arguments:
-                  - '@security.token_storage'
+                  - '%searching_radius_m%'
         tags:
             - { name: validator.constraint_validator }
 
@@ -118,6 +117,27 @@ services:
             - '@liip_imagine.cache.manager'
         public: true
         tags: [jms_serializer.event_subscriber]
+
+    App\Event\Subscriber\IssuePictureSerializeSubscriber:
+        arguments:
+            - '@vich_uploader.templating.helper.uploader_helper'
+            - '@liip_imagine.cache.manager'
+        public: true
+        tags: [jms_serializer.event_subscriber]
+
+    Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
+    App\Repository\ComplaintRepository:
+        calls:
+            - method: setSearchingRadius
+              arguments:
+                  - '%searching_radius_m%'
+
+    App\Event\Subscriber\ComplaintConfirmationSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
 
 
 

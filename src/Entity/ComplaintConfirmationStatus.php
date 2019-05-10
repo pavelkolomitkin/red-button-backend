@@ -4,17 +4,26 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ComplaintConfirmationStatusRepository")
  * @ORM\Table(name="complaint_confirmation_status")
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class ComplaintConfirmationStatus
 {
+    const STATUS_PENDING = 'pending';
+    const STATUS_CONFIRMED = 'confirmed';
+    const STATUS_REJECTED = 'rejected';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
@@ -22,6 +31,9 @@ class ComplaintConfirmationStatus
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $title;
 
@@ -29,6 +41,8 @@ class ComplaintConfirmationStatus
      * @var string
      *
      * @ORM\Column(name="code", type="string", length=15)
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $code;
 
@@ -91,5 +105,10 @@ class ComplaintConfirmationStatus
     public function getConfirmations()
     {
         return $this->confirmations;
+    }
+
+    public function __toString()
+    {
+        return $this->getTitle();
     }
 }

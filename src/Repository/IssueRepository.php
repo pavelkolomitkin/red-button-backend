@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Issue;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -18,6 +19,43 @@ class IssueRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Issue::class);
     }
+
+    public function getSearchQuery(array $criteria)
+    {
+        $builder = $this->createQueryBuilder('issue');
+
+        $this->handleClientParameter($builder, $criteria);
+        $this->handleCompanyParameter($builder, $criteria);
+
+        $builder->orderBy('issue.createdAt', 'DESC');
+        return $builder->getQuery();
+    }
+
+    private function handleClientParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (isset($criteria['client']))
+        {
+            $builder
+                ->andWhere('issue.client = :client')
+                ->setParameter('client', $criteria['client']);
+        }
+
+        return $builder;
+    }
+
+    private function handleCompanyParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (isset($criteria['company']))
+        {
+            $builder
+                ->andWhere('issue.company = :company')
+                ->setParameter('company', $criteria['company']);
+        }
+
+        return $builder;
+    }
+
+
 
     // /**
     //  * @return Issue[] Returns an array of Issue objects

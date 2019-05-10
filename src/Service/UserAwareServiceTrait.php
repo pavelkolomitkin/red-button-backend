@@ -12,6 +12,11 @@ trait UserAwareServiceTrait
      */
     private $tokenStorage;
 
+    /**
+     * @param TokenStorageInterface $tokenStorage
+     *
+     * @required
+     */
     public function setTokenStorage(TokenStorageInterface $tokenStorage)
     {
         $this->tokenStorage = $tokenStorage;

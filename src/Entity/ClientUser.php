@@ -72,9 +72,23 @@ class ClientUser extends User
     /**
      * @var ArrayCollection
      *
+     * @ORM\OneToMany(targetEntity="App\Entity\IssuePicture", mappedBy="owner")
+     */
+    private $issueUploadPictures;
+
+    /**
+     * @var ArrayCollection
+     *
      * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="owner")
      */
     private $videos;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Issue", mappedBy="likes")
+     */
+    private $likeIssues;
 
     public function __construct()
     {
@@ -82,7 +96,10 @@ class ClientUser extends User
         $this->issues = new ArrayCollection();
 
         $this->complaintUploadPictures = new ArrayCollection();
+        $this->issueUploadPictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
+
+        $this->likeIssues = new ArrayCollection();
     }
 
     /**
@@ -199,8 +216,25 @@ class ClientUser extends User
     /**
      * @return ArrayCollection
      */
+    public function getIssueUploadPictures()
+    {
+        return $this->issueUploadPictures;
+    }
+
+
+    /**
+     * @return ArrayCollection
+     */
     public function getVideos()
     {
         return $this->videos;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getLikeIssues()
+    {
+        return $this->likeIssues;
     }
 }

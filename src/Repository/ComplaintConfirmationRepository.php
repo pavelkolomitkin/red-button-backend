@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\ComplaintConfirmation;
+use App\Entity\ComplaintConfirmationStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,32 +21,44 @@ class ComplaintConfirmationRepository extends ServiceEntityRepository
         parent::__construct($registry, ComplaintConfirmation::class);
     }
 
-    // /**
-    //  * @return ComplaintConfirmation[] Returns an array of ComplaintConfirmation objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getSearchQuery(array $criteria)
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $builder = $this->createQueryBuilder('complaint_confirmation');
 
-    /*
-    public function findOneBySomeField($value): ?ComplaintConfirmation
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $this->handleAddresseeClientParameter($builder, $criteria);
+        $this->handleStatusParameter($builder, $criteria);
+
+
+        $builder->orderBy('complaint_confirmation.createdAt', 'DESC');
+
+        return $builder->getQuery();
     }
-    */
+
+    private function handleAddresseeClientParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (isset($criteria['addressee']))
+        {
+            $builder
+                ->join('complaint_confirmation.complaint', 'complaint')
+                ->andWhere('complaint.client = :client')
+                ->setParameter('client', $criteria['addressee']);
+        }
+
+        return $builder;
+    }
+
+    private function handleStatusParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (isset($criteria['status']))
+        {
+            $status = $criteria['status'] instanceof ComplaintConfirmationStatus ? $criteria['status']->getCode() : $criteria['status'];
+
+            $builder
+                ->join('complaint_confirmation.status', 'status')
+                ->andWhere('status.code = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $builder;
+    }
 }

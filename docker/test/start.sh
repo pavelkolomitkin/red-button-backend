@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# get flag --jenkins
-isJenkins=0
+# get flag --rebuild
+rebuild=0
 while [ -n "$1" ]
 do
     case "$1" in
-    --jenkins) isJenkins=1
+    --rebuild) rebuild=1
         break
      ;;
     esac
@@ -23,7 +23,7 @@ docker-compose --rm --force -v
 docker volume rm test_postgres_red_button_data_volume_test -f
 
 
-if [[ $isJenkins = 1 ]]
+if [[ $rebuild = 1 ]]
     then
         echo -n "Rebuild images..."
         echo -en '\n'
@@ -60,12 +60,18 @@ do
     echo -en '\n'
 done
 
+# Import companies and administrative units from dump
+echo -en '\n'
+echo -n "Import companies and administrative units from dump..."
+echo -en '\n'
+docker exec -i postgres-db-container-test psql -U postgres red-button-test < dump.pgsql
+
 
 # Run behat tests
 echo -en '\n'
 echo -n "Run behat tests..."
 echo -en '\n'
-docker exec php-fpm-container-test vendor/bin/behat --colors
+docker exec php-fpm-container-test vendor/bin/behat --colors --stop-on-failure
 
 # Stop previous containers
 echo -n "Stop containers..."
