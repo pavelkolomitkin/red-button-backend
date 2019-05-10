@@ -77,7 +77,11 @@ class ComplaintConfirmationController extends CommonController
         $confirmation = $manager->changeStatus($confirmation, $request->request->get('status'));
 
         return $this->getResponse([
-            'confirmation' => $confirmation
+            'confirmation' => $confirmation,
+            'issue' => $confirmation->getIssue()
+        ], Response::HTTP_OK, [], [
+            'client_complaint_details',
+            'client_issue_details'
         ]);
     }
 }

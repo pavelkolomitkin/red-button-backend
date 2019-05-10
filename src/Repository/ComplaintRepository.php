@@ -114,7 +114,7 @@ class ComplaintRepository extends ServiceEntityRepository
                 ST_Distance(
                     Geography(ST_Point(:selectedLongitude, :selectedLatitude)),
                     Geography(ST_Point(complaint.address.longitude, complaint.address.latitude))
-                ) / 1000 <= :radius
+                ) <= :radius
                 ')
                 ->setParameter('selectedLatitude', $criteria['centerLatitude'])
                 ->setParameter('selectedLongitude', $criteria['centerLongitude'])

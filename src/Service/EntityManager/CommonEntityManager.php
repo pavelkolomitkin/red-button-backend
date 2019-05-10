@@ -39,28 +39,47 @@ abstract class CommonEntityManager
      * @param array $data
      * @return mixed
      * @throws ManageEntityException
+     * @throws \Exception
      */
     public function create(array $data)
     {
-        $form = $this->getCreationForm();
 
-        $form->submit($data);
-        if (!$form->isValid())
+        $this->entityManager->beginTransaction();
+
+        try
         {
-            throw new ManageEntityException(
-                $this->errorExtractor->extract($form),
-                ManageEntityException::CREATE_ENTITY_ERROR_TYPE
-            );
+            $form = $this->getCreationForm();
+
+            $entity = $form->getData();
+
+            $this->preValidate($entity, $data);
+
+            $form->submit($data);
+            if (!$form->isValid())
+            {
+                throw new ManageEntityException(
+                    $this->errorExtractor->extract($form),
+                    ManageEntityException::CREATE_ENTITY_ERROR_TYPE
+                );
+            }
+
+            $entity = $form->getData();
+
+            $this->postValidate($entity, $data);
+
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+
+            $this->entityManager->commit();
+
+            return $entity;
         }
+        catch (\Exception $exception)
+        {
+            $this->entityManager->rollback();
 
-        $entity = $form->getData();
-
-        $this->postValidate($entity, $data);
-
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
-
-        return $entity;
+            throw $exception;
+        }
     }
 
     /**
@@ -68,30 +87,47 @@ abstract class CommonEntityManager
      * @param array $data
      * @return mixed
      * @throws ManageEntityException
+     * @throws \Exception
      */
     public function update($entity, array $data)
     {
-        $form = $this->getUpdatingForm();
+        $this->entityManager->beginTransaction();
 
-        $form->setData($entity);
-
-        $form->submit($data);
-        if (!$form->isValid())
+        try
         {
-            throw new ManageEntityException(
-                $this->errorExtractor->extract($form),
-                ManageEntityException::UPDATE_ENTITY_ERROR_TYPE
-            );
+            $form = $this->getUpdatingForm();
+
+            $form->setData($entity);
+
+            $this->preValidate($entity, $data);
+
+            $form->submit($data);
+            if (!$form->isValid())
+            {
+                throw new ManageEntityException(
+                    $this->errorExtractor->extract($form),
+                    ManageEntityException::UPDATE_ENTITY_ERROR_TYPE
+                );
+            }
+
+            $entity = $form->getData();
+
+            $this->postValidate($entity, $data);
+
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
+
+            $this->entityManager->commit();
+
+            return $entity;
+
         }
+        catch (\Exception $exception)
+        {
+            $this->entityManager->rollback();
 
-        $entity = $form->getData();
-
-        $this->postValidate($entity, $data);
-
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
-
-        return $entity;
+            throw $exception;
+        }
     }
 
     /**
@@ -109,6 +145,11 @@ abstract class CommonEntityManager
         {
             throw new ManageEntityException(['Cannot delete item'], ManageEntityException::DELETE_ENTITY_ERROR_TYPE);
         }
+    }
+
+    protected function preValidate($entity, $data)
+    {
+
     }
 
     protected function postValidate($entity, $data)

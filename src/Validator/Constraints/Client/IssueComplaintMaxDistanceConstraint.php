@@ -11,5 +11,8 @@ use Symfony\Component\Validator\Constraint;
  */
 class IssueComplaintMaxDistanceConstraint extends Constraint
 {
-
+    public function validatedBy()
+    {
+        return IssueComplaintMaxDistanceValidator::class;
+    }
 }

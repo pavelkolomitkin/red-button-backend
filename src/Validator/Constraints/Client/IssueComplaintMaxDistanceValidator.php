@@ -52,12 +52,14 @@ class IssueComplaintMaxDistanceValidator extends ConstraintValidator
     {
 
         /** @var Complaint $complaint */
-        $complaint = $this->context->getRoot()->get('complaint');
+        $complaint = $this->context->getObject()->getComplaint();
 
         $issuePoint = new GeoLocation($value->getAddress()->getLatitude(), $value->getAddress()->getLongitude());
         $complaintPoint = new GeoLocation($complaint->getAddress()->getLatitude(), $complaint->getAddress()->getLongitude());
 
-        if ($this->geoMeasureService->getDistanceKm($issuePoint, $complaintPoint) > $this->maxDistance)
+        $distance = $this->geoMeasureService->getDistanceMetres($issuePoint, $complaintPoint);
+
+        if ($distance > $this->maxDistance)
         {
             $this->context->addViolation('You can choose complaint so far!');
             return;

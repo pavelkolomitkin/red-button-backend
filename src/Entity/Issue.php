@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
+use function GuzzleHttp\Psr7\str;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as JMSSerializer;
 
@@ -37,10 +38,13 @@ class Issue
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\ComplaintConfirmation", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\ComplaintConfirmation", mappedBy="issue", cascade={"persist", "remove"})
      *
      * @IssueComplaintConfirmationUniqueUserListConstraint()
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details"
+     * })
      * @JMSSerializer\Expose
      */
     private $complaintConfirmations;
@@ -202,16 +206,27 @@ class Issue
         return $this->complaintConfirmations;
     }
 
+    /**
+     * @param $confirmations
+     * @return Issue
+     */
     public function setComplaintConfirmations($confirmations): self
     {
-        $this->complaintConfirmations = $confirmations;
+        foreach ($confirmations as $confirmation)
+        {
+            $this->addComplaintConfirmation($confirmation);
+        }
 
         return $this;
     }
 
+    /**
+     * @param ComplaintConfirmation $confirmation
+     * @return Issue
+     */
     public function addComplaintConfirmation(ComplaintConfirmation $confirmation): self
     {
-        if (!$this->findConfirmation($confirmation))
+        if (!$this->complaintConfirmations->contains($confirmation))
         {
             $this->complaintConfirmations[] = $confirmation;
             $confirmation->setIssue($this);
@@ -220,32 +235,18 @@ class Issue
         return $this;
     }
 
+    /**
+     * @param ComplaintConfirmation $confirmation
+     * @return Issue
+     */
     public function removeComplaintConfirmation(ComplaintConfirmation $confirmation): self
     {
-        if ($item = $this->findConfirmation($confirmation))
+        if ($this->complaintConfirmations->contains($confirmation))
         {
-            $this->complaintConfirmations->removeElement($item);
+            $this->complaintConfirmations->removeElement($confirmation);
         }
 
         return $this;
-    }
-
-    public function findConfirmation(ComplaintConfirmation $confirmation)
-    {
-        $items = $this->complaintConfirmations->filter(
-            function ($element, $key) use ($confirmation) {
-
-                return $element->getComplaint()->getId() === $confirmation->getComplaint()->getId();
-            });
-
-        $result = null;
-
-        if ($items->count() > 0)
-        {
-            $result = $items->first();
-        }
-
-        return $result;
     }
 
     /**
@@ -522,6 +523,6 @@ class Issue
 
     public function __toString()
     {
-        return $this->getMessage();
+        return (string)$this->getMessage();
     }
 }

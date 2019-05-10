@@ -61,7 +61,7 @@ class IssueManager extends CommonEntityManager
      * @param $data
      * @throws ManageEntityException
      */
-    protected function postValidate($entity, $data)
+    protected function preValidate($entity, $data)
     {
         try
         {
@@ -93,6 +93,148 @@ class IssueManager extends CommonEntityManager
         $entity
             ->setAddress($address)
             ->setRegion($region);
+
+        if ($entity->getId())
+        {
+            $this->processConfirmationsForExistingIssue($entity, $data);
+        }
+        else
+        {
+            $this->processConfirmationForNewIssue($entity, $data);
+        }
+    }
+
+    /**
+     * @param Issue $entity
+     * @param $data
+     */
+    private function processConfirmationForNewIssue($entity, $data)
+    {
+        $complaintIds = [];
+
+        foreach ($data['complaintConfirmations'] as $item)
+        {
+            if (isset($item['complaint']))
+            {
+                $complaintIds[] = $item['complaint'];
+            }
+        }
+
+
+        if (!empty($complaintIds))
+        {
+            $complaints = $this->entityManager->getRepository('App\Entity\Complaint')
+                ->createQueryBuilder('complaint')
+                ->where('complaint.id in (:ids)')
+                ->setParameter('ids', $complaintIds)
+                ->getQuery()
+                ->getResult();
+
+            foreach ($complaints as $complaint)
+            {
+                $newConfirmation = new ComplaintConfirmation();
+                $newConfirmation
+                    ->setComplaint($complaint)
+                    ->setIssue($entity);
+
+                $entity->getComplaintConfirmations()->add($newConfirmation);
+            }
+        }
+
+    }
+
+
+    /**
+     * @param Issue $entity
+     * @param array $data
+     */
+    private function processConfirmationsForExistingIssue($entity, $data)
+    {
+        $confirmationIds = [];
+        $complaintIds = [];
+
+        foreach ($data['complaintConfirmations'] as $item)
+        {
+            if (isset($item['id']))
+            {
+                $confirmationIds[] = $item['id'];
+            }
+            else if (isset($item['complaint']))
+            {
+                $complaintIds[] = $item['complaint'];
+            }
+        }
+
+        $confirmationRepository = $this->entityManager->getRepository('App\Entity\ComplaintConfirmation');
+        $deletingConfirmations = [];
+
+        if (!empty($confirmationIds))
+        {
+            $confirmationRepository = $this->entityManager->getRepository('App\Entity\ComplaintConfirmation');
+
+            $deletingConfirmations = $confirmationRepository->createQueryBuilder('complaint_confirmation')
+                ->where('complaint_confirmation.issue = :issue')
+                ->setParameter('issue', $entity)
+                ->andWhere('complaint_confirmation.id not in (:ids)')
+                ->setParameter('ids', $confirmationIds)
+                ->getQuery()
+                ->getResult();
+        }
+        else
+        {
+            $deletingConfirmations = $confirmationRepository->createQueryBuilder('complaint_confirmation')
+                ->where('complaint_confirmation.issue = :issue')
+                ->setParameter('issue', $entity)
+                ->getQuery()
+                ->getResult();
+        }
+
+        foreach ($deletingConfirmations as $deletingConfirmation)
+        {
+            $entity->removeComplaintConfirmation($deletingConfirmation);
+            $this->entityManager->remove($deletingConfirmation);
+            $this->entityManager->flush($deletingConfirmation);
+
+            $entity->getComplaintConfirmations()->removeElement($deletingConfirmation);
+        }
+
+
+        if (!empty($complaintIds))
+        {
+            $complaints = $this->entityManager->getRepository('App\Entity\Complaint')
+                ->createQueryBuilder('complaint')
+                ->where('complaint.id in (:ids)')
+                ->setParameter('ids', $complaintIds)
+                ->getQuery()
+                ->getResult();
+
+            foreach ($complaints as $complaint)
+            {
+                $newConfirmation = new ComplaintConfirmation();
+                $newConfirmation
+                    ->setComplaint($complaint)
+                    ->setIssue($entity);
+
+                $this->entityManager->persist($newConfirmation);
+                $this->entityManager->flush($newConfirmation);
+
+                $entity->getComplaintConfirmations()->add($newConfirmation);
+            }
+        }
+
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
+
+    }
+
+    /**
+     * @param Issue $entity
+     * @param $data
+     * @throws ManageEntityException
+     */
+    protected function postValidate($entity, $data)
+    {
+
     }
 
     /**
@@ -104,34 +246,6 @@ class IssueManager extends CommonEntityManager
         $entity->getComplaintConfirmations()->clear();
 
         parent::remove($entity);
-    }
-
-    public function addComplaintConfirmation(Issue $issue, Complaint $complaint)
-    {
-        $confirmationRepository = $this->entityManager->getRepository('App\Entity\ComplaintConfirmation');
-        $result = $confirmationRepository->findOneBy([
-            'complaint' => $complaint,
-            'issue' => $issue
-        ]);
-
-        if ($result)
-        {
-            return $result;
-        }
-
-        $statusRepository = $this->entityManager->getRepository('App\Entity\ComplaintConfirmationStatus');
-        $status = $statusRepository->findOneBy(['code' => ComplaintConfirmationStatus::STATUS_PENDING]);
-
-        $result = new ComplaintConfirmation();
-        $result
-            ->setIssue($issue)
-            ->setComplaint($complaint)
-            ->setStatus($status);
-
-        $this->entityManager->persist($result);
-        $this->entityManager->flush($result);
-
-        return $result;
     }
 
     public function addLike(Issue $issue, ClientUser $user)

@@ -85,7 +85,7 @@ class IssueController extends CommonController
         return $this->getResponse([
             'issue' => $issue
         ], Response::HTTP_CREATED, [], [
-            'client_issue_details'
+            'client_issue_details', 'client_complaint_details'
         ]);
     }
 
@@ -109,7 +109,7 @@ class IssueController extends CommonController
         return $this->getResponse([
                 'issue' => $issue
             ], Response::HTTP_OK, [], [
-            'client_issue_details'
+            'client_issue_details', 'client_complaint_details'
         ]);
     }
 
@@ -149,7 +149,7 @@ class IssueController extends CommonController
             'issue' => $issue,
             'hasLike' => true
         ], Response::HTTP_OK, [], [
-            'client_issue_details'
+            'client_issue_details', 'client_complaint_details'
         ]);
     }
 
@@ -171,7 +171,7 @@ class IssueController extends CommonController
             'issue' => $issue,
             'hasLike' => false
         ], Response::HTTP_OK, [], [
-            'client_issue_details'
+            'client_issue_details', 'client_complaint_details'
         ]);
     }
 }
