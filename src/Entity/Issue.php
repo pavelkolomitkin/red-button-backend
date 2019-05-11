@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use function GuzzleHttp\Psr7\str;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as JMSSerializer;
 
@@ -43,7 +42,9 @@ class Issue
      * @IssueComplaintConfirmationUniqueUserListConstraint()
      * @JMSSerializer\Groups({
      *     "client_issue_list",
-     *     "client_issue_details"
+     *     "client_issue_details",
+     *
+     *     "admin_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -57,7 +58,11 @@ class Issue
      * @Assert\NotBlank()
      * @Assert\Length(max="10000")
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details",
+     *     "admin_default"
+     *     })
      * @JMSSerializer\Expose
      */
     private $message;
@@ -68,7 +73,11 @@ class Issue
      * @ORM\ManyToOne(targetEntity="App\Entity\ServiceType", inversedBy="issues")
      * @ORM\JoinColumn(name="service_type_id", nullable=true)
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details",
+     *     "admin_default"
+     *     })
      * @JMSSerializer\Expose
      */
     private $serviceType;
@@ -82,7 +91,9 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
-     *     "client_issue_incoming_confirmation"})
+     *     "client_issue_incoming_confirmation",
+     *     "admin_default"
+     *     })
      * @JMSSerializer\Expose
      */
     private $client;
@@ -93,7 +104,11 @@ class Issue
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="issues")
      * @ORM\JoinColumn(name="company_id", nullable=true)
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details",
+     *     "admin_default"
+     *     })
      * @JMSSerializer\Expose
      */
     private $company;
@@ -104,7 +119,11 @@ class Issue
      * @ORM\ManyToOne(targetEntity="App\Entity\Region", inversedBy="issues")
      * @ORM\JoinColumn(name="region_id", nullable=false)
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details",
+     *     "admin_default"
+     * })
      * @JMSSerializer\Expose
      */
     private $region;
@@ -118,7 +137,11 @@ class Issue
      *
      * @ORM\OneToMany(targetEntity="App\Entity\IssuePicture", mappedBy="issue", cascade={"persist", "remove"}, orphanRemoval=true)
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details",
+     *     "admin_default"
+     * })
      * @JMSSerializer\Expose
      */
     private $pictures;
@@ -132,7 +155,11 @@ class Issue
      *
      * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="issue", cascade={"persist"})
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *      "client_issue_details",
+     *     "admin_default"
+     * })
      * @JMSSerializer\Expose
      */
     private $videos;
@@ -141,7 +168,10 @@ class Issue
      * @var OSMAddress
      * @ORM\Embedded(class="App\Entity\OSMAddress")
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({
+     *     "default",
+     *     "admin_default"
+     * })
      * @JMSSerializer\Expose
      */
     private $address;
@@ -151,7 +181,11 @@ class Issue
      *
      * @ORM\Column(name="comment_number", type="integer", nullable=false, options={"default": 0})
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details",
+     *     "admin_default"
+     *     })
      * @JMSSerializer\Expose
      */
     private $commentNumber = 0;
@@ -168,7 +202,11 @@ class Issue
      *
      * @ORM\Column(name="like_number", type="integer", nullable=false, options={"default": 0})
      *
-     * @JMSSerializer\Groups({"client_issue_list", "client_issue_details"})
+     * @JMSSerializer\Groups({
+     *     "client_issue_list",
+     *     "client_issue_details",
+     *     "admin_default"
+     *     })
      * @JMSSerializer\Expose
      */
     private $likeNumber = 0;
