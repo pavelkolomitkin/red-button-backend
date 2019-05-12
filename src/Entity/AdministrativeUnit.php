@@ -5,9 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+use JMS\Serializer\Annotation as JMSSerializer;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AdministrativeUnitRepository")
  * @ORM\Table(name="administrative_unit")
+ *
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class AdministrativeUnit
 {
@@ -15,6 +19,9 @@ class AdministrativeUnit
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $id;
 
@@ -22,6 +29,9 @@ class AdministrativeUnit
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $title;
 
@@ -30,6 +40,9 @@ class AdministrativeUnit
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Region", inversedBy="administrativeUnits")
      * @ORM\JoinColumn(name="region_id", nullable=false)
+     *
+     * @JMSSerializer\Groups({"admin_details"})
+     * @JMSSerializer\Expose
      */
     private $region;
 

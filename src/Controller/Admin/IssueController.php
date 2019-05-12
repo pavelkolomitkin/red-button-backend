@@ -50,6 +50,8 @@ class IssueController extends AdminCommonController
     {
         return $this->getResponse([
             'issue' => $issue,
+        ], Response::HTTP_OK, [], [
+            'admin_details'
         ]);
     }
 

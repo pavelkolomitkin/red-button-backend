@@ -35,7 +35,7 @@ class Company
      *
      * @ORM\Column(name="title", type="string", length=255)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $title;
@@ -46,7 +46,7 @@ class Company
      *
      * @ORM\Column(name="full_name", type="string", length=255)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $fullName;
@@ -56,7 +56,7 @@ class Company
      *
      * @ORM\Column(name="legal_form_text", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $legalFormText;
@@ -66,7 +66,7 @@ class Company
      *
      * @ORM\Column(name="head_name", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"admin", "company"})
+     * @JMSSerializer\Groups({"company", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $headName;
@@ -76,7 +76,7 @@ class Company
      *
      * @ORM\Column(name="inn", type="string", length=30, nullable=true)
      *
-     * @JMSSerializer\Groups({"admin", "company"})
+     * @JMSSerializer\Groups({"company", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $INN;
@@ -86,7 +86,7 @@ class Company
      *
      * @ORM\Column(name="ogrn", type="string", length=30, nullable=true)
      *
-     * @JMSSerializer\Groups({"admin", "company"})
+     * @JMSSerializer\Groups({"company", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $OGRN;
@@ -97,7 +97,7 @@ class Company
      *
      * @ORM\Column(name="legal_address", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $legalAddress;
@@ -107,7 +107,7 @@ class Company
      *
      * @ORM\Column(name="actual_address", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $actualAddress;
@@ -118,7 +118,7 @@ class Company
      *
      * @ORM\Column(name="postal_address", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $postalAddress;
@@ -128,7 +128,7 @@ class Company
      *
      * @ORM\Column(name="phone_numbers", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $phoneNumbers;
@@ -138,7 +138,7 @@ class Company
      *
      * @ORM\Column(name="office_hours", type="text", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $officeHours;
@@ -148,7 +148,7 @@ class Company
      *
      * @ORM\Column(name="email", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $email;
@@ -158,7 +158,7 @@ class Company
      *
      * @ORM\Column(name="site", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $site;
@@ -168,7 +168,7 @@ class Company
      *
      * @ORM\Column(name="building_number", type="integer", nullable=true)
      *
-     * @JMSSerializer\Groups({"admin", "company"})
+     * @JMSSerializer\Groups({"company", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $buildingNumber;
@@ -178,7 +178,7 @@ class Company
      *
      * @ORM\Column(name="surface", type="decimal", scale=2, precision=12, nullable=true)
      *
-     * @JMSSerializer\Groups({"admin", "company"})
+     * @JMSSerializer\Groups({"company", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $surface;
@@ -192,6 +192,9 @@ class Company
 
     /**
      * @var ArrayCollection
+     *
+     * @JMSSerializer\Groups({"admin_details"})
+     * @JMSSerializer\Expose
      *
      * @ORM\ManyToMany(targetEntity="App\Entity\AdministrativeUnit", mappedBy="companies")
      */
