@@ -124,7 +124,7 @@ abstract class User implements UserInterface
      * @see UserInterface
      *
      * @JMSSerializer\VirtualProperty(name="roles")
-     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose
      */
     public function getRoles(): array
