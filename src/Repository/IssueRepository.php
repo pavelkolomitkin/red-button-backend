@@ -26,6 +26,9 @@ class IssueRepository extends ServiceEntityRepository
 
         $this->handleClientParameter($builder, $criteria);
         $this->handleCompanyParameter($builder, $criteria);
+        $this->handleDatePeriodParameter($builder, $criteria);
+        $this->handleRegionParameter($builder, $criteria);
+        $this->handleServiceTypeParameter($builder, $criteria);
 
         $builder->orderBy('issue.createdAt', 'DESC');
         return $builder->getQuery();
@@ -55,34 +58,47 @@ class IssueRepository extends ServiceEntityRepository
         return $builder;
     }
 
-
-
-    // /**
-    //  * @return Issue[] Returns an array of Issue objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    private function handleDatePeriodParameter(QueryBuilder $builder, array $criteria): QueryBuilder
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        if (isset($criteria['startDate']) && isset($criteria['endDate']))
+        {
+            $startDate = $criteria['startDate'] instanceof \DateTime
+                ? $criteria['startDate'] : new \DateTime($criteria['startDate']);
 
-    /*
-    public function findOneBySomeField($value): ?Issue
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            $endDate = $criteria['endDate'] instanceof \DateTime
+                ? $criteria['endDate'] : new \DateTime($criteria['endDate']);
+
+            $builder
+                ->andWhere('issue.createdAt between :startDate and :endDate')
+                ->setParameter('startDate', $startDate)
+                ->setParameter('endDate', $endDate);
+
+        }
+
+        return $builder;
     }
-    */
+
+    private function handleRegionParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (!empty($criteria['region']))
+        {
+            $builder
+                ->andWhere('issue.region = :region')
+                ->setParameter('region', $criteria['region']);
+        }
+
+        return $builder;
+    }
+
+    private function handleServiceTypeParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (!empty($criteria['serviceType']))
+        {
+            $builder
+                ->andWhere('issue.serviceType = :serviceType')
+                ->setParameter('serviceType', $criteria['serviceType']);
+        }
+
+        return $builder;
+    }
 }
