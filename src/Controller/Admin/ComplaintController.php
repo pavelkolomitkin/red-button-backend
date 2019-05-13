@@ -60,7 +60,7 @@ class ComplaintController extends AdminCommonController
      * @throws \App\Service\EntityManager\Exception\ManageEntityException
      *
      * @Route(name="admin_complaint_delete", path="/complaint/{id}", methods={"DELETE"}, requirements={"id"="\d+"})
-     * @ParamConverter("complaint", class="App\Entity\Issue")
+     * @ParamConverter("complaint", class="App\Entity\Complaint")
      */
     public function delete(Complaint $complaint, ComplaintManager $manager)
     {
