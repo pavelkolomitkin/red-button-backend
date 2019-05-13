@@ -26,7 +26,7 @@ class ComplaintController extends AdminCommonController
      */
     public function index(Request $request, ComplaintRepository $repository, PaginatorInterface $paginator)
     {
-        $query = $repository->getSearchQuery([]);
+        $query = $repository->getSearchQuery($request->query->all());
 
         $pagination = $paginator->paginate(
             $query,
