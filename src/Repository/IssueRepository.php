@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Issue;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -13,14 +14,14 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method Issue[]    findAll()
  * @method Issue[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class IssueRepository extends ServiceEntityRepository
+class IssueRepository extends ServiceEntityRepository implements ISearchRepository
 {
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Issue::class);
     }
 
-    public function getSearchQuery(array $criteria)
+    public function getSearchQuery(array $criteria): Query
     {
         $builder = $this->createQueryBuilder('issue');
 

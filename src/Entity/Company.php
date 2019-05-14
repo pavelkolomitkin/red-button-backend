@@ -200,10 +200,18 @@ class Company
      */
     private $administrativeUnits;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\CompanyRepresentativeUser", mappedBy="company")
+     */
+    private $representatives;
+
     public function __construct()
     {
         $this->issues = new ArrayCollection();
         $this->administrativeUnits = new ArrayCollection();
+        $this->representatives = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -509,5 +517,12 @@ class Company
         return $this;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getRepresentatives()
+    {
+        return $this->representatives;
+    }
 
 }

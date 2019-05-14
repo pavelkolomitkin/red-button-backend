@@ -17,7 +17,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="users")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="descriminator", type="string")
- * @ORM\DiscriminatorMap({"client" = "ClientUser", "admin" = "AdminUser", "company_representative" = "CompanyRepresentativeUser"})
+ * @ORM\DiscriminatorMap({
+ *     "client" = "ClientUser",
+ *     "admin" = "AdminUser",
+ *     "company_representative" = "CompanyRepresentativeUser",
+ *     "analyst" = "AnalystUser"
+ * })
  *
  * @JMSSerializer\ExclusionPolicy("all")
  *
@@ -27,6 +32,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 abstract class User implements UserInterface
 {
+    const PASSWORD_MIN_LENGTH = 6;
+    const PASSWORD_MAX_LENGTH = 10;
+
     use SerializeTimestampableTrait;
     use SoftDeleteableEntity;
 
@@ -45,7 +53,7 @@ abstract class User implements UserInterface
      * @Assert\Email()
      * @Assert\Length(max="180")
      *
-     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Groups({"private", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $email;
@@ -78,6 +86,9 @@ abstract class User implements UserInterface
     /**
      * @var boolean
      * @ORM\Column(name="is_active", type="boolean", nullable=false)
+     *
+     * @JMSSerializer\Groups({"default", "admin_default"})
+     * @JMSSerializer\Expose
      */
     private $isActive = false;
 

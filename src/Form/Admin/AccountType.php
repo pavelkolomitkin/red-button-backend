@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Form\Client;
 
-use App\Entity\ClientUser;
+namespace App\Form\Admin;
+
 use App\Entity\User;
 use App\Form\CommonType;
-use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,33 +14,39 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 
-class ClientUserRegisterType extends CommonType
+class AccountType extends CommonType
 {
+    const SCENARIO_CREATE = 'create';
+    const SCENARIO_UPDATE = 'update';
+
     /**
      * @var UserPasswordEncoderInterface
      */
     private $passwordEncoder;
 
     /**
-     * @var PhoneNumberUtil
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     *
+     * @required
      */
-    private $phoneNumberUtil;
-
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder, PhoneNumberUtil $phoneNumberUtil)
+    public function setPasswordEncoder(UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->passwordEncoder = $passwordEncoder;
-        $this->phoneNumberUtil = $phoneNumberUtil;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $scenario = isset($options['scenario']) ? $options['scenario'] : 'create';
+
         $builder
-            ->add('email')
             ->add('fullName')
-            ->add('phoneNumber', PhoneNumberType::class)
-            ->add('plainPassword', RepeatedType::class, [
+            ->add('email')
+            ->add('isActive');
+
+        if ($scenario === 'create')
+        {
+            $builder->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'first_name' => 'password',
                 'second_name' => 'passwordRepeat',
@@ -62,15 +67,17 @@ class ClientUserRegisterType extends CommonType
                 ]
             ]);
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-            /** @var User $user */
-            $user = $event->getForm()->getData();
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+                /** @var User $user */
+                $user = $event->getForm()->getData();
 
-            $newPassword = $event->getForm()->get('plainPassword')->getData();
+                $newPassword = $event->getForm()->get('plainPassword')->getData();
 
-            $newPasswordHash = $this->passwordEncoder->encodePassword($user,  $newPassword);
-            $user->setPassword($newPasswordHash);
-        });
+                $newPasswordHash = $this->passwordEncoder->encodePassword($user,  $newPassword);
+                $user->setPassword($newPasswordHash);
+            });
+        }
+
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -78,8 +85,7 @@ class ClientUserRegisterType extends CommonType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'data_class' => ClientUser::class,
-            'allow_extra_fields' => true
+            'data_class' => User::class
         ]);
     }
 }
