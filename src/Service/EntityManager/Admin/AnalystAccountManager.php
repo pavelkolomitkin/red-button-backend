@@ -17,7 +17,7 @@ class AnalystAccountManager extends CommonAccountManager
         return $this->formFactory->create(
             AnalystType::class,
             new AnalystUser(),
-            ['scenario' => 'create']
+            ['action' => 'create']
         );
     }
 
@@ -26,7 +26,7 @@ class AnalystAccountManager extends CommonAccountManager
         return $this->formFactory->create(
             AnalystType::class,
             null,
-            ['scenario' => 'update']
+            ['action' => 'update']
         );
     }
 }
