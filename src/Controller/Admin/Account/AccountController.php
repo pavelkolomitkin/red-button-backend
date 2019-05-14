@@ -71,6 +71,8 @@ class AccountController extends AdminCommonController
     {
         return $this->getResponse([
             'account' => $account
+        ], Response::HTTP_OK, [], [
+            'admin_details'
         ]);
     }
 

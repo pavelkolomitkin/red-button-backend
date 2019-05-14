@@ -26,7 +26,7 @@ class CompanyRepresentativeUser extends User
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="representatives")
      * @ORM\JoinColumn(name="company_id", nullable=false)
      *
-     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Groups({"default", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $company;
