@@ -18,9 +18,23 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class CompanyRepresentativeUserRepository extends ServiceEntityRepository implements ISearchRepository
 {
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, CompanyRepresentativeUser::class);
+    }
+
+    /**
+     * @param UserRepository $userRepository
+     * @required
+     */
+    public function setUserRepository(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
     }
 
     function getSearchQuery(array $criteria): Query
@@ -45,4 +59,22 @@ class CompanyRepresentativeUserRepository extends ServiceEntityRepository implem
 
         return $builder;
     }
+
+    /**
+     * It's used to handle a bug with UniqueEntity constraint when the inheritance is used
+     *
+     * @param $criteria
+     * @return mixed
+     */
+    public function findByEmail($criteria)
+    {
+        $result = $this->userRepository->createQueryBuilder('user')
+            ->where('user.email = :email')
+            ->setParameters($criteria)
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
 }

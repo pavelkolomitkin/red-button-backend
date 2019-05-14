@@ -37,7 +37,7 @@ class AccountType extends CommonType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $scenario = isset($options['scenario']) ? $options['scenario'] : 'create';
+        $scenario = isset($options['action']) ? $options['action'] : 'create';
 
         $builder
             ->add('fullName')

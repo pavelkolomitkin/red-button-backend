@@ -13,7 +13,7 @@ class CompanyRepresentativeAccountManager extends CommonAccountManager
         return $this->formFactory->create(
             CompanyRepresentativeType::class,
             new CompanyRepresentativeUser(),
-            ['scenario' => 'create']
+            ['action' => 'create']
         );
     }
 
@@ -22,7 +22,7 @@ class CompanyRepresentativeAccountManager extends CommonAccountManager
         return $this->formFactory->create(
             CompanyRepresentativeType::class,
             null,
-            ['scenario' => 'update']
+            ['action' => 'update']
         );
     }
 }

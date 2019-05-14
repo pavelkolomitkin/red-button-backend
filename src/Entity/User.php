@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  *
- * @UniqueEntity("email", message="User with that email is already exist!")
+ * @UniqueEntity("email", message="User with that email is already exist!", repositoryMethod="findByEmail")
  */
 abstract class User implements UserInterface
 {
@@ -198,7 +198,7 @@ abstract class User implements UserInterface
      * @param string $fullName
      * @return $this
      */
-    public function setFullName(string $fullName): self
+    public function setFullName(string $fullName = null): self
     {
         $this->fullName = $fullName;
         return $this;

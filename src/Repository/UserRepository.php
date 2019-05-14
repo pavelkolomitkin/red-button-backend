@@ -57,5 +57,21 @@ class UserRepository extends ServiceEntityRepository implements ISearchRepositor
         return $builder;
     }
 
+    /**
+     * It's used to handle a bug with UniqueEntity constraint when the inheritance is used
+     *
+     * @param $criteria
+     * @return mixed
+     */
+    public function findByEmail($criteria)
+    {
+        $e = '';
+        return $this->createQueryBuilder('user')
+                ->where('user.email = :email')
+                ->setParameters($criteria)
+                ->getQuery()
+                ->getResult();
+    }
+
 
 }

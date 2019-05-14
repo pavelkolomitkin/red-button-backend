@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMSSerializer;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class CompanyRepresentativeUser
@@ -19,6 +21,8 @@ class CompanyRepresentativeUser extends User
     /**
      * @var Company
      *
+     * @Assert\NotNull(message="Choose a company")
+     *
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="representatives")
      * @ORM\JoinColumn(name="company_id", nullable=false)
      *
@@ -30,7 +34,7 @@ class CompanyRepresentativeUser extends User
     /**
      * @return Company
      */
-    public function getCompany(): Company
+    public function getCompany(): ?Company
     {
         return $this->company;
     }

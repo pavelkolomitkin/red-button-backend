@@ -15,7 +15,7 @@ class CompanyRepresentativeType extends AccountType
         parent::buildForm($builder, $options);
 
         $builder->add('company', EntityType::class, [
-            'required' => false,
+            'required' => true,
             'class' => Company::class,
             'multiple' => false
         ]);
