@@ -42,7 +42,7 @@ class CommonAccountManager extends CommonEntityManager
 
     private function getSearchQueryBuilder(array $criteria)
     {
-        $type = !empty($criteria['type']) ? $criteria['type'] : 'user';
+        $type = !empty($criteria['type']) ? $criteria['type'] : 'client';
 
         $repository = null;
 
