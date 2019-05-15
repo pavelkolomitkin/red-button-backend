@@ -27,7 +27,7 @@ class IssueController extends CommonController
 
     private function filterSearchParameters(array $params)
     {
-        $result = array_intersect_assoc($params, array_flip(self::ALLOWED_SEARCH_PARAMETERS));
+        $result = array_intersect_key($params, array_flip(self::ALLOWED_SEARCH_PARAMETERS));
 
         return $result;
     }
