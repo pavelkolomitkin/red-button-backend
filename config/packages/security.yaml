@@ -43,3 +43,5 @@ security:
         - { path: ^/api/security/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/client, roles: ROLE_CLIENT_USER }
         - { path: ^/api/admin, roles: ROLE_ADMIN_USER }
+        - { path: ^/api/company-representative, roles: ROLE_COMPANY_REPRESENTATIVE_USER }
+        - { path: ^/api/analyst, roles: ROLE_ANALYST_USER }

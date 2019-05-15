@@ -17,16 +17,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="users")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="descriminator", type="string")
- * @ORM\DiscriminatorMap({"client" = "ClientUser", "admin" = "AdminUser", "company_representative" = "CompanyRepresentativeUser"})
+ * @ORM\DiscriminatorMap({
+ *     "client" = "ClientUser",
+ *     "admin" = "AdminUser",
+ *     "company_representative" = "CompanyRepresentativeUser",
+ *     "analyst" = "AnalystUser"
+ * })
  *
  * @JMSSerializer\ExclusionPolicy("all")
  *
  * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  *
- * @UniqueEntity("email", message="User with that email is already exist!")
+ * @UniqueEntity("email", message="User with that email is already exist!", repositoryMethod="findByEmail")
  */
 abstract class User implements UserInterface
 {
+    const PASSWORD_MIN_LENGTH = 6;
+    const PASSWORD_MAX_LENGTH = 10;
+
     use SerializeTimestampableTrait;
     use SoftDeleteableEntity;
 
@@ -45,7 +53,7 @@ abstract class User implements UserInterface
      * @Assert\Email()
      * @Assert\Length(max="180")
      *
-     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Groups({"private", "admin_default"})
      * @JMSSerializer\Expose
      */
     private $email;
@@ -78,6 +86,9 @@ abstract class User implements UserInterface
     /**
      * @var boolean
      * @ORM\Column(name="is_active", type="boolean", nullable=false)
+     *
+     * @JMSSerializer\Groups({"default", "admin_default"})
+     * @JMSSerializer\Expose
      */
     private $isActive = false;
 
@@ -124,7 +135,7 @@ abstract class User implements UserInterface
      * @see UserInterface
      *
      * @JMSSerializer\VirtualProperty(name="roles")
-     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose
      */
     public function getRoles(): array
@@ -187,7 +198,7 @@ abstract class User implements UserInterface
      * @param string $fullName
      * @return $this
      */
-    public function setFullName(string $fullName): self
+    public function setFullName(string $fullName = null): self
     {
         $this->fullName = $fullName;
         return $this;

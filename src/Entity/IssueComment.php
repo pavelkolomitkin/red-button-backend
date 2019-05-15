@@ -60,6 +60,9 @@ class IssueComment
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Issue", inversedBy="comments")
      * @ORM\JoinColumn(name="issue_id", nullable=false)
+     *
+     * @JMSSerializer\Groups({"admin_default"})
+     * @JMSSerializer\Expose
      */
     private $issue;
 

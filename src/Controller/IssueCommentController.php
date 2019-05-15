@@ -81,12 +81,9 @@ class IssueCommentController extends CommonController
      */
     public function update(IssueComment $comment, IssueCommentManager $manager, Request $request)
     {
-        if (!$this->isGranted('ROLE_ADMIN_USER'))
+        if ($comment->getAuthor() !== $this->getUser())
         {
-            if ($comment->getAuthor() !== $this->getUser())
-            {
-                throw new AccessDeniedException();
-            }
+            throw new AccessDeniedException();
         }
 
         $comment = $manager->update($comment, $request->request->all());

@@ -35,7 +35,7 @@ class ClientUser extends User
      *
      * @Type("libphonenumber\PhoneNumber")
      *
-     * @JMSSerializer\Groups({"private"})
+     * @JMSSerializer\Groups({"private", "admin_default"})
      * @JMSSerializer\Expose
      *
      */

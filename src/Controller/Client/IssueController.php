@@ -20,6 +20,18 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class IssueController extends CommonController
 {
+    // TODO Add allowed parameters later
+    const ALLOWED_SEARCH_PARAMETERS = [
+
+    ];
+
+    private function filterSearchParameters(array $params)
+    {
+        $result = array_intersect_key($params, array_flip(self::ALLOWED_SEARCH_PARAMETERS));
+
+        return $result;
+    }
+
     /**
      * @param Request $request
      * @param IssueRepository $repository
@@ -30,13 +42,16 @@ class IssueController extends CommonController
      */
     public function getUserIssues(Request $request, IssueRepository $repository, PaginatorInterface $paginator)
     {
+        $searchCriteria = $this->filterSearchParameters($request->query->all());
+
         $searchCriteria = array_merge(
-            $request->query->all(),
+            $searchCriteria,
             [
                 'client' => $this->getUser()
             ]
         );
 
+        // TODO Add filter of allowed parameters
         $query = $repository->getSearchQuery($searchCriteria);
 
         $pagination = $paginator->paginate(

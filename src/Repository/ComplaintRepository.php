@@ -75,7 +75,7 @@ class ComplaintRepository extends ServiceEntityRepository
         $this->handleNearPointParameter($builder, $criteria);
         $this->handleGeoBoundariesParameters($builder, $criteria);
         $this->handleServiceTypeParameter($builder, $criteria);
-        $this->handleTimePeriodParameters($builder, $criteria);
+        $this->handleDatePeriodParameter($builder, $criteria);
 
 
         $builder
@@ -96,8 +96,9 @@ class ComplaintRepository extends ServiceEntityRepository
         $this->handleNearPointParameter($builder, $criteria);
         $this->handleGeoBoundariesParameters($builder, $criteria);
         $this->handleServiceTypeParameter($builder, $criteria);
-        $this->handleTimePeriodParameters($builder, $criteria);
         $this->handleTagsParameter($builder, $criteria);
+        $this->handleRegionParameter($builder, $criteria);
+        $this->handleDatePeriodParameter($builder, $criteria);
 
         $builder->addOrderBy('complaint.createdAt', 'DESC');
 
@@ -108,8 +109,6 @@ class ComplaintRepository extends ServiceEntityRepository
     {
         if ($this->hasGeoNearCriteria($criteria))
         {
-            // TODO: filtering by the neighbourhood of the center point
-            // TODO: move the radius to the config
             $builder->andWhere('
                 ST_Distance(
                     Geography(ST_Point(:selectedLongitude, :selectedLatitude)),
@@ -158,31 +157,13 @@ class ComplaintRepository extends ServiceEntityRepository
         return $builder;
     }
 
-    private function handleTimePeriodParameters(QueryBuilder $builder, array $criteria): QueryBuilder
-    {
-        if (isset($criteria['timeStart']))
-        {
-            $timeEnd = isset($criteria['timeEnd']) ? $criteria['timeEnd'] : time();
-            $timeStart = $criteria['timeStart'];
-
-            $timeStart = $timeStart instanceof \DateTime ? $timeStart : new \DateTime($timeStart);
-            $timeEnd = $timeStart instanceof \DateTime ? $timeEnd : new \DateTime($timeEnd);
-
-            $builder->andWhere('complaint.createdAt BETWEEN :timeStart AND :timeEnd')
-                ->setParameter('timeStart', $timeStart)
-                ->setParameter('timeEnd', $timeEnd);
-        }
-
-        return $builder;
-    }
-
     private function handleServiceTypeParameter(QueryBuilder $builder, array $criteria): QueryBuilder
     {
-        if (!empty($criteria['serviceTypeId']))
+        if (!empty($criteria['serviceType']))
         {
             $builder
                 ->andWhere('complaint.serviceType = :serviceType')
-                ->setParameter('serviceType', $criteria['serviceTypeId']);
+                ->setParameter('serviceType', $criteria['serviceType']);
         }
 
         return $builder;
@@ -195,6 +176,38 @@ class ComplaintRepository extends ServiceEntityRepository
             $builder
                 ->andWhere('complaint.client = :client')
                 ->setParameter('client', $criteria['client']);
+        }
+
+        return $builder;
+    }
+
+    private function handleDatePeriodParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (isset($criteria['startDate']) && isset($criteria['endDate']))
+        {
+            $startDate = $criteria['startDate'] instanceof \DateTime
+                ? $criteria['startDate'] : new \DateTime($criteria['startDate']);
+
+            $endDate = $criteria['endDate'] instanceof \DateTime
+                ? $criteria['endDate'] : new \DateTime($criteria['endDate']);
+
+            $builder
+                ->andWhere('complaint.createdAt between :startDate and :endDate')
+                ->setParameter('startDate', $startDate)
+                ->setParameter('endDate', $endDate);
+
+        }
+
+        return $builder;
+    }
+
+    private function handleRegionParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (!empty($criteria['region']))
+        {
+            $builder
+                ->andWhere('complaint.region = :region')
+                ->setParameter('region', $criteria['region']);
         }
 
         return $builder;

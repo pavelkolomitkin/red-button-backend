@@ -19,6 +19,35 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ComplaintController extends CommonController
 {
+    // TODO Add allowed parameters later
+    const ALLOWED_SEARCH_PARAMETERS = [
+        'centerLatitude',
+        'centerLongitude',
+
+        'topLeftLatitude',
+        'topLeftLongitude',
+        'bottomRightLatitude',
+        'bottomRightLongitude',
+        'serviceTypeId',
+        'tags'
+
+    ];
+
+    private function filterSearchParameters(array $params)
+    {
+        $result = array_intersect_key($params, array_flip(self::ALLOWED_SEARCH_PARAMETERS));
+
+        return $result;
+    }
+
+    private function getDefaultSearchDatePeriod()
+    {
+        return [
+            'startDate' => new \DateTime('-1 month'),
+            'endDate' => new \DateTime('now')
+        ];
+    }
+
     /**
      * @param Request $request
      * @param ComplaintRepository $repository
@@ -28,7 +57,8 @@ class ComplaintController extends CommonController
      */
     public function tagGeoSearch(Request $request, ComplaintRepository $repository)
     {
-        $searchCriteria = $request->query->all();
+        $searchCriteria = $this->filterSearchParameters($request->query->all());
+
         if (!$repository->hasGeoCriteria($searchCriteria))
         {
             return $this->getResponse(
@@ -38,10 +68,7 @@ class ComplaintController extends CommonController
 
         $searchCriteria = array_merge(
             $searchCriteria,
-            [
-                'timeStart' => new \DateTime('-1 month'),
-                'timeEnd' => new \DateTime('now')
-            ]
+            $this->getDefaultSearchDatePeriod()
         );
 
         $tags = $repository->getTagSearchQuery($searchCriteria)->getResult();
@@ -60,7 +87,7 @@ class ComplaintController extends CommonController
      */
     public function geoSearch(Request $request, ComplaintRepository $repository)
     {
-        $searchCriteria = $request->query->all();
+        $searchCriteria = $this->filterSearchParameters($request->query->all());
         if (!$repository->hasGeoCriteria($searchCriteria))
         {
             return $this->getResponse(
@@ -70,10 +97,7 @@ class ComplaintController extends CommonController
 
         $searchCriteria = array_merge(
             $searchCriteria,
-            [
-                'timeStart' => new \DateTime('-1 month'),
-                'timeEnd' => new \DateTime('now')
-            ]
+            $this->getDefaultSearchDatePeriod()
         );
 
         $complaints = $repository->getSearchQuery($searchCriteria)->getResult();

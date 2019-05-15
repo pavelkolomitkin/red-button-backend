@@ -7,3 +7,13 @@ client_controllers:
     resource: ../../src/Controller/Client/
     type: annotation
     prefix: /api/client
+
+admin_controllers:
+    resource: ../../src/Controller/Admin/
+    type: annotation
+    prefix: /api/admin
+
+admin_accounts_controllers:
+    resource: ../../src/Controller/Admin/Account
+    type: annotation
+    prefix: /api/admin/account
