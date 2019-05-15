@@ -5,6 +5,7 @@ namespace App\Controller\Admin\Account;
 use App\Controller\Admin\AdminCommonController;
 use App\Entity\User;
 use App\Service\EntityManager\Admin\CommonAccountManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,6 +70,30 @@ class AccountController extends AdminCommonController
      */
     public function details(User $account)
     {
+        return $this->getResponse([
+            'account' => $account
+        ], Response::HTTP_OK, [], [
+            'admin_details'
+        ]);
+    }
+
+    /**
+     * @param User $account
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @Route(name="admin_account_change_active", path="/change-active/{id}", methods={"PUT"}, requirements={"id"="\d+"})
+     * @ParamConverter("account", class="App\Entity\User")
+     * @return Response
+     */
+    public function changeActiveState(User $account, Request $request, EntityManagerInterface $manager)
+    {
+        $isActive = $request->request->get('isActive', false);
+
+        $account->setIsActive($isActive);
+
+        $manager->persist($account);
+        $manager->flush();
+
         return $this->getResponse([
             'account' => $account
         ], Response::HTTP_OK, [], [
