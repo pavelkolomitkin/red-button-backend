@@ -18,6 +18,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class ComplaintRepository extends ServiceEntityRepository
 {
+    use GeoCriteriaAwareTrait;
+
     private $searchingRadius;
 
     /**
@@ -43,22 +45,6 @@ class ComplaintRepository extends ServiceEntityRepository
     public function setComplaintTagRepository(ComplaintTagRepository $complaintTagRepository)
     {
         $this->complaintTagRepository = $complaintTagRepository;
-    }
-
-    public function hasGeoCriteria(array $criteria)
-    {
-        return $this->hasGeoBoundariesCriteria($criteria) || $this->hasGeoNearCriteria($criteria);
-    }
-
-    public function hasGeoBoundariesCriteria(array $criteria)
-    {
-        return isset($criteria['topLeftLatitude']) && isset($criteria['topLeftLongitude'])
-            && isset($criteria['bottomRightLatitude']) && isset($criteria['bottomRightLongitude']);
-    }
-
-    public function hasGeoNearCriteria(array $criteria)
-    {
-        return isset($criteria['centerLatitude']) && isset($criteria['centerLongitude']);
     }
 
     public function getTagSearchQuery(array $criteria): Query

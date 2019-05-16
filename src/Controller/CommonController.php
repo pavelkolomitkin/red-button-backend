@@ -67,4 +67,16 @@ abstract class CommonController extends AbstractFOSRestController
 
         return $result;
     }
+
+    protected function getAllowedSearchParameters()
+    {
+        return [];
+    }
+
+    protected function filterSearchParameters(array $params)
+    {
+        $result = array_intersect_key($params, array_flip($this->getAllowedSearchParameters()));
+
+        return $result;
+    }
 }

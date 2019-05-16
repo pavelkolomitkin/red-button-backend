@@ -16,6 +16,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class IssueRepository extends ServiceEntityRepository implements ISearchRepository
 {
+    use GeoCriteriaAwareTrait;
+
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Issue::class);
@@ -30,9 +32,43 @@ class IssueRepository extends ServiceEntityRepository implements ISearchReposito
         $this->handleDatePeriodParameter($builder, $criteria);
         $this->handleRegionParameter($builder, $criteria);
         $this->handleServiceTypeParameter($builder, $criteria);
+        $this->handleGeoBoundariesParameters($builder, $criteria);
 
-        $builder->orderBy('issue.createdAt', 'DESC');
+        $this->handleOrdering($builder, $criteria);
+
         return $builder->getQuery();
+    }
+
+    private function handleGeoBoundariesParameters(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if ($this->hasGeoBoundariesCriteria($criteria))
+        {
+            $builder
+                ->andWhere('issue.address.latitude <= :topLeftLatitude')
+                ->andWhere('issue.address.longitude >= :topLeftLongitude')
+                ->andWhere('issue.address.latitude >= :bottomRightLatitude')
+                ->andWhere('issue.address.longitude <= :bottomRightLongitude')
+
+                ->setParameter('topLeftLatitude', $criteria['topLeftLatitude'])
+                ->setParameter('topLeftLongitude', $criteria['topLeftLongitude'])
+                ->setParameter('bottomRightLatitude', $criteria['bottomRightLatitude'])
+                ->setParameter('bottomRightLongitude', $criteria['bottomRightLongitude'])
+            ;
+        }
+
+        return $builder;
+    }
+
+    private function handleOrdering(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (isset($criteria['popular']))
+        {
+            $builder->orderBy('issue.likeNumber', 'DESC');
+        }
+
+        $builder->addOrderBy('issue.createdAt', 'DESC');
+
+        return $builder;
     }
 
     private function handleClientParameter(QueryBuilder $builder, array $criteria): QueryBuilder

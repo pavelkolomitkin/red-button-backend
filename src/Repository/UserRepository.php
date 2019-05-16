@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,7 +16,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements ISearchRepository
+class UserRepository extends ServiceEntityRepository implements ISearchRepository, UserLoaderInterface
 {
     public function __construct(RegistryInterface $registry)
     {
@@ -65,7 +67,6 @@ class UserRepository extends ServiceEntityRepository implements ISearchRepositor
      */
     public function findByEmail($criteria)
     {
-        $e = '';
         return $this->createQueryBuilder('user')
                 ->where('user.email = :email')
                 ->setParameters($criteria)
@@ -74,4 +75,23 @@ class UserRepository extends ServiceEntityRepository implements ISearchRepositor
     }
 
 
+    /**
+     * Loads the user for the given username.
+     *
+     * This method must return null if the user is not found.
+     *
+     * @param string $username The username
+     *
+     * @return UserInterface|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function loadUserByUsername($username)
+    {
+        return $this->createQueryBuilder('user')
+            ->where('user.email = :email')
+            ->andWhere('user.isActive = true')
+            ->setParameter('email', $username)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

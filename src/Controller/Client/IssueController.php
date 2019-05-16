@@ -20,16 +20,9 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class IssueController extends CommonController
 {
-    // TODO Add allowed parameters later
-    const ALLOWED_SEARCH_PARAMETERS = [
-
-    ];
-
-    private function filterSearchParameters(array $params)
+    protected function getAllowedSearchParameters()
     {
-        $result = array_intersect_key($params, array_flip(self::ALLOWED_SEARCH_PARAMETERS));
-
-        return $result;
+        return [];
     }
 
     /**
