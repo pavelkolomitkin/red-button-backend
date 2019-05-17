@@ -5,6 +5,7 @@ namespace App\Controller\Company;
 use App\Entity\Issue;
 use App\Repository\IssueRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -89,6 +90,7 @@ class IssueController extends CompanyCommonController
      * @param Issue $issue
      *
      * @Route(name="company_issue_get", path="/issue/{id}", methods={"GET"})
+     * @ParamConverter("issue", class="App\Entity\Issue")
      * @return Response
      */
     public function details(Issue $issue)

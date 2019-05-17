@@ -61,7 +61,7 @@ class IssueRepository extends ServiceEntityRepository implements ISearchReposito
 
     private function handleOrdering(QueryBuilder $builder, array $criteria): QueryBuilder
     {
-        if (isset($criteria['popular']))
+        if (!empty($criteria['popular']))
         {
             $builder->orderBy('issue.likeNumber', 'DESC');
         }

@@ -44,7 +44,8 @@ class Complaint
      * @JMSSerializer\Groups({
      *     "client_complaint_list",
      *     "client_complaint_details",
-     *     "admin_default"
+     *     "admin_default",
+     *     "company_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -61,7 +62,8 @@ class Complaint
      *     "client_complaint_details",
      *     "client_issue_list",
      *     "client_complaint_incoming_confirmations",
-     *     "admin_default"
+     *     "admin_default",
+     *     "company_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -76,7 +78,8 @@ class Complaint
      * @JMSSerializer\Groups({
      *     "client_complaint_list",
      *      "client_complaint_details",
-     *     "admin_default"
+     *     "admin_default",
+     *     "company_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -91,7 +94,7 @@ class Complaint
      *  inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
      *     )
      *
-     * @JMSSerializer\Groups({"client_complaint_details_tags", "admin_default"})
+     * @JMSSerializer\Groups({"client_complaint_details_tags", "admin_default", "company_default"})
      * @JMSSerializer\Expose
      */
     private $tags;
@@ -108,7 +111,7 @@ class Complaint
      * @ORM\ManyToOne(targetEntity="App\Entity\Region", inversedBy="complaints")
      * @ORM\JoinColumn(name="region_id", nullable=false)
      *
-     * @JMSSerializer\Groups({"client_complaint_list", "client_complaint_details", "admin_default"})
+     * @JMSSerializer\Groups({"client_complaint_list", "client_complaint_details", "admin_default", "company_default"})
      * @JMSSerializer\Expose
      */
     private $region;
@@ -122,7 +125,7 @@ class Complaint
      *
      * @ORM\OneToMany(targetEntity="App\Entity\ComplaintPicture", mappedBy="complaint", cascade={"persist", "remove"}, orphanRemoval=true)
      *
-     * @JMSSerializer\Groups({"client_complaint_list", "client_complaint_details", "admin_default"})
+     * @JMSSerializer\Groups({"client_complaint_list", "client_complaint_details", "admin_default", "company_default"})
      * @JMSSerializer\Expose
      */
     private $pictures;
@@ -136,7 +139,7 @@ class Complaint
      *
      * @ORM\OneToMany(targetEntity="App\Entity\VideoMaterial", mappedBy="complaint", cascade={"persist"})
      *
-     * @JMSSerializer\Groups({"client_complaint_list", "client_complaint_details", "admin_default"})
+     * @JMSSerializer\Groups({"client_complaint_list", "client_complaint_details", "admin_default", "company_default"})
      * @JMSSerializer\Expose
      */
     private $videos;
