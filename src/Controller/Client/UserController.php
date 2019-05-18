@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class UserController
  * @package App\Controller\Client
  */
-class UserController extends CommonController
+class UserController extends ClientCommonController
 {
     /**
      * @param EntityManagerInterface $entityManager

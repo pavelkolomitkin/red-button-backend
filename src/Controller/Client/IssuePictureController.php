@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class IssuePictureController
  * @package App\Controller\Client
  */
-class IssuePictureController extends CommonController
+class IssuePictureController extends ClientCommonController
 {
     /**
      * @param Request $request

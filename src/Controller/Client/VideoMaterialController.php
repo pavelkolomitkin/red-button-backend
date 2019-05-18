@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class VideoMaterialController
  * @package App\Controller\Client
  */
-class VideoMaterialController extends CommonController
+class VideoMaterialController extends ClientCommonController
 {
     /**
      * @Route(name="client_video_material", path="/video-material/create", methods={"POST"})

@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class ComplaintController
  * @package App\Controller\Client
  */
-class ComplaintController extends CommonController
+class ComplaintController extends ClientCommonController
 {
     protected function getAllowedSearchParameters()
     {
@@ -31,14 +31,6 @@ class ComplaintController extends CommonController
             'bottomRightLongitude',
             'serviceTypeId',
             'tags'
-        ];
-    }
-
-    private function getDefaultSearchDatePeriod()
-    {
-        return [
-            'startDate' => new \DateTime('-1 month'),
-            'endDate' => new \DateTime('now')
         ];
     }
 

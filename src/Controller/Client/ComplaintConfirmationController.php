@@ -19,7 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
  * Class ComplaintConfirmationController
  * @package App\Controller\Client
  */
-class ComplaintConfirmationController extends CommonController
+class ComplaintConfirmationController extends ClientCommonController
 {
     /**
      * @param Request $request
