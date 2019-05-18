@@ -35,8 +35,10 @@ class IssueController extends CompanyCommonController
      */
     public function search(Request $request, IssueRepository $repository, PaginatorInterface $paginator)
     {
+        $searchCriteria = $this->filterSearchParameters($request->query->all());
+
         $searchCriteria = array_merge(
-            $request->query->all(),
+            $searchCriteria,
             [
                 'company' => $this->getCompany()
             ]);
@@ -63,13 +65,7 @@ class IssueController extends CompanyCommonController
      */
     public function geoSearch(Request $request, IssueRepository $repository)
     {
-        $searchCriteria = $request->query->all();
-        if (!$repository->hasGeoCriteria($searchCriteria))
-        {
-            return $this->getResponse([
-                'issues' => []
-            ]);
-        }
+        $searchCriteria = $this->filterSearchParameters($request->query->all());
 
         $searchCriteria = array_merge(
             $searchCriteria,
