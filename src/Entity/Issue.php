@@ -43,6 +43,7 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
+     *     "client_default",
      *
      *     "admin_default",
      *     "company_default"
@@ -62,6 +63,8 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
+     *     "client_default",
+     *
      *     "admin_default",
      *     "company_default"
      *     })
@@ -78,6 +81,7 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
+     *     "client_default",
      *     "admin_default",
      *     "company_default"
      *     })
@@ -95,6 +99,7 @@ class Issue
      *     "client_issue_list",
      *     "client_issue_details",
      *     "client_issue_incoming_confirmation",
+     *     "client_default",
      *     "admin_default",
      *     "company_default"
      *     })
@@ -111,6 +116,7 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
+     *     "client_default",
      *     "admin_default"
      *     })
      * @JMSSerializer\Expose
@@ -126,6 +132,7 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
+     *     "client_default",
      *     "admin_default",
      *     "company_default"
      * })
@@ -145,6 +152,7 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
+     *     "client_default",
      *     "admin_default",
      *     "company_default"
      * })
@@ -164,6 +172,7 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *      "client_issue_details",
+     *     "client_default",
      *     "admin_default",
      *     "company_default"
      * })
@@ -192,6 +201,7 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
+     *     "client_default",
      *     "admin_default",
      *     "company_default"
      *     })
@@ -214,6 +224,7 @@ class Issue
      * @JMSSerializer\Groups({
      *     "client_issue_list",
      *     "client_issue_details",
+     *     "client_default",
      *     "admin_default",
      *     "company_default"
      *     })

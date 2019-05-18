@@ -18,11 +18,45 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class IssueController
  * @package App\Controller\Client
  */
-class IssueController extends CommonController
+class IssueController extends ClientCommonController
 {
     protected function getAllowedSearchParameters()
     {
-        return [];
+        return [
+            'topLeftLatitude',
+            'topLeftLongitude',
+            'bottomRightLatitude',
+            'bottomRightLongitude',
+        ];
+    }
+
+    /**
+     * @param Request $request
+     * @param IssueRepository $repository
+     *
+     * @Route(name="client_issue_geo_search", path="/issue/geo/search", methods={"GET"})
+     * @return Response
+     */
+    public function geoSearch(Request $request, IssueRepository $repository)
+    {
+        $searchCriteria = $this->filterSearchParameters($request->query->all());
+        if (!$repository->hasGeoBoundariesCriteria($searchCriteria))
+        {
+            return $this->getResponse([
+                'issues' => []
+            ]);
+        }
+
+        $searchCriteria = array_merge(
+            $searchCriteria,
+            $this->getDefaultSearchDatePeriod()
+        );
+
+        $issues = $repository->getSearchQuery($searchCriteria)->getResult();
+
+        return $this->getResponse([
+            'issues' => $issues
+        ]);
     }
 
     /**
