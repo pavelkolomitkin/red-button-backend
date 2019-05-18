@@ -19,25 +19,19 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ComplaintController extends CommonController
 {
-    // TODO Add allowed parameters later
-    const ALLOWED_SEARCH_PARAMETERS = [
-        'centerLatitude',
-        'centerLongitude',
-
-        'topLeftLatitude',
-        'topLeftLongitude',
-        'bottomRightLatitude',
-        'bottomRightLongitude',
-        'serviceTypeId',
-        'tags'
-
-    ];
-
-    private function filterSearchParameters(array $params)
+    protected function getAllowedSearchParameters()
     {
-        $result = array_intersect_key($params, array_flip(self::ALLOWED_SEARCH_PARAMETERS));
+        return [
+            'centerLatitude',
+            'centerLongitude',
 
-        return $result;
+            'topLeftLatitude',
+            'topLeftLongitude',
+            'bottomRightLatitude',
+            'bottomRightLongitude',
+            'serviceTypeId',
+            'tags'
+        ];
     }
 
     private function getDefaultSearchDatePeriod()
