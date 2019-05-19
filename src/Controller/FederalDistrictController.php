@@ -25,6 +25,8 @@ class FederalDistrictController extends CommonController
 
         return $this->getResponse([
             'list' => $items
+        ], Response::HTTP_OK, [], [
+            'with_regions'
         ]);
     }
 }

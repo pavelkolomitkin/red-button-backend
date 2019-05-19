@@ -38,6 +38,9 @@ class FederalDistrict
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Region", mappedBy="federalDistrict")
+     *
+     * @JMSSerializer\Groups({"with_regions"})
+     * @JMSSerializer\Expose
      */
     private $regions;
 
