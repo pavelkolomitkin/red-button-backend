@@ -83,18 +83,47 @@ class StatisticsService
         $repository = $this->entityManager->getRepository('App\Entity\Issue');
 
         $dynamic = $repository->createQueryBuilder('issue')
-            ->select('st as serviceType, MONTH(issue.createdAt) as issueMonth, COUNT(issue) as issueNumber')
+            ->select('st.id as sId, st.title as sTitle, month(issue.createdAt) as issueMonth, COUNT(issue.id) as issueNumber')
             ->leftJoin('issue.serviceType', 'st', 'WITH', 'issue.createdAt between :startDate and :endDate')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
             ->groupBy('st, issueMonth')
-            ->orderBy('issueMonth', 'ASC')
+            ->orderBy('st.id', 'ASC')
+            ->addOrderBy('issueMonth', 'ASC')
             ->getQuery()
             ->getResult()
             ;
 
+        $result = [];
 
-        return $dynamic;
+        $currentServiceTypeId = null;
+        $currentRow = [];
+        foreach ($dynamic as $item)
+        {
+            if ($currentServiceTypeId !== $item['sId'])
+            {
+                $currentServiceTypeId = $item['sId'];
+                if (!empty($currentRow))
+                {
+                    $result[] = $currentRow;
+                }
+
+                $currentRow = [
+                    'id' => $item['sId'],
+                    'title' => $item['sTitle'],
+                    'months' => []
+                ];
+            }
+
+            $currentRow['months'][$item['issueMonth']] = $item['issueNumber'];
+        }
+
+        if (!empty($currentRow))
+        {
+            $result[] = $currentRow;
+        }
+
+        return $result;
     }
 
     public function getIssueNumbersOfFederalDistrictsByYear($year)
@@ -111,7 +140,7 @@ class StatisticsService
         $repository = $this->entityManager->getRepository('App\Entity\FederalDistrict');
 
         $data = $repository->createQueryBuilder('federalDistrict')
-            ->select('federalDistrict.id as fId, federalDistrict.title as fTitle, serviceType.id as sId, serviceType.title as sTitle, COUNT(issue.id) as issueNumber')
+            ->select('federalDistrict.id as fId, federalDistrict.title as fTitle, federalDistrict.code as fCode, serviceType.id as sId, serviceType.title as sTitle, COUNT(issue.id) as issueNumber')
             ->join('federalDistrict.regions', 'region')
             ->leftJoin('region.issues', 'issue', 'WITH', 'issue.createdAt between :startDate and :endDate')
             ->leftJoin('issue.serviceType', 'serviceType')
@@ -137,12 +166,12 @@ class StatisticsService
                 if (!empty($currentRow))
                 {
                     $result[] = $currentRow;
-                    $currentRow = [];
                 }
 
-                $currentRow['federalDistrict'] = [
+                $currentRow = [
                     'id' => $item['fId'],
-                    'title' => $item['fTitle']
+                    'title' => $item['fTitle'],
+                    'code' => $item['fCode']
                 ];
 
                 $currentRow['serviceTypes'] = [];
