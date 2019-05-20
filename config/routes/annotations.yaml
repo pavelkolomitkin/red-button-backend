@@ -22,3 +22,8 @@ company_controllers:
     resource: ../../src/Controller/Company/
     type: annotation
     prefix: /api/company
+
+analytics_controllers:
+    resource: ../../src/Controller/Analytics/
+    type: annotation
+    prefix: /api/analytics
