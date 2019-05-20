@@ -83,7 +83,7 @@ class StatisticsService
         $repository = $this->entityManager->getRepository('App\Entity\Issue');
 
         $dynamic = $repository->createQueryBuilder('issue')
-            ->select('st.id as sId, st.title as sTitle, month(issue.createdAt) as issueMonth, COUNT(issue.id) as issueNumber')
+            ->select('st.id as sId, st.title as sTitle, st.code as sCode, month(issue.createdAt) as issueMonth, COUNT(issue.id) as issueNumber')
             ->leftJoin('issue.serviceType', 'st', 'WITH', 'issue.createdAt between :startDate and :endDate')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
@@ -111,6 +111,7 @@ class StatisticsService
                 $currentRow = [
                     'id' => $item['sId'],
                     'title' => $item['sTitle'],
+                    'code' => $item['sCode'],
                     'months' => []
                 ];
             }
@@ -140,7 +141,14 @@ class StatisticsService
         $repository = $this->entityManager->getRepository('App\Entity\FederalDistrict');
 
         $data = $repository->createQueryBuilder('federalDistrict')
-            ->select('federalDistrict.id as fId, federalDistrict.title as fTitle, federalDistrict.code as fCode, serviceType.id as sId, serviceType.title as sTitle, COUNT(issue.id) as issueNumber')
+            ->select('federalDistrict.id as fId, 
+                            federalDistrict.title as fTitle, 
+                            federalDistrict.code as fCode, 
+                            serviceType.id as sId, 
+                            serviceType.title as sTitle,
+                            serviceType.code as sCode,
+                            COUNT(issue.id) as issueNumber
+                            ')
             ->join('federalDistrict.regions', 'region')
             ->leftJoin('region.issues', 'issue', 'WITH', 'issue.createdAt between :startDate and :endDate')
             ->leftJoin('issue.serviceType', 'serviceType')
@@ -181,6 +189,7 @@ class StatisticsService
             $currentRow['serviceTypes'][] = [
                 'id' => $item['sId'],
                 'title' => $item['sTitle'],
+                'code' => $item['sCode'],
                 'issueNumber' => $item['issueNumber']
             ];
         }

@@ -37,6 +37,16 @@ class ServiceType
     private $title;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=30, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     */
+    private $code;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Complaint", mappedBy="serviceType")
@@ -78,6 +88,25 @@ class ServiceType
         $this->title = $title;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     * @return ServiceType
+     */
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
+        return $this;
+    }
+
 
     /**
      * @return ArrayCollection
