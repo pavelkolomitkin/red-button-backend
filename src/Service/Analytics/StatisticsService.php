@@ -79,16 +79,21 @@ class StatisticsService
 
     public function getIssueNumberDynamicByPeriod(\DateTime $startDate, \DateTime $endDate)
     {
-        /** @var IssueRepository $repository */
-        $repository = $this->entityManager->getRepository('App\Entity\Issue');
+        /** @var ServiceTypeRepository $repository */
+        $repository = $this->entityManager->getRepository('App\Entity\ServiceType');
 
-        $dynamic = $repository->createQueryBuilder('issue')
-            ->select('st.id as sId, st.title as sTitle, st.code as sCode, month(issue.createdAt) as issueMonth, COUNT(issue.id) as issueNumber')
-            ->leftJoin('issue.serviceType', 'st', 'WITH', 'issue.createdAt between :startDate and :endDate')
+        $dynamic = $repository->createQueryBuilder('service_type')
+            ->select('service_type.id as sId, 
+                            service_type.title as sTitle, 
+                            service_type.code as sCode, 
+                            month(issue.createdAt) as issueMonth, 
+                            COUNT(issue.id) as issueNumber'
+            )
+            ->leftJoin('service_type.issues', 'issue', 'WITH', 'issue.createdAt between :startDate and :endDate')
             ->setParameter('startDate', $startDate)
             ->setParameter('endDate', $endDate)
-            ->groupBy('st, issueMonth')
-            ->orderBy('st.id', 'ASC')
+            ->groupBy('service_type.id, issueMonth')
+            ->orderBy('service_type.id', 'ASC')
             ->addOrderBy('issueMonth', 'ASC')
             ->getQuery()
             ->getResult()
@@ -115,14 +120,47 @@ class StatisticsService
                     'months' => []
                 ];
             }
-
-            $currentRow['months'][$item['issueMonth']] = $item['issueNumber'];
+            if (!is_null($item['issueMonth']))
+            {
+                $currentRow['months'][$item['issueMonth']] = $item['issueNumber'];
+            }
         }
 
         if (!empty($currentRow))
         {
             $result[] = $currentRow;
         }
+
+        /** @var IssueRepository $issueRepository */
+        $issueRepository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $nonServiceTypeIssueDynamic = $issueRepository->createQueryBuilder('issue')
+            ->select(
+                'month(issue.createdAt) as issueMonth,
+                       COUNT(issue.id) as issueNumber'
+            )
+            ->where('issue.createdAt between :startDate and :endDate')
+            ->andWhere('issue.serviceType IS NULL')
+            ->groupBy('issueMonth')
+            ->orderBy('issueMonth', 'ASC')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult();
+
+        if (count($nonServiceTypeIssueDynamic) > 0)
+        {
+            $monthsDynamic = [];
+            foreach ($nonServiceTypeIssueDynamic as $item)
+            {
+                $monthsDynamic[$item['issueMonth']] = $item['issueNumber'];
+            }
+
+            $result[] = [
+                'months' => $monthsDynamic
+            ];
+        }
+
 
         return $result;
     }
