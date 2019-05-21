@@ -35,6 +35,12 @@ class Region
     private $title;
 
     /**
+     * @var string
+     * @ORM\Column(name="code", type="string", length=40, nullable=true)
+     */
+    private $code;
+
+    /**
      * @var FederalDistrict
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\FederalDistrict", inversedBy="regions")
@@ -95,6 +101,25 @@ class Region
         $this->title = $title;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     * @return Region
+     */
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
+        return $this;
+    }
+
 
     /**
      * @return FederalDistrict
