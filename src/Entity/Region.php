@@ -37,6 +37,9 @@ class Region
     /**
      * @var string
      * @ORM\Column(name="code", type="string", length=40, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $code;
 
