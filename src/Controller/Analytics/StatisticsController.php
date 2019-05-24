@@ -2,6 +2,7 @@
 
 namespace App\Controller\Analytics;
 
+use App\Entity\FederalDistrict;
 use App\Service\Analytics\StatisticsService;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -56,6 +57,56 @@ class StatisticsController extends AnalyticsCommonController
     public function getCountryIssueNumberDynamics($year, StatisticsService $service)
     {
         $statistics = $service->getIssueNumberDynamicByYear($year);
+
+        return $this->getResponse([
+            'statistics' => $statistics,
+            'year' => $year
+        ]);
+    }
+
+    /**
+     * @param $year
+     * @param StatisticsService $service
+     * @Route(
+     *     name="analytics_statistics_federal_district_numbers",
+     *     path="/statistics/federal-district-numbers/{id}/{year}",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+", "year"="\d{4,4}"}
+     * )
+     * @ParamConverter("district", class="App\Entity\FederalDistrict")
+     */
+    public function getFederalDistrictNumbers(FederalDistrict $district, $year, StatisticsService $service)
+    {
+        $commonStatistics = $service->getFederalDistrictIssueNumberByYear($district, $year);
+        $byRegionStatistics = $service->getIssueNumbersOfRegionsByYear($district, $year);
+
+        return $this->getResponse([
+            'statistics' =>
+                [
+                    'common' =>  $commonStatistics,
+                    'byRegions' => $byRegionStatistics
+                ],
+            'year' => $year
+        ]);
+    }
+
+    /**
+     * @param FederalDistrict $district
+     * @param $year
+     * @param StatisticsService $service
+     * @return Response
+     *
+     * @Route(
+     *     name="analytics_statistics_federal_district_numbers_dynamic",
+     *     path="/statistics/federal-district-numbers/dynamic/{id}/{year}",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+", "year"="\d{4,4}"}
+     * )
+     * @ParamConverter("district", class="App\Entity\FederalDistrict")
+     */
+    public function getFederalDistrictIssueNumberDynamics(FederalDistrict $district, $year, StatisticsService $service)
+    {
+        $statistics = $service->getFederalDistrictIssueNumberDynamicYear($district, $year);
 
         return $this->getResponse([
             'statistics' => $statistics,
