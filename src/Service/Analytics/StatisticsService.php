@@ -3,6 +3,7 @@
 namespace App\Service\Analytics;
 
 use App\Entity\FederalDistrict;
+use App\Entity\Region;
 use App\Repository\FederalDistrictRepository;
 use App\Repository\IssueRepository;
 use App\Repository\RegionRepository;
@@ -203,35 +204,77 @@ class StatisticsService
 
         if (count($nonServiceTypeIssueDynamic) > 0)
         {
-            $nonServiceTypeDynamic = [];
-
-            $currentYearHash = [];
-            $currentYear = null;
-
-            foreach ($nonServiceTypeIssueDynamic as $item)
-            {
-                if ($currentYear !== $item['issue_year'])
-                {
-                    if (!empty($currentYearHash))
-                    {
-                        $nonServiceTypeDynamic[$currentYear] = $currentYearHash;
-                    }
-
-                    $currentYear = $item['issue_year'];
-
-                    $currentYearHash = [];
-                }
-
-                $currentYearHash[$item['issue_month']] = $item['issue_number'];
-            }
-
-            if (!empty($currentYearHash))
-            {
-                $nonServiceTypeDynamic[$currentYear] = $currentYearHash;
-            }
-
             $result[] = [
-                'years' => $nonServiceTypeDynamic
+                'years' => $this->formatNonServiceTypeIssueNumberDynamicResult($nonServiceTypeIssueDynamic)
+            ];
+        }
+
+        return $result;
+    }
+
+    public function getFederalDistrictIssueNumberDynamicByPeriod(FederalDistrict $district, \DateTime $startDate, \DateTime $endDate)
+    {
+        $sql = "SELECT 
+                     service_type.id as id,
+                     service_type.title as title,
+                     service_type.code as code,
+                     district_issues.issue_year as issue_year,
+                     district_issues.issue_month as issue_month,
+                     COUNT(district_issues.issue_id) as issue_number
+                FROM service_type
+                LEFT JOIN (
+                    SELECT 
+                        issue.id as issue_id,
+                        EXTRACT(YEAR FROM issue.created_at) as issue_year,
+                        EXTRACT(MONTH from issue.created_at) as issue_month,
+                        issue.service_type_id as service_type_id
+                    FROM issue
+                    JOIN region ON (region.id = issue.region_id)
+                    WHERE (region.federal_district_id = :federalDistrcitId)
+                    AND (issue.created_at BETWEEN :startDate AND :endDate )     
+                    AND (issue.deleted_at IS NULL)            
+                ) AS district_issues ON (district_issues.service_type_id = service_type.id)
+                GROUP BY service_type.id, district_issues.issue_year, district_issues.issue_month
+                ORDER BY id, issue_year, issue_month
+        ";
+
+        $statement = $this->entityManager->getConnection()->prepare($sql);
+        $statement->execute([
+            'federalDistrcitId' => $district->getId(),
+            'startDate' => $startDate->format('Y-m-d H:i:s'),
+            'endDate' => $endDate->format('Y-m-d H:i:s')
+        ]);
+
+        $dynamic = $statement->fetchAll();
+        $result = $this->formatIssueNumberDynamicResult($dynamic);
+
+
+        /** @var IssueRepository $issueRepository */
+        $issueRepository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $nonServiceTypeIssueDynamic = $issueRepository->createQueryBuilder('issue')
+            ->select(
+                'year(issue.createdAt) as issue_year,
+                 month(issue.createdAt) as issue_month, 
+                 COUNT(issue.id) as issue_number'
+            )
+            ->join('issue.region', 'region', 'WITH', 'region.federalDistrict = :federalDistrict')
+            ->where('issue.createdAt between :startDate and :endDate')
+            ->andWhere('issue.serviceType IS NULL')
+            ->groupBy('issue_year, issue_month')
+            ->orderBy('issue_year', 'ASC')
+            ->addOrderBy('issue_month', 'ASC')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('federalDistrict', $district)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        if (count($nonServiceTypeIssueDynamic) > 0)
+        {
+            $result[] = [
+                'years' => $this->formatNonServiceTypeIssueNumberDynamicResult($nonServiceTypeIssueDynamic)
             ];
         }
 
@@ -281,97 +324,44 @@ class StatisticsService
         return $result;
     }
 
+    private function formatNonServiceTypeIssueNumberDynamicResult(array $rawData)
+    {
+        $result = [];
+
+        $currentYearHash = [];
+        $currentYear = null;
+
+        foreach ($rawData as $item)
+        {
+            if ($currentYear !== $item['issue_year'])
+            {
+                if (!empty($currentYearHash))
+                {
+                    $result[$currentYear] = $currentYearHash;
+                }
+
+                $currentYear = $item['issue_year'];
+
+                $currentYearHash = [];
+            }
+
+            $currentYearHash[$item['issue_month']] = $item['issue_number'];
+        }
+
+        if (!empty($currentYearHash))
+        {
+            $result[$currentYear] = $currentYearHash;
+        }
+
+        return $result;
+    }
+
     public function getFederalDistrictIssueNumberDynamicYear(FederalDistrict $district, $year)
     {
         $this->getDatePeriodByYear($year, $startTime, $endTime);
 
         return $this->getFederalDistrictIssueNumberDynamicByPeriod($district, $startTime, $endTime);
     }
-
-    public function getFederalDistrictIssueNumberDynamicByPeriod(FederalDistrict $district, \DateTime $startDate, \DateTime $endDate)
-    {
-
-        $sql = "SELECT 
-                     service_type.id as id,
-                     service_type.title as title,
-                     service_type.code as code,
-                     district_issues.issue_year as issue_year,
-                     district_issues.issue_month as issue_month,
-                     COUNT(district_issues.issue_id) as issue_number
-                FROM service_type
-                LEFT JOIN (
-                    SELECT 
-                        issue.id as issue_id,
-                        EXTRACT(YEAR FROM issue.created_at) as issue_year,
-                        EXTRACT(MONTH from issue.created_at) as issue_month,
-                        issue.service_type_id as service_type_id
-                    FROM issue
-                    JOIN region ON (region.id = issue.region_id)
-                    WHERE (region.federal_district_id = :federalDistrcitId)
-                    AND (issue.created_at BETWEEN :startDate AND :endDate )     
-                    AND (issue.deleted_at IS NULL)            
-                ) AS district_issues ON (district_issues.service_type_id = service_type.id)
-                GROUP BY service_type.id, district_issues.issue_year, district_issues.issue_month
-                ORDER BY id, issue_year, issue_month
-        ";
-
-        $statement = $this->entityManager->getConnection()->prepare($sql);
-        $statement->execute([
-            'federalDistrcitId' => $district->getId(),
-            'startDate' => $startDate->format('Y-m-d H:i:s'),
-            'endDate' => $endDate->format('Y-m-d H:i:s')
-        ]);
-
-        $dynamic = $statement->fetchAll();
-        $result = $this->formatIssueNumberDynamicResult($dynamic);
-
-
-        $nonServiceTypeIssueDynamic = $this->getCommonNonServiceTypeIssueNumberDynamicQueryBuilder($startDate, $endDate)
-            ->join('issue.region', 'region', 'WITH', 'region.federalDistrict = :federalDistrict')
-            ->setParameter('federalDistrict', $district)
-            ->getQuery()
-            ->getResult();
-
-
-        if (count($nonServiceTypeIssueDynamic) > 0)
-        {
-            $monthsDynamic = [];
-            foreach ($nonServiceTypeIssueDynamic as $item)
-            {
-                $monthsDynamic[$item['issueMonth']] = $item['issueNumber'];
-            }
-
-            $result[] = [
-                'months' => $monthsDynamic
-            ];
-        }
-
-        return $result;
-
-    }
-
-    private function getCommonNonServiceTypeIssueNumberDynamicQueryBuilder(\DateTime $startDate, \DateTime $endDate): QueryBuilder
-    {
-        /** @var IssueRepository $issueRepository */
-        $issueRepository = $this->entityManager->getRepository('App\Entity\Issue');
-
-        $result = $issueRepository->createQueryBuilder('issue')
-            ->select(
-                'month(issue.createdAt) as issueMonth,
-                 COUNT(issue.id) as issueNumber'
-            )
-            ->where('issue.createdAt between :startDate and :endDate')
-            ->andWhere('issue.serviceType IS NULL')
-            ->groupBy('issueMonth')
-            ->orderBy('issueMonth', 'ASC')
-            ->setParameter('startDate', $startDate)
-            ->setParameter('endDate', $endDate)
-            ;
-
-        return $result;
-    }
-
-
 
     public function getIssueNumbersOfFederalDistrictsByYear($year)
     {
@@ -553,6 +543,120 @@ class StatisticsService
             $result[] = $currentRow;
         }
 
+
+        return $result;
+    }
+
+    public function getRegionIssueNumberByYear(Region $region, $year)
+    {
+        $this->getDatePeriodByYear($year, $startTime, $endTime);
+
+        return $this->getRegionIssueNumberByPeriod($region, $startTime, $endTime);
+    }
+
+    public function getRegionIssueNumberByPeriod(Region $region, \DateTime $startDate, \DateTime $endDate)
+    {
+        /** @var ServiceTypeRepository $serviceTypeRepository */
+        $serviceTypeRepository = $this->entityManager->getRepository('App\Entity\ServiceType');
+
+        $result = $serviceTypeRepository->createQueryBuilder('service_type')
+            ->select(['service_type as serviceType', 'COUNT(issue.id) as issueNumber'])
+            ->leftJoin('service_type.issues', 'issue', 'WITH', '(issue.createdAt between :startDate and :endDate) AND (issue.region = :region)')
+            ->groupBy('service_type.id')
+            ->setParameter('region', $region)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult();
+
+
+        /** @var IssueRepository $issueRepository */
+        $issueRepository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $nonServiceTypeIssues = $issueRepository->createQueryBuilder('issue')
+            ->select('COUNT(issue.id) as issueNumber')
+            ->where('issue.serviceType IS NULL')
+            ->andWhere('issue.createdAt between :startDate and :endDate')
+            ->andWhere('issue.region = :region')
+            ->setParameter('region', $region)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $result[] = [
+            'serviceType' => null,
+            'issueNumber' => $nonServiceTypeIssues[0]['issueNumber']
+        ];
+
+        return $result;
+    }
+
+    public function getRegionIssueNumberDynamicByYear(Region $region, $year)
+    {
+        $this->getDatePeriodByYear($year, $startTime, $endTime);
+
+        return $this->getRegionIssueNumberDynamicByPeriod($region, $startTime, $endTime);
+    }
+
+    public function getRegionIssueNumberDynamicByPeriod(Region $region, \DateTime $startDate, \DateTime $endDate)
+    {
+        /** @var ServiceTypeRepository $serviceTypeRepository */
+        $serviceTypeRepository = $this->entityManager->getRepository('App\Entity\ServiceType');
+
+        $issueNumberDynamic = $serviceTypeRepository->createQueryBuilder('service_type')
+            ->select('
+                service_type.id as id, 
+                service_type.title as title, 
+                service_type.code as code,
+                year(issue.createdAt) as issue_year,
+                month(issue.createdAt) as issue_month, 
+                COUNT(issue.id) as issue_number
+            ')
+            ->leftJoin('service_type.issues', 'issue', 'WITH', '(issue.createdAt between :startDate and :endDate) AND (issue.region = :region)')
+            ->groupBy('service_type.id, issue_year, issue_month')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('region', $region)
+            ->groupBy('service_type.id, issue_year, issue_month')
+            ->orderBy('service_type.id', 'ASC')
+            ->addOrderBy('issue_year', 'ASC')
+            ->addOrderBy('issue_month', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $result = $this->formatIssueNumberDynamicResult($issueNumberDynamic);
+
+
+        /** @var IssueRepository $issueRepository */
+        $issueRepository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $nonServiceTypeIssueDynamic = $issueRepository->createQueryBuilder('issue')
+            ->select(
+                'year(issue.createdAt) as issue_year,
+                 month(issue.createdAt) as issue_month, 
+                 COUNT(issue.id) as issue_number'
+            )
+            ->where('issue.createdAt between :startDate and :endDate')
+            ->andWhere('issue.region = :region')
+            ->andWhere('issue.serviceType IS NULL')
+            ->groupBy('issue_year, issue_month')
+            ->orderBy('issue_year', 'ASC')
+            ->addOrderBy('issue_month', 'ASC')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('region', $region)
+            ->getQuery()
+            ->getResult();
+
+        if (count($nonServiceTypeIssueDynamic) > 0)
+        {
+            $result[] = [
+                'years' => $this->formatNonServiceTypeIssueNumberDynamicResult($nonServiceTypeIssueDynamic)
+            ];
+        }
 
         return $result;
     }

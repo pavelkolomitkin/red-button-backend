@@ -3,6 +3,7 @@
 namespace App\Controller\Analytics;
 
 use App\Entity\FederalDistrict;
+use App\Entity\Region;
 use App\Service\Analytics\StatisticsService;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -107,6 +108,55 @@ class StatisticsController extends AnalyticsCommonController
     public function getFederalDistrictIssueNumberDynamics(FederalDistrict $district, $year, StatisticsService $service)
     {
         $statistics = $service->getFederalDistrictIssueNumberDynamicYear($district, $year);
+
+        return $this->getResponse([
+            'statistics' => $statistics,
+            'year' => $year
+        ]);
+    }
+
+    /**
+     * @param Region $region
+     * @param $year
+     * @param StatisticsService $service
+     * @Route(
+     *     name="analytics_statistics_region_numbers",
+     *     path="/statistics/region/{id}/{year}",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+", "year"="\d{4,4}"}
+     * )
+     * @ParamConverter("region", class="App\Entity\Region")
+     */
+    public function getRegionIssueNumbers(Region $region, $year, StatisticsService $service)
+    {
+        $statistics = $service->getRegionIssueNumberByYear($region, $year);
+
+        return $this->getResponse([
+            'statistics' => [
+                'common' => $statistics
+            ],
+            'year' => $year
+        ]);
+    }
+
+
+    /**
+     * @param Region $region
+     * @param $year
+     * @param StatisticsService $service
+     * @return Response
+     *
+     * @Route(
+     *     name="analytics_statistics_region_numbers_dynamic",
+     *     path="/statistics/region-numbers/dynamic/{id}/{year}",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+", "year"="\d{4,4}"}
+     * )
+     * @ParamConverter("region", class="App\Entity\Region")
+     */
+    public function getRegionIssueNumbersDynamic(Region $region, $year, StatisticsService $service)
+    {
+        $statistics = $service->getRegionIssueNumberDynamicByYear($region, $year);
 
         return $this->getResponse([
             'statistics' => $statistics,
