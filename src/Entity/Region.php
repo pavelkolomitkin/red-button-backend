@@ -75,11 +75,18 @@ class Region
      */
     private $issues;
 
+    /**
+     * @var OSMRegion
+     * @ORM\Embedded(class="App\Entity\OSMRegion")
+     */
+    private $osmRegion;
+
     public function __construct()
     {
         $this->complaints = new ArrayCollection();
         $this->issues = new ArrayCollection();
         $this->administrativeUnits = new ArrayCollection();
+        $this->osmRegion = new OSMRegion();
     }
 
     public function getId(): ?int
@@ -194,5 +201,23 @@ class Region
     public function getIssues()
     {
         return $this->issues;
+    }
+
+    /**
+     * @return OSMRegion
+     */
+    public function getOsmRegion(): ?OSMRegion
+    {
+        return $this->osmRegion;
+    }
+
+    /**
+     * @param OSMRegion $osmRegion
+     * @return Region
+     */
+    public function setOsmRegion(OSMRegion $osmRegion): self
+    {
+        $this->osmRegion = $osmRegion;
+        return $this;
     }
 }
