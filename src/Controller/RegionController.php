@@ -42,6 +42,6 @@ class RegionController extends CommonController
     {
         return $this->getResponse([
             'region' => $region
-        ]);
+        ], Response::HTTP_OK, [], ['region_details']);
     }
 }

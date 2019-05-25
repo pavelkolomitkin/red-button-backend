@@ -60,6 +60,9 @@ class OSMRegion
      * @var array
      *
      * @ORM\Column(name="bounding_box", type="array", nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
      */
     private $boundingBox;
 
@@ -67,8 +70,6 @@ class OSMRegion
      * @var mixed
      * @ORM\Column(name="geo_json", type="json", nullable=true)
      *
-     * @JMSSerializer\Groups({"default"})
-     * @JMSSerializer\Expose
      */
     private $geoJson;
 

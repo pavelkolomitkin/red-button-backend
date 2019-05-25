@@ -78,6 +78,9 @@ class Region
     /**
      * @var OSMRegion
      * @ORM\Embedded(class="App\Entity\OSMRegion")
+     *
+     * @JMSSerializer\Groups({"region_details"})
+     * @JMSSerializer\Expose
      */
     private $osmRegion;
 
