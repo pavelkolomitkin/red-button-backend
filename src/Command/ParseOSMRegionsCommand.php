@@ -115,7 +115,20 @@ class ParseOSMRegionsCommand extends Command
             throw new \Exception('Cannot parse info of the region: "' . $region->getTitle() . '"');
         }
 
-        $result = $data[0];
+        $result = null;
+        foreach ($data as $item)
+        {
+            if (($item['osm_type'] == 'relation') || ($item['osm_type'] == 'way'))
+            {
+                $result = $item;
+                break;
+            }
+        }
+
+        if (empty($result))
+        {
+            throw new \Exception('Cannot find "relation" for the region "' . $region->getTitle() . '"!');
+        }
 
 
         return $result;
