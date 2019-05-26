@@ -29,6 +29,7 @@ class IssueRepository extends ServiceEntityRepository implements ISearchReposito
 
         $this->handleClientParameter($builder, $criteria);
         $this->handleCompanyParameter($builder, $criteria);
+        $this->handleYearParameter($builder, $criteria);
         $this->handleDatePeriodParameter($builder, $criteria);
         $this->handleRegionParameter($builder, $criteria);
         $this->handleServiceTypeParameter($builder, $criteria);
@@ -95,6 +96,21 @@ class IssueRepository extends ServiceEntityRepository implements ISearchReposito
         return $builder;
     }
 
+    private function handleYearParameter(QueryBuilder $builder, array $criteria): QueryBuilder
+    {
+        if (isset($criteria['year']))
+        {
+            $this->getDatePeriodByYear($criteria['year'], $startDate, $endDate);
+
+            $criteria['startDate'] = $startDate;
+            $criteria['endDate'] = $endDate;
+
+            $this->handleDatePeriodParameter($builder, $criteria);
+        }
+
+        return $builder;
+    }
+
     private function handleDatePeriodParameter(QueryBuilder $builder, array $criteria): QueryBuilder
     {
         if (isset($criteria['startDate']) && isset($criteria['endDate']))
@@ -137,5 +153,16 @@ class IssueRepository extends ServiceEntityRepository implements ISearchReposito
         }
 
         return $builder;
+    }
+
+    private function getDatePeriodByYear($year, \DateTime &$startTime = null, \DateTime &$endTime = null)
+    {
+        $startTime = new \DateTime();
+        $startTime->setTime(0, 0, 0);
+        $startTime->setDate($year, 1, 1);
+
+        $endTime = new \DateTime();
+        $endTime->setTime(23, 59, 59);
+        $endTime->setDate($year, 12, 31);
     }
 }

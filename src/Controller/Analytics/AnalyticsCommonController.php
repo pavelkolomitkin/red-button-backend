@@ -10,5 +10,11 @@ use App\Controller\CommonController;
  */
 class AnalyticsCommonController extends CommonController
 {
-
+    protected function getDefaultSerializeGroups()
+    {
+        return array_merge(
+            parent::getDefaultSerializeGroups(), [
+                'analyst_default'
+            ]);
+    }
 }
