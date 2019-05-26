@@ -130,10 +130,12 @@ class StatisticsController extends AnalyticsCommonController
     public function getRegionIssueNumbers(Region $region, $year, StatisticsService $service)
     {
         $statistics = $service->getRegionIssueNumberByYear($region, $year);
+        $number = $service->getRegionCommonNumberIssuesByYear($region, $year);
 
         return $this->getResponse([
             'statistics' => [
-                'common' => $statistics
+                'common' => $statistics,
+                'number' => $number
             ],
             'year' => $year
         ]);

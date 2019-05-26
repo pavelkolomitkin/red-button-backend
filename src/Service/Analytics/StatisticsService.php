@@ -4,6 +4,7 @@ namespace App\Service\Analytics;
 
 use App\Entity\FederalDistrict;
 use App\Entity\Region;
+use App\Repository\CompanyRepository;
 use App\Repository\FederalDistrictRepository;
 use App\Repository\IssueRepository;
 use App\Repository\RegionRepository;
@@ -600,6 +601,31 @@ class StatisticsService
         return $this->getRegionIssueNumberDynamicByPeriod($region, $startTime, $endTime);
     }
 
+    public function getRegionCommonNumberIssuesByYear(Region $region, $year)
+    {
+        $this->getDatePeriodByYear($year, $startTime, $endTime);
+
+        return $this->getRegionCommonNumberIssuesByPeriod($region, $startTime, $endTime);
+    }
+
+    public function getRegionCommonNumberIssuesByPeriod(Region $region, \DateTime $startDate, \DateTime $endDate)
+    {
+        /** @var IssueRepository $repository */
+        $repository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $result = $repository->createQueryBuilder('issue')
+            ->select('COUNT(issue.id) as issueNumber')
+            ->where('issue.region = :region')
+            ->andWhere('issue.createdAt between :startDate and :endDate')
+            ->setParameter('region', $region)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult();
+
+        return $result[0]['issueNumber'];
+    }
+
     public function getRegionIssueNumberDynamicByPeriod(Region $region, \DateTime $startDate, \DateTime $endDate)
     {
         /** @var ServiceTypeRepository $serviceTypeRepository */
@@ -657,6 +683,35 @@ class StatisticsService
                 'years' => $this->formatNonServiceTypeIssueNumberDynamicResult($nonServiceTypeIssueDynamic)
             ];
         }
+
+        return $result;
+    }
+
+    public function getRegionPopularCompaniesByYear(Region $region, $year, $number = 10)
+    {
+        $this->getDatePeriodByYear($year, $startTime, $endTime);
+
+        return $this->getRegionPopularCompaniesByPeriod($region, $startTime, $endTime, $number);
+    }
+
+    public function getRegionPopularCompaniesByPeriod(Region $region, \DateTime $startDate, \DateTime $endDate, $number = 10)
+    {
+        /** @var CompanyRepository $companyRepository  */
+        $companyRepository = $this->entityManager->getRepository('App\Entity\Company');
+
+        $result = $companyRepository->createQueryBuilder('c')
+            ->select('c as company, COUNT(issue.id) as issueNumber')
+            ->join('c.issues', 'issue')
+            ->where('issue.region = :region')
+            ->andWhere('issue.createdAt between :startDate and :endDate')
+            ->groupBy('c.id')
+            ->orderBy('issueNumber', 'DESC')
+            ->setParameter('region', $region)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setMaxResults($number)
+            ->getQuery()
+            ->getResult();
 
         return $result;
     }
