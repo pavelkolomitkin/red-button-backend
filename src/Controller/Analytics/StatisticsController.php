@@ -228,4 +228,26 @@ class StatisticsController extends AnalyticsCommonController
             'year' => $year
         ]);
     }
+
+    /**
+     * @param Company $company
+     * @param $year
+     * @param StatisticsService $service
+     * @Route(
+     *     name="analytics_statistics_company_popular_issues",
+     *     path="/statistics/company/{id}/{year}/popular-issues",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+", "year"="\d{4,4}"}
+     * )
+     * @ParamConverter("company", class="App\Entity\Company")
+     */
+    public function getCompanyPopularIssues(Company $company, $year, StatisticsService $service)
+    {
+        $statistics = $service->getCompanyPopularIssuesByYear($company, $year, 3);
+
+        return $this->getResponse([
+            'statistics' => $statistics,
+            'year' => $year
+        ]);
+    }
 }

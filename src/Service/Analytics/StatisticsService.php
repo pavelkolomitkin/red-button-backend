@@ -861,6 +861,33 @@ class StatisticsService
         return $result;
     }
 
+    public function getCompanyPopularIssuesByYear(Company $company, $year, $number)
+    {
+        $this->getDatePeriodByYear($year, $startTime, $endTime);
+
+        return $this->getCompanyPopularIssuesByPeriod($company, $startTime, $endTime, $number);
+    }
+
+    public function getCompanyPopularIssuesByPeriod(Company $company, \DateTime $startDate, \DateTime $endDate, $number = 10)
+    {
+        /** @var IssueRepository $repository */
+        $repository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $result = $repository->createQueryBuilder('issue')
+            ->where('issue.company = :company')
+            ->andWhere('issue.createdAt between :startDate and :endDate')
+            ->orderBy('issue.likeNumber', 'DESC')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('company', $company)
+            ->setMaxResults($number)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $result;
+    }
+
     private function getDatePeriodByYear($year, \DateTime &$startTime = null, \DateTime &$endTime = null)
     {
         $startTime = new \DateTime();
