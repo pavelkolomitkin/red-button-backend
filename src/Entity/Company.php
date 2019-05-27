@@ -56,7 +56,7 @@ class Company
      *
      * @ORM\Column(name="legal_form_text", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default", "admin_default"})
+     * @JMSSerializer\Groups({"default", "admin_default", "analyst_default"})
      * @JMSSerializer\Expose
      */
     private $legalFormText;
@@ -66,7 +66,7 @@ class Company
      *
      * @ORM\Column(name="head_name", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"company", "admin_default"})
+     * @JMSSerializer\Groups({"company", "admin_default", "analyst_default"})
      * @JMSSerializer\Expose
      */
     private $headName;
@@ -76,7 +76,7 @@ class Company
      *
      * @ORM\Column(name="inn", type="string", length=30, nullable=true)
      *
-     * @JMSSerializer\Groups({"company", "admin_default"})
+     * @JMSSerializer\Groups({"company", "admin_default", "analyst_default"})
      * @JMSSerializer\Expose
      */
     private $INN;
@@ -86,7 +86,7 @@ class Company
      *
      * @ORM\Column(name="ogrn", type="string", length=30, nullable=true)
      *
-     * @JMSSerializer\Groups({"company", "admin_default"})
+     * @JMSSerializer\Groups({"company", "admin_default", "analyst_default"})
      * @JMSSerializer\Expose
      */
     private $OGRN;
@@ -168,7 +168,7 @@ class Company
      *
      * @ORM\Column(name="building_number", type="integer", nullable=true)
      *
-     * @JMSSerializer\Groups({"company", "admin_default"})
+     * @JMSSerializer\Groups({"company", "admin_default", "analyst_default"})
      * @JMSSerializer\Expose
      */
     private $buildingNumber;
@@ -178,7 +178,7 @@ class Company
      *
      * @ORM\Column(name="surface", type="decimal", scale=2, precision=12, nullable=true)
      *
-     * @JMSSerializer\Groups({"company", "admin_default"})
+     * @JMSSerializer\Groups({"company", "admin_default", "analyst_default"})
      * @JMSSerializer\Expose
      */
     private $surface;
@@ -193,7 +193,7 @@ class Company
     /**
      * @var ArrayCollection
      *
-     * @JMSSerializer\Groups({"admin_details"})
+     * @JMSSerializer\Groups({"admin_details", "analyst_details"})
      * @JMSSerializer\Expose
      *
      * @ORM\ManyToMany(targetEntity="App\Entity\AdministrativeUnit", mappedBy="companies")

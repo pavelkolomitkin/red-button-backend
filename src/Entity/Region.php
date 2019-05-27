@@ -35,6 +35,15 @@ class Region
     private $title;
 
     /**
+     * @var string
+     * @ORM\Column(name="code", type="string", length=40, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     */
+    private $code;
+
+    /**
      * @var FederalDistrict
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\FederalDistrict", inversedBy="regions")
@@ -66,11 +75,21 @@ class Region
      */
     private $issues;
 
+    /**
+     * @var OSMRegion
+     * @ORM\Embedded(class="App\Entity\OSMRegion")
+     *
+     * @JMSSerializer\Groups({"region_details"})
+     * @JMSSerializer\Expose
+     */
+    private $osmRegion;
+
     public function __construct()
     {
         $this->complaints = new ArrayCollection();
         $this->issues = new ArrayCollection();
         $this->administrativeUnits = new ArrayCollection();
+        $this->osmRegion = new OSMRegion();
     }
 
     public function getId(): ?int
@@ -95,6 +114,25 @@ class Region
         $this->title = $title;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     * @return Region
+     */
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
+        return $this;
+    }
+
 
     /**
      * @return FederalDistrict
@@ -166,5 +204,23 @@ class Region
     public function getIssues()
     {
         return $this->issues;
+    }
+
+    /**
+     * @return OSMRegion
+     */
+    public function getOsmRegion(): ?OSMRegion
+    {
+        return $this->osmRegion;
+    }
+
+    /**
+     * @param OSMRegion $osmRegion
+     * @return Region
+     */
+    public function setOsmRegion(OSMRegion $osmRegion): self
+    {
+        $this->osmRegion = $osmRegion;
+        return $this;
     }
 }

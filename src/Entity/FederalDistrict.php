@@ -35,9 +35,23 @@ class FederalDistrict
     private $title;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=30, nullable=true)
+     *
+     * @JMSSerializer\Groups({"default"})
+     * @JMSSerializer\Expose
+     */
+    private $code;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Region", mappedBy="federalDistrict")
+     * @ORM\OrderBy({"title" = "ASC"})
+     *
+     * @JMSSerializer\Groups({"with_regions"})
+     * @JMSSerializer\Expose
      */
     private $regions;
 
@@ -74,6 +88,24 @@ class FederalDistrict
     public function setTitle(string $title): self
     {
         $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     * @return FederalDistrict
+     */
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
         return $this;
     }
 }

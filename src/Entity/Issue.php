@@ -46,7 +46,8 @@ class Issue
      *     "client_default",
      *
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -66,7 +67,8 @@ class Issue
      *     "client_default",
      *
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      *     })
      * @JMSSerializer\Expose
      */
@@ -83,7 +85,8 @@ class Issue
      *     "client_issue_details",
      *     "client_default",
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      *     })
      * @JMSSerializer\Expose
      */
@@ -101,7 +104,8 @@ class Issue
      *     "client_issue_incoming_confirmation",
      *     "client_default",
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      *     })
      * @JMSSerializer\Expose
      */
@@ -117,7 +121,8 @@ class Issue
      *     "client_issue_list",
      *     "client_issue_details",
      *     "client_default",
-     *     "admin_default"
+     *     "admin_default",
+     *     "analyst_default"
      *     })
      * @JMSSerializer\Expose
      */
@@ -134,7 +139,8 @@ class Issue
      *     "client_issue_details",
      *     "client_default",
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -154,7 +160,8 @@ class Issue
      *     "client_issue_details",
      *     "client_default",
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -174,7 +181,8 @@ class Issue
      *      "client_issue_details",
      *     "client_default",
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -187,7 +195,8 @@ class Issue
      * @JMSSerializer\Groups({
      *     "default",
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      * })
      * @JMSSerializer\Expose
      */
@@ -203,7 +212,8 @@ class Issue
      *     "client_issue_details",
      *     "client_default",
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      *     })
      * @JMSSerializer\Expose
      */
@@ -226,7 +236,8 @@ class Issue
      *     "client_issue_details",
      *     "client_default",
      *     "admin_default",
-     *     "company_default"
+     *     "company_default",
+     *     "analyst_default"
      *     })
      * @JMSSerializer\Expose
      */
