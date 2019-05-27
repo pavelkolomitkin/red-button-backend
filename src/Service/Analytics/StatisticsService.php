@@ -2,6 +2,7 @@
 
 namespace App\Service\Analytics;
 
+use App\Entity\Company;
 use App\Entity\FederalDistrict;
 use App\Entity\Region;
 use App\Repository\CompanyRepository;
@@ -712,6 +713,150 @@ class StatisticsService
             ->setMaxResults($number)
             ->getQuery()
             ->getResult();
+
+        return $result;
+    }
+
+    public function getCompanyIssueNumberByYear(Company $company, $year)
+    {
+        $this->getDatePeriodByYear($year, $startTime, $endTime);
+
+        return $this->getCompanyIssueNumberByPeriod($company, $startTime, $endTime);
+    }
+
+    public function getCompanyIssueNumberByPeriod(Company $company, \DateTime $startDate, \DateTime $endDate)
+    {
+        /** @var ServiceTypeRepository $repository */
+        $repository = $this->entityManager->getRepository('App\Entity\ServiceType');
+
+        $result = $repository->createQueryBuilder('service_type')
+            ->select('
+                service_type as serviceType,
+                COUNT(issue.id) as issueNumber
+            ')
+            ->leftJoin('service_type.issues', 'issue', 'WITH', '(issue.createdAt between :startDate and :endDate) and (issue.company = :company)')
+            ->groupBy('service_type.id')
+            ->setParameter('company', $company)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        /** @var IssueRepository $issueRepository */
+        $issueRepository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $nonServiceTypeIssues = $issueRepository->createQueryBuilder('issue')
+            ->select('COUNT(issue.id) as issueNumber')
+            ->where('issue.company = :company')
+            ->andWhere('issue.serviceType IS NULL')
+            ->andWhere('issue.createdAt between :startDate and :endDate')
+            ->setParameter('company', $company)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $result[] = [
+            'serviceType' => null,
+            'issueNumber' => $nonServiceTypeIssues[0]['issueNumber']
+        ];
+
+        return $result;
+    }
+
+    public function getCompanyCommonIssueNumbersByYear(Company $company, $year)
+    {
+        $this->getDatePeriodByYear($year, $startTime, $endTime);
+
+        return $this->getCompanyCommonIssueNumbersByPeriod($company, $startTime, $endTime);
+    }
+
+    public function getCompanyCommonIssueNumbersByPeriod(Company $company, \DateTime $startDate, \DateTime $endDate)
+    {
+        /** @var IssueRepository $repository */
+        $repository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $result = $repository->createQueryBuilder('issue')
+            ->select('COUNT(issue.id) as issueNumber')
+            ->where('issue.company = :company')
+            ->andWhere('issue.createdAt between :startDate and :endDate')
+            ->setParameter('company', $company)
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->getQuery()
+            ->getResult()
+        ;
+
+
+        return $result[0]['issueNumber'];
+    }
+
+    public function getCompanyIssueNumberDynamicByYear(Company $company, $year)
+    {
+        $this->getDatePeriodByYear($year, $startTime, $endTime);
+
+        return $this->getCompanyIssueNumberDynamicByPeriod($company, $startTime, $endTime);
+    }
+
+    public function getCompanyIssueNumberDynamicByPeriod(Company $company, \DateTime $startDate, \DateTime $endDate)
+    {
+        /** @var ServiceTypeRepository $serviceTypeRepository */
+        $serviceTypeRepository = $this->entityManager->getRepository('App\Entity\ServiceType');
+
+        $issueNumberDynamic = $serviceTypeRepository->createQueryBuilder('service_type')
+            ->select('
+                service_type.id as id, 
+                service_type.title as title, 
+                service_type.code as code,
+                year(issue.createdAt) as issue_year,
+                month(issue.createdAt) as issue_month, 
+                COUNT(issue.id) as issue_number
+            ')
+            ->leftJoin('service_type.issues', 'issue', 'WITH', '(issue.createdAt between :startDate and :endDate) AND (issue.company = :company)')
+            ->groupBy('service_type.id, issue_year, issue_month')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('company', $company)
+            ->groupBy('service_type.id, issue_year, issue_month')
+            ->orderBy('service_type.id', 'ASC')
+            ->addOrderBy('issue_year', 'ASC')
+            ->addOrderBy('issue_month', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $result = $this->formatIssueNumberDynamicResult($issueNumberDynamic);
+
+
+        /** @var IssueRepository $issueRepository */
+        $issueRepository = $this->entityManager->getRepository('App\Entity\Issue');
+
+        $nonServiceTypeIssueDynamic = $issueRepository->createQueryBuilder('issue')
+            ->select(
+                'year(issue.createdAt) as issue_year,
+                 month(issue.createdAt) as issue_month, 
+                 COUNT(issue.id) as issue_number'
+            )
+            ->where('issue.createdAt between :startDate and :endDate')
+            ->andWhere('issue.company = :company')
+            ->andWhere('issue.serviceType IS NULL')
+            ->groupBy('issue_year, issue_month')
+            ->orderBy('issue_year', 'ASC')
+            ->addOrderBy('issue_month', 'ASC')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('company', $company)
+            ->getQuery()
+            ->getResult();
+
+        if (count($nonServiceTypeIssueDynamic) > 0)
+        {
+            $result[] = [
+                'years' => $this->formatNonServiceTypeIssueNumberDynamicResult($nonServiceTypeIssueDynamic)
+            ];
+        }
 
         return $result;
     }

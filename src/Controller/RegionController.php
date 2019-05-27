@@ -35,7 +35,7 @@ class RegionController extends CommonController
      * @param Region $region
      * @return Response
      *
-     * @Route(name="region_get_details", path="/region/{id}", methods={"GET"})
+     * @Route(name="region_get_details", path="/region/{id}", methods={"GET"}, requirements={"id"="\d+"})
      * @ParamConverter("region", class="App\Entity\Region")
      */
     public function details(Region $region)

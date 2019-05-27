@@ -2,9 +2,11 @@
 
 namespace App\Controller\Analytics;
 
+use App\Entity\Company;
 use App\Entity\Region;
 use App\Service\Analytics\StatisticsService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
@@ -15,16 +17,17 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 class CompanyController extends AnalyticsCommonController
 {
     /**
-     * @Route(name="analytics_company_popular", path="/company/region/{id}/{year}/popular", methods={"GET"})
-     * @ParamConverter("region", class="App\Entity\Region")
+     * @param Company $company
+     *
+     * @Route(name="company_get_details", path="/company/{id}", methods={"GET"}, requirements={"id"="\d+"})
+     * @ParamConverter("company", class="App\Entity\Company")
      */
-    public function popular(Region $region, $year, StatisticsService $service)
+    public function details(Company $company)
     {
-        $statistics = $service->getRegionPopularCompaniesByYear($region, $year);
-
         return $this->getResponse([
-            'statistics' => $statistics,
-            'year' => $year
+            'company' => $company
+        ], Response::HTTP_OK, [], [
+            'analyst_details'
         ]);
     }
 }

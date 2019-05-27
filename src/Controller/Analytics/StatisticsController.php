@@ -2,6 +2,7 @@
 
 namespace App\Controller\Analytics;
 
+use App\Entity\Company;
 use App\Entity\FederalDistrict;
 use App\Entity\Region;
 use App\Service\Analytics\StatisticsService;
@@ -159,6 +160,68 @@ class StatisticsController extends AnalyticsCommonController
     public function getRegionIssueNumbersDynamic(Region $region, $year, StatisticsService $service)
     {
         $statistics = $service->getRegionIssueNumberDynamicByYear($region, $year);
+
+        return $this->getResponse([
+            'statistics' => $statistics,
+            'year' => $year
+        ]);
+    }
+
+    /**
+     * @Route(name="analytics_statistics_region_popular_companies", path="/statistics/region/{id}/{year}/popular-companies", methods={"GET"})
+     * @ParamConverter("region", class="App\Entity\Region")
+     */
+    public function getRegionPopularCompanies(Region $region, $year, StatisticsService $service)
+    {
+        $statistics = $service->getRegionPopularCompaniesByYear($region, $year);
+
+        return $this->getResponse([
+            'statistics' => $statistics,
+            'year' => $year
+        ]);
+    }
+
+    /**
+     * @param Company $company
+     * @param $year
+     * @param StatisticsService $service
+     * @Route(
+     *     name="analytics_statistics_company_numbers",
+     *     path="/statistics/company/{id}/{year}",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+", "year"="\d{4,4}"}
+     * )
+     * @ParamConverter("company", class="App\Entity\Company")
+     */
+    public function getCompanyStatistics(Company $company, $year, StatisticsService $service)
+    {
+        $statistics = $service->getCompanyIssueNumberByYear($company, $year);
+        $number = $service->getCompanyCommonIssueNumbersByYear($company, $year);
+
+        return $this->getResponse([
+            'statistics' => [
+                'common' => $statistics,
+                'number' => $number
+            ],
+            'year' => $year
+        ]);
+    }
+
+    /**
+     * @param Company $company
+     * @param $year
+     * @param StatisticsService $service
+     * @Route(
+     *     name="analytics_statistics_company_numbers_dynamic",
+     *     path="/statistics/company-numbers/dynamic/{id}/{year}",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+", "year"="\d{4,4}"}
+     * )
+     * @ParamConverter("company", class="App\Entity\Company")
+     */
+    public function getDynamicByYear(Company $company, $year, StatisticsService $service)
+    {
+        $statistics = $service->getCompanyIssueNumberDynamicByYear($company, $year);
 
         return $this->getResponse([
             'statistics' => $statistics,
