@@ -56,7 +56,7 @@ class Company
      *
      * @ORM\Column(name="legal_form_text", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"default", "admin_default"})
+     * @JMSSerializer\Groups({"default", "admin_default", "analyst_default"})
      * @JMSSerializer\Expose
      */
     private $legalFormText;
@@ -66,7 +66,7 @@ class Company
      *
      * @ORM\Column(name="head_name", type="string", length=255, nullable=true)
      *
-     * @JMSSerializer\Groups({"company", "admin_default"})
+     * @JMSSerializer\Groups({"company", "admin_default", "analyst_default"})
      * @JMSSerializer\Expose
      */
     private $headName;
