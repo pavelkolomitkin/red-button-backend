@@ -3,6 +3,7 @@
 namespace App\Controller\Analytics;
 
 use App\Entity\Company;
+use App\Entity\Issue;
 use App\Entity\Region;
 use App\Repository\IssueRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +56,12 @@ class IssueController extends AnalyticsCommonController
      * @param IssueRepository $repository
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @Route(name="analytics_issue_company_geo_search", path="/issue/company/{id}/geo/search", methods={"GET"})
+     * @Route(
+     *     name="analytics_issue_company_geo_search",
+     *     path="/issue/company/{id}/geo/search",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+"}
+     * )
      * @ParamConverter("company", class="App\Entity\Company")
      */
     public function companyGeoSearch(Company $company, Request $request, IssueRepository $repository)
@@ -66,6 +72,23 @@ class IssueController extends AnalyticsCommonController
         $result = $repository->getSearchQuery($searchCriteria)->getResult();
         return $this->getResponse([
             'issues' => $result
+        ]);
+    }
+
+    /**
+     * @param Issue $issue
+     * @Route(
+     *     name="analytics_issue_get_details",
+     *     path="/issue/{id}",
+     *     methods={"GET"},
+     *     requirements={"id"="\d+"}
+     * )
+     * @ParamConverter("issue", class="App\Entity\Issue")
+     */
+    public function details(Issue $issue)
+    {
+        return $this->getResponse([
+            'issue' => $issue
         ]);
     }
 }
