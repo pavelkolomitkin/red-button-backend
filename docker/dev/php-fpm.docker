@@ -28,7 +28,7 @@ RUN apt-get install git -y \
     && echo "post_max_size=5.5M" >> /usr/local/etc/php/conf.d/php.ini \
     && echo "upload_max_filesize=5M" >> /usr/local/etc/php/conf.d/php.ini \
     && echo "upload_tmp_dir=/home/upload_temp" >> /usr/local/etc/php/conf.d/php.ini \
-    && echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/php.ini \
+    && echo "memory_limit=1024M" >> /usr/local/etc/php/conf.d/php.ini \
     && mkdir /home/upload_temp \
     && chown -R www-data:www-data /home/upload_temp
 

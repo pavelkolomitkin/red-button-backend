@@ -61,11 +61,7 @@ do
 done
 
 # Import companies and administrative units from dump
-echo -en '\n'
-echo -n "Import companies and administrative units from dump..."
-echo -en '\n'
-docker exec -i postgres-db-container-test psql -U postgres red-button-test < dump.pgsql
-
+/bin/bash ./import-data.sh
 
 # Run behat tests
 echo -en '\n'
