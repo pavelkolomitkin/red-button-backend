@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\PasswordRecoveryKeyRepository;
+use App\Service\EntityManager\RecoveryPasswordKeyManager;
 use App\Service\EntityManager\UserManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,5 +63,66 @@ class SecurityController extends CommonController
             [],
             [static::SERIALIZE_GROUP_PRIVATE]
         );
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @param RecoveryPasswordKeyManager $manager
+     * @Route(
+     *     name="security_user_recovery_request",
+     *     path="/security/recovery-request",
+     *     methods={"POST"}
+     * )
+     * @return Response
+     * @throws \App\Service\EntityManager\Exception\ManageEntityException
+     */
+    public function requestPasswordRecovery(Request $request, RecoveryPasswordKeyManager $manager)
+    {
+        $manager->create($request->request->all());
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @param $key
+     * @param RecoveryPasswordKeyManager $manager
+     *
+     * @Route(
+     *     name="security_user_recovery_verify_key",
+     *     path="/security/verify-recovery-key/{key}",
+     *     methods={"GET"}
+     * )
+     * @return Response
+     * @throws \App\Service\EntityManager\Exception\ManageEntityException
+     */
+    public function verifyRecoveryKey($key, RecoveryPasswordKeyManager $manager)
+    {
+        $manager->verifyKey($key);
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @param $key
+     * @param Request $request
+     * @param UserManager $manager
+     * @param RecoveryPasswordKeyManager $keyManager
+     * @return Response
+     *
+     * @Route(
+     *     name="security_user_reset_password",
+     *     path="/security/reset-password/{key}",
+     *     methods={"PUT"}
+     * )
+     * @throws \App\Service\EntityManager\Exception\ManageEntityException
+     */
+    public function resetPassword($key, Request $request, UserManager $manager, RecoveryPasswordKeyManager $keyManager)
+    {
+        $keyEntity = $keyManager->verifyKey($key);
+        $manager->resetPassword($keyEntity->getUser(), $request->request->all());
+        $keyManager->utilizeKey($key);
+
+        return $this->getResponse();
     }
 }
