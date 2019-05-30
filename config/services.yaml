@@ -9,6 +9,7 @@ parameters:
     email_link_host: '%env(MAIL_LINK_HOST)%'
     upload_directory: '%env(UPLOAD_DIRECTORY)%'
     searching_radius_m: '%env(SEARCHING_RADIUS_M)%'
+    password_recovery_key_ttl_h: '%env(PASSWORD_RECOVERY_KEY_TTL_HOURS)%'
 
 services:
     # default configuration for services in *this* file
@@ -33,10 +34,8 @@ services:
     app.service.mailer:
         class: App\Service\Mailer
         arguments:
-            - '@swiftmailer.mailer.default'
-            - '@templating.engine.twig'
-            - '%noreply_mail%'
-            - '%email_link_host%'
+            $mailer: '@swiftmailer.mailer.default'
+            $templating: '@templating.engine.twig'
 
     App\Service\EntityManager\UserManager:
         calls:
@@ -111,6 +110,13 @@ services:
               arguments:
                   - '@app.complaint_tag.manager'
 
+    App\Service\EntityManager\RecoveryPasswordKeyManager:
+        calls:
+            - method: setPasswordRecoveryKeyTtl
+              arguments:
+                  - '%password_recovery_key_ttl_h%'
+
+
     App\Event\Subscriber\ComplaintPictureSerializeSubscriber:
         arguments:
             - '@vich_uploader.templating.helper.uploader_helper'
@@ -141,3 +147,13 @@ services:
 
 
 
+#   events
+
+#    user.event.password_recovery.request:
+#        class: App\Event\Subscriber\UserPasswordRecoverySubscriber
+#        arguments:
+#            $mailer: '@app.service.mailer'
+#        tags:
+#            - { name: kernel.event_subscriber }
+
+##  events

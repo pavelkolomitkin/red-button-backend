@@ -97,6 +97,6 @@ class ClientConfirmationKey
 
     public static function generateRandomKey($salt = '')
     {
-        return sha1(rand(0, 999999) . $salt);
+        return sha1(time() . rand(0, 999999) . $salt);
     }
 }

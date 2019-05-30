@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Form\Admin;
+namespace App\Form;
 
 use App\Entity\User;
-use App\Form\CommonType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,7 +32,6 @@ class AccountResetPasswordType extends CommonType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // TODO move it to a separated form type
         $builder->add('plainPassword', RepeatedType::class, [
             'type' => PasswordType::class,
             'first_name' => 'password',

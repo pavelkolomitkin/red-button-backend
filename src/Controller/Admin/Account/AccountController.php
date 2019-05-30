@@ -5,6 +5,7 @@ namespace App\Controller\Admin\Account;
 use App\Controller\Admin\AdminCommonController;
 use App\Entity\User;
 use App\Service\EntityManager\Admin\CommonAccountManager;
+use App\Service\EntityManager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -52,8 +53,9 @@ class AccountController extends AdminCommonController
      * @Route(name="admin_account_reset_password", path="/reset-password/{id}", methods={"PUT"}, requirements={"id"="\d+"})
      * @ParamConverter("account", class="App\Entity\User")
      * @return Response
+     * @throws \App\Service\EntityManager\Exception\ManageEntityException
      */
-    public function resetPassword(User $account, CommonAccountManager $manager, Request $request)
+    public function resetPassword(User $account, UserManager $manager, Request $request)
     {
         $account = $manager->resetPassword($account, $request->request->all());
 

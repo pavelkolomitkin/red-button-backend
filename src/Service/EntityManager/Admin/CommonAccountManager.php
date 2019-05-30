@@ -3,17 +3,12 @@
 namespace App\Service\EntityManager\Admin;
 
 use App\Entity\User;
-use App\Form\Admin\AccountResetPasswordType;
+use App\Form\AccountResetPasswordType;
 use App\Service\EntityManager\CommonEntityManager;
 use Symfony\Component\Form\FormInterface;
 
 class CommonAccountManager extends CommonEntityManager
 {
-    public function resetPassword(User $user, array $data)
-    {
-        return $this->update($user, $data);
-    }
-
     protected function getCreationForm(): FormInterface
     {
         throw new \Exception('You can not create this entity');
@@ -21,7 +16,7 @@ class CommonAccountManager extends CommonEntityManager
 
     protected function getUpdatingForm(): FormInterface
     {
-        return $this->formFactory->create(AccountResetPasswordType::class);
+        throw new \Exception('You can not update this entity');
     }
 
     public function search(array $criteria)

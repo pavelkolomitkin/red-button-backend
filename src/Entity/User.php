@@ -98,6 +98,18 @@ abstract class User implements UserInterface
      */
     private $issueComments;
 
+    /**
+     * @var PasswordRecoveryKey
+     *
+     * @ORM\OneToOne(
+     *     targetEntity="App\Entity\PasswordRecoveryKey",
+     *     mappedBy="user",
+     *     cascade={"persist", "remove"},
+     *     orphanRemoval=true
+     * )
+     */
+    private $passwordRecoveryKey;
+
     public function __construct()
     {
         $this->issueComments = new ArrayCollection();
@@ -236,6 +248,26 @@ abstract class User implements UserInterface
     public function setIssueComments($issueComments): self
     {
         $this->issueComments = $issueComments;
+        return $this;
+    }
+
+    /**
+     * @return PasswordRecoveryKey
+     */
+    public function getPasswordRecoveryKey(): ?PasswordRecoveryKey
+    {
+        return $this->passwordRecoveryKey;
+    }
+
+    /**
+     * @param PasswordRecoveryKey $passwordRecoveryKey
+     * @return User
+     */
+    public function setPasswordRecoveryKey(PasswordRecoveryKey $passwordRecoveryKey): self
+    {
+        $this->passwordRecoveryKey = $passwordRecoveryKey;
+        $this->passwordRecoveryKey->setUser($this);
+
         return $this;
     }
 }

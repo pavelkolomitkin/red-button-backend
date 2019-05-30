@@ -5,6 +5,7 @@ namespace App\Service\EntityManager;
 use App\Entity\ClientUser;
 use App\Entity\User;
 use App\Entity\ClientConfirmationKey;
+use App\Form\AccountResetPasswordType;
 use App\Service\EntityManager\Exception\ManageEntityException;
 use App\Service\Mailer;
 use Doctrine\DBAL\LockMode;
@@ -16,6 +17,7 @@ class UserManager extends CommonEntityManager
      * @var Mailer
      */
     private $mailer;
+
 
     public function setMailer(Mailer $mailer)
     {
@@ -98,6 +100,27 @@ class UserManager extends CommonEntityManager
         $this->entityManager->flush();
 
         $this->entityManager->commit();
+
+        return $user;
+    }
+
+    public function resetPassword(User $user, array $data)
+    {
+        $form = $this->formFactory->create(AccountResetPasswordType::class, $user);
+
+        $form->submit($data);
+        if (!$form->isValid())
+        {
+            throw new ManageEntityException(
+                $this->errorExtractor->extract($form),
+                ManageEntityException::UPDATE_ENTITY_ERROR_TYPE
+            );
+        }
+
+        $user = $form->getData();
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         return $user;
     }
