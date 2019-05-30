@@ -12,7 +12,6 @@ use Symfony\Component\EventDispatcher\Event;
 class UserPasswordRecoveryEvent extends Event
 {
     public const RECOVERY_REQUEST_EVENT = 'password_recovery.request';
-    public const RECOVERY_CONFIRM_EVENT = 'password_recovery.confirm';
 
     /**
      * @var PasswordRecoveryKey

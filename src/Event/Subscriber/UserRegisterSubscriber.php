@@ -1,15 +1,12 @@
 <?php
 
-
 namespace App\Event\Subscriber;
 
-
-use App\Event\UserPasswordRecoveryEvent;
-use App\Event\UserPasswordResetNotifyEvent;
+use App\Event\ClientRegisterEvent;
 use App\Service\Mailer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class UserPasswordRecoverySubscriber implements EventSubscriberInterface
+class UserRegisterSubscriber implements EventSubscriberInterface
 {
     /**
      * @var Mailer
@@ -42,18 +39,12 @@ class UserPasswordRecoverySubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            UserPasswordRecoveryEvent::RECOVERY_REQUEST_EVENT => 'onRecoveryRequest',
-            UserPasswordResetNotifyEvent::NAME => 'onPasswordReset'
+            ClientRegisterEvent::NAME => 'onUserRegister'
         ];
     }
 
-    public function onRecoveryRequest(UserPasswordRecoveryEvent $event)
+    public function onUserRegister(ClientRegisterEvent $event)
     {
-        $this->mailer->sendRecoverPasswordLink($event->getKey());
-    }
-
-    public function onPasswordReset(UserPasswordResetNotifyEvent $event)
-    {
-        $this->mailer->sendPasswordResetNotifyMessage($event->getUser());
+        $this->mailer->sendConfirmRegistrationMessage($event->getConfirmationKey());
     }
 }
