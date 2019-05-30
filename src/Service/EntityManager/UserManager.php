@@ -5,10 +5,13 @@ namespace App\Service\EntityManager;
 use App\Entity\ClientUser;
 use App\Entity\User;
 use App\Entity\ClientConfirmationKey;
+use App\Event\ClientRegisterEvent;
+use App\Event\UserPasswordResetNotifyEvent;
 use App\Form\AccountResetPasswordType;
 use App\Service\EntityManager\Exception\ManageEntityException;
 use App\Service\Mailer;
 use Doctrine\DBAL\LockMode;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 
 class UserManager extends CommonEntityManager
@@ -18,10 +21,25 @@ class UserManager extends CommonEntityManager
      */
     private $mailer;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
 
     public function setMailer(Mailer $mailer)
     {
         $this->mailer = $mailer;
+    }
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     *
+     * @required
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -31,32 +49,24 @@ class UserManager extends CommonEntityManager
      */
     public function register(array $data)
     {
-        $this->entityManager->beginTransaction();
+        /** @var ClientUser $user */
+        $user = parent::create($data);
 
-        try
-        {
-            /** @var ClientUser $user */
-            $user = parent::create($data);
+        $confirmationKey = new ClientConfirmationKey();
+        $confirmationKey
+            ->setKey(ClientConfirmationKey::generateRandomKey())
+            ->setClient($user)
+            ->setIsActivated(false);
 
-            $confirmationKey = new ClientConfirmationKey();
-            $confirmationKey
-                ->setKey(ClientConfirmationKey::generateRandomKey())
-                ->setClient($user)
-                ->setIsActivated(false);
+        $this->entityManager->persist($confirmationKey);
+        $this->entityManager->flush($confirmationKey);
 
-            $this->entityManager->persist($confirmationKey);
-            $this->entityManager->flush();
-
-        }
-        catch (\Exception $exception)
-        {
-            $this->entityManager->rollback();
-            throw $exception;
-        }
-
-        $this->entityManager->commit();
-
-        $this->mailer->sendConfirmRegistrationMessage($confirmationKey);
+        $this
+            ->eventDispatcher
+            ->dispatch(
+                ClientRegisterEvent::NAME,
+                new ClientRegisterEvent($confirmationKey)
+            );
 
         return $user;
     }
@@ -121,6 +131,13 @@ class UserManager extends CommonEntityManager
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $this
+            ->eventDispatcher
+            ->dispatch(
+                UserPasswordResetNotifyEvent::NAME,
+                new UserPasswordResetNotifyEvent($user)
+            );
 
         return $user;
     }

@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
-use App\Entity\ClientUser;
 use App\Entity\ClientConfirmationKey;
 use App\Entity\PasswordRecoveryKey;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -39,6 +39,7 @@ class Mailer
             ->setTo($user->getEmail())
             ->setBody(
                 $this->templating->render('Mail\register_confirmation.html.twig', [
+                    'user' => $user,
                     'confirmationLink' => 'http://' . $this->linkHost . '/security/register-confirm/' . $confirmationKey->getKey()]
                 )
             );
@@ -56,6 +57,21 @@ class Mailer
             ->setBody(
                 $this->templating->render('Mail\recovery_password_request.html.twig', [
                     'recoveryLink' => 'http://' . $this->linkHost . '/security/password-recovery/' . $key->getKey()
+                ])
+            )
+        ;
+
+        $this->mailer->send($message);
+    }
+
+    public function sendPasswordResetNotifyMessage(User $user)
+    {
+        $message = (new \Swift_Message('Password has been reset'))
+            ->setFrom($this->fromMail)
+            ->setTo($user->getEmail())
+            ->setBody(
+                $this->templating->render('Mail\reset_password_notify.html.twig', [
+                    'user' => $user
                 ])
             )
         ;

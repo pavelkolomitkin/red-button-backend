@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\PasswordRecoveryKeyRepository;
 use App\Service\EntityManager\RecoveryPasswordKeyManager;
 use App\Service\EntityManager\UserManager;
 use Symfony\Component\HttpFoundation\Request;
