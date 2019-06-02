@@ -68,8 +68,17 @@ class VideoMaterialManager extends CommonEntityManager
             }
 
             // try to grab from external source
-            $result = $this->externalVideoProvider->getMaterial($link);
+            try
+            {
+                $result = $this->externalVideoProvider->getMaterial($link);
+            }
+            catch (ProvideVideoException $exception)
+            {
+                throw new ManageEntityException(['url' => $exception->getMessage()]);
+            }
+
             $result->setOwner($user);
+
 
             $this->entityManager->persist($result);
             $this->entityManager->flush();
