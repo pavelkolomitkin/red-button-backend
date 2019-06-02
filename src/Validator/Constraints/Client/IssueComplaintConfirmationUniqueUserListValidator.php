@@ -27,7 +27,7 @@ class IssueComplaintConfirmationUniqueUserListValidator extends ConstraintValida
             $userId = $item->getComplaint()->getClient()->getId();
             if (isset($userIds[$userId]))
             {
-                $this->context->addViolation('You can request signature only one from each person!');
+                $this->context->addViolation('complaint_confirmation.you_can_request_only_one_signature_from_each_user');
                 break;
             }
 

@@ -39,7 +39,7 @@ class Complaint
      * @ORM\Column(name="message", type="text", nullable=false)
      *
      * @Assert\NotBlank()
-     * @Assert\Length(max="5000")
+     * @Assert\Length(max="5000", maxMessage="complaint.message.max_length")
      *
      * @JMSSerializer\Groups({
      *     "client_complaint_list",

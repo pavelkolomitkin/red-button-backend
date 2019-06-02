@@ -21,7 +21,7 @@ class CompanyRepresentativeUser extends User
     /**
      * @var Company
      *
-     * @Assert\NotNull(message="Choose a company")
+     * @Assert\NotNull(message="company_representative.company.choose_a_company")
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="representatives")
      * @ORM\JoinColumn(name="company_id", nullable=false)

@@ -21,7 +21,7 @@ use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumbe
  *
  * @JMSSerializer\ExclusionPolicy("all")
  *
- * @UniqueEntity("phoneNumber", message="User with that phone number is already exist!")
+ * @UniqueEntity("phoneNumber", message="client.phone_number.already_exists")
  */
 class ClientUser extends User
 {
@@ -31,7 +31,7 @@ class ClientUser extends User
      * @ORM\Column(name="phone_number", type="phone_number", unique=true, nullable=true)
      *
      * @Assert\Length(max="255")
-     * @AssertPhoneNumber(defaultRegion="RU", type="mobile")
+     * @AssertPhoneNumber(defaultRegion="RU", type="mobile", message="client.phone_number.incorrect_number")
      *
      * @Type("libphonenumber\PhoneNumber")
      *

@@ -98,13 +98,13 @@ class GeoLocationService implements IGeoLocationService
 
         if ($response->getStatusCode() != 200)
         {
-            throw new GeoLocationException('The external service is not available!');
+            throw new GeoLocationException('geo_location.external_service_is_not_available');
         }
 
         $result = json_decode($response->getBody()->getContents(), true);
         if (empty($result))
         {
-            throw new GeoLocationException('Cannot get address by location!');
+            throw new GeoLocationException('geo_location.cannot_identify_address_by_location');
         }
 
         return $result;

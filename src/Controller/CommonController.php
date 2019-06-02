@@ -42,32 +42,6 @@ abstract class CommonController extends AbstractFOSRestController
         return [self::SERIALIZE_GROUP_DEFAULT];
     }
 
-    /**
-     * Translate error messages
-     *
-     * @param array $errors
-     * @return array
-     */
-    protected function translateErrors(array $errors)
-    {
-        $result = [];
-
-        $translator = $this->get('translator');
-        foreach ($errors as $key => $error)
-        {
-            if (is_array($error))
-            {
-                $result[$key] = $this->translateErrors($error);
-            }
-            else
-            {
-                $result[$key] = $translator->trans($error);
-            }
-        }
-
-        return $result;
-    }
-
     protected function getAllowedSearchParameters()
     {
         return [];

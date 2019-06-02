@@ -25,7 +25,7 @@ class VideoOwnerValidator extends ConstraintValidator
     {
         if ($value->getOwner() !== $this->getUser())
         {
-            $this->context->addViolation('You can use only your own linked videos!');
+            $this->context->addViolation('video.only_own_items');
             return;
         }
     }

@@ -42,24 +42,24 @@ class ExternalVideoProvider implements IExternalVideoProvider
         }
         catch (ClientException $exception)
         {
-            throw new ProvideVideoException('Cannot not get an access to this video!');
+            throw new ProvideVideoException('external_video_service.cannot_get_an_access_to_this_video');
         }
 
 
         $responseCode = $response->getStatusCode();
         if ($responseCode === 401)
         {
-            throw new ProvideVideoException('Cannot not get an access to this video! Authorization denied!');
+            throw new ProvideVideoException('external_video_service.cannot_get_an_access_to_this_video');
         }
         elseif ($responseCode != 200)
         {
-            throw new ProvideVideoException('The external service is not available!');
+            throw new ProvideVideoException('external_video_service.external_service_is_not_available');
         }
 
         $result = json_decode($response->getBody()->getContents(), true);
         if (empty($result))
         {
-            throw new ProvideVideoException('Cannot to receive data by link!');
+            throw new ProvideVideoException('external_video_service.external_service_is_not_available');
         }
 
         return $result;

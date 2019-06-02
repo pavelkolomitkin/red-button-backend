@@ -61,7 +61,7 @@ class IssueComplaintMaxDistanceValidator extends ConstraintValidator
 
         if ($distance > $this->maxDistance)
         {
-            $this->context->addViolation('You can choose complaint so far!');
+            $this->context->addViolation('issue.complaint.max_distance');
             return;
         }
 

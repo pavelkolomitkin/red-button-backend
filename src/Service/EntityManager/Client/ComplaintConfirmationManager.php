@@ -28,7 +28,7 @@ class ComplaintConfirmationManager extends CommonEntityManager
     {
         if ($statusCode === ComplaintConfirmationStatus::STATUS_PENDING)
         {
-            throw new ManageEntityException(['status' => 'The status is not allowed!']);
+            throw new ManageEntityException(['status' => 'complaint_confirmation.status.not_allowed']);
         }
 
         $status = $this
@@ -37,7 +37,7 @@ class ComplaintConfirmationManager extends CommonEntityManager
             ->findOneBy(['code' => $statusCode]);
         if (!$status || ($status->getCode() === ComplaintConfirmationStatus::STATUS_PENDING))
         {
-            throw new ManageEntityException(['status' => 'The status is not allowed!']);
+            throw new ManageEntityException(['status' => 'complaint_confirmation.status.not_allowed']);
         }
 
 

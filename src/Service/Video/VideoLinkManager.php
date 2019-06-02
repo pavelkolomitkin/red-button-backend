@@ -32,7 +32,7 @@ class VideoLinkManager
 
         if ($result === null)
         {
-            throw new VideoLinkException('Cannot recognize the video link "' . $url . '"!');
+            throw new VideoLinkException('video_link.cannot_recognize');
         }
 
         return $result;

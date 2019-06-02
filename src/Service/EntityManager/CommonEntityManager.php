@@ -143,7 +143,7 @@ abstract class CommonEntityManager
         }
         catch (\Exception $exception)
         {
-            throw new ManageEntityException(['Cannot delete item'], ManageEntityException::DELETE_ENTITY_ERROR_TYPE);
+            throw new ManageEntityException(['common.cannot_delete_item'], ManageEntityException::DELETE_ENTITY_ERROR_TYPE);
         }
     }
 

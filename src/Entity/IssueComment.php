@@ -37,7 +37,7 @@ class IssueComment
      * @ORM\Column(type="text", length=2000, nullable=false)
      *
      * @Assert\NotBlank()
-     * @Assert\Length(max="2000")
+     * @Assert\Length(max="2000", maxMessage="issue_comment.message.max_length")
      *
      * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose

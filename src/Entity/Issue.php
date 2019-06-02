@@ -59,7 +59,7 @@ class Issue
      * @ORM\Column(name="message", type="text", nullable=false)
      *
      * @Assert\NotBlank()
-     * @Assert\Length(max="10000")
+     * @Assert\Length(max="10000", maxMessage="issue.message.max_length")
      *
      * @JMSSerializer\Groups({
      *     "client_issue_list",

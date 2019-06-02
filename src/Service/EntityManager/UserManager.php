@@ -97,7 +97,7 @@ class UserManager extends CommonEntityManager
         {
             $this->entityManager->rollback();
             throw new ManageEntityException([
-                'key' => ['This key is not valid']
+                'key' => ['register_confirmation_key.invalid']
             ]);
         }
 
