@@ -49,6 +49,11 @@ class FeatureContext extends MinkContext
     private $registerConfirmationKey;
 
     /**
+     * @var string
+     */
+    private $passwordRecoveryKey;
+
+    /**
      * @var array [fileName => pictureId]
      */
     private $uploadedComplaintPictures = [];
@@ -98,6 +103,7 @@ class FeatureContext extends MinkContext
     /**
      * @param \Behat\Gherkin\Node\TableNode $data
      * @Given I add a client user stuff with data:
+     * @throws \libphonenumber\NumberParseException
      */
     public function createClientUserStuff(\Behat\Gherkin\Node\TableNode $data)
     {
@@ -432,11 +438,59 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * @param $email
+     * @throws \Doctrine\DBAL\DBALException
+     *
+     * @Given I have a password recovery key with email :email
+     */
+    public function iHaveAPasswordRecoveryKey($email)
+    {
+        $connection = $this->entityManager->getConnection();
+
+        $statement = $connection->prepare("
+            SELECT password_recovery_key.key_hash as key_hash FROM password_recovery_key
+            JOIN users ON (password_recovery_key.user_id = users.id)
+            WHERE users.email = :email
+        ");
+
+        $statement->bindValue("email", $email);
+        $statement->execute();
+
+        $key = $statement->fetch(\Doctrine\DBAL\FetchMode::ASSOCIATIVE);
+
+        $this->passwordRecoveryKey = $key['key_hash'];
+    }
+
+    /**
+     * @Given I verify the existing password recovery key
+     */
+    public function iVerifyPasswordRecoveryKey()
+    {
+        $this->sendRequest('GET', '/security/verify-recovery-key/' . $this->passwordRecoveryKey);
+    }
+
+    /**
      * @Then I try activate my registration by key
      */
     public function iTryActivateRegistration()
     {
         $this->sendRequest('POST', '/security/confirm-register/' . $this->registerConfirmationKey);
+    }
+
+    /**
+     * @param $password
+     * @param $passwordRepeat
+     *
+     * @Given I restore password with password :password and passwordRepeat :passwordRepeat with existing key
+     */
+    public function iRestorePasswordWithKey($password, $passwordRepeat)
+    {
+        $this->sendRequest('PUT', '/security/reset-password/' . $this->passwordRecoveryKey, [], [], [], json_encode([
+            'plainPassword' => [
+                'password' => $password,
+                'passwordRepeat' => $passwordRepeat
+            ]
+        ]));
     }
 
 

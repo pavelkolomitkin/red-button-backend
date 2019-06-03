@@ -29,8 +29,10 @@ class IssueController extends AnalyticsCommonController
     }
 
     /**
+     * @param Region $region
      * @param Request $request
      * @param IssueRepository $repository
+     * @return \Symfony\Component\HttpFoundation\Response
      * @Route(name="analytics_issue_region_geo_search", path="/issue/region/{id}/geo/search", methods={"GET"})
      * @ParamConverter("region", class="App\Entity\Region")
      */
@@ -84,6 +86,7 @@ class IssueController extends AnalyticsCommonController
      *     requirements={"id"="\d+"}
      * )
      * @ParamConverter("issue", class="App\Entity\Issue")
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function details(Issue $issue)
     {
