@@ -42,7 +42,7 @@ class RequestRecoveryPasswordType extends CommonType
         $user = $this->userRepository->findOneBy(['email' => $value]);
         if (!$user)
         {
-            $context->addViolation('User with this email does not exist in the system!');
+            $context->addViolation('user.email.undefined');
         }
     }
 

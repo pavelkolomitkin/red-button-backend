@@ -23,10 +23,10 @@ Feature:
     Then the JSON should be equal to:
     """
     {
-      "errors": {
-          "key": [
-              "This key is not valid"
+        "errors": {
+            "key": [
+                "Ссылка недействительна!"
             ]
-          }
+        }
     }
     """

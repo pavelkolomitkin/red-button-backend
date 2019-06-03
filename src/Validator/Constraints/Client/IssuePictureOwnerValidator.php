@@ -25,7 +25,7 @@ class IssuePictureOwnerValidator extends ConstraintValidator
     {
         if ($value->getOwner() !== $this->getUser())
         {
-            $this->context->addViolation('You can use only pictures uploaded by your own!');
+            $this->context->addViolation('issue.picture.only_own_items');
             return;
         }
     }

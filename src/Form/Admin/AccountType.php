@@ -52,17 +52,28 @@ class AccountType extends CommonType
                 'second_name' => 'passwordRepeat',
                 'mapped' => false,
                 'required' => true,
-                'invalid_message' => 'The password fields must match.',
+                'invalid_message' => 'user.password.should_much',
                 'first_options' => [
                     'constraints' => [
                         new NotBlank(),
-                        new Length(['min' => User::PASSWORD_MIN_LENGTH, 'max' => User::PASSWORD_MAX_LENGTH])
+                        new Length([
+                            'min' => User::PASSWORD_MIN_LENGTH,
+                            'max' => User::PASSWORD_MAX_LENGTH,
+                            'maxMessage' => 'user.password.max_length',
+                            'minMessage' => 'user.password.min_length'
+                            ]
+                        )
                     ]
                 ],
                 'second_options' => [
                     'constraints' => [
                         new NotBlank(),
-                        new Length(['min' => User::PASSWORD_MIN_LENGTH, 'max' => User::PASSWORD_MAX_LENGTH])
+                        new Length([
+                            'min' => User::PASSWORD_MIN_LENGTH,
+                            'max' => User::PASSWORD_MAX_LENGTH,
+                            'maxMessage' => 'user.password.max_length',
+                            'minMessage' => 'user.password.min_length'
+                        ])
                     ]
                 ]
             ]);

@@ -134,7 +134,7 @@ class RecoveryPasswordKeyManager extends CommonEntityManager
         $entity = $this->repository->findOneBy(['key' => $key]);
         if (!$entity || $this->isRecoveryKeyExpired($entity))
         {
-            throw new ManageEntityException(['key' => 'Invalid key!']);
+            throw new ManageEntityException(['key' => 'password_recovery_key.invalid']);
         }
 
         return $entity;

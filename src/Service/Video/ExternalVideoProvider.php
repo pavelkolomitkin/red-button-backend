@@ -6,6 +6,7 @@ use App\Entity\VideoMaterial;
 use App\Service\Video\Exception\ProvideVideoException;
 use App\Service\Video\Link\VideoLink;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class ExternalVideoProvider implements IExternalVideoProvider
 {
@@ -35,17 +36,30 @@ class ExternalVideoProvider implements IExternalVideoProvider
 
     protected function getExternalData(VideoLink $link): array
     {
-        $response = $this->httpClient->request('GET', $link->getApiUrl());
-
-        if ($response->getStatusCode() != 200)
+        try
         {
-            throw new ProvideVideoException('The external service is not available!');
+            $response = $this->httpClient->request('GET', $link->getApiUrl());
+        }
+        catch (ClientException $exception)
+        {
+            throw new ProvideVideoException('external_video_service.cannot_get_an_access_to_this_video');
+        }
+
+
+        $responseCode = $response->getStatusCode();
+        if ($responseCode === 401)
+        {
+            throw new ProvideVideoException('external_video_service.cannot_get_an_access_to_this_video');
+        }
+        elseif ($responseCode != 200)
+        {
+            throw new ProvideVideoException('external_video_service.external_service_is_not_available');
         }
 
         $result = json_decode($response->getBody()->getContents(), true);
         if (empty($result))
         {
-            throw new ProvideVideoException('Cannot to receive data by link!');
+            throw new ProvideVideoException('external_video_service.external_service_is_not_available');
         }
 
         return $result;

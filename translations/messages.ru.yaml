@@ -1,0 +1,8 @@
+mail.welcome_to_the_red_button: 'Добро пожаловать в сервис Red Button!'
+mail.hello: 'Здравствуйте'
+mail.this_is_your_register_confirmation_link: 'Ваша ссылка для подтверждения регистрации'
+mail.password_recovery: 'Восстановление пароля'
+mail.your_link_to_restore_your_password: 'Ваша ссылка для восстановления пароля'
+mail.password_has_been_reset: 'Ваш пароль успешно изменен'
+mail.you_have_reset_your_password: 'Вы успешно изменили свой пароль'
+mail.link_label: 'Перейти'

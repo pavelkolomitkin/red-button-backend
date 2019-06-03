@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Gedmo\SoftDeleteable(fieldName="deletedAt")
  *
- * @UniqueEntity("email", message="User with that email is already exist!", repositoryMethod="findByEmail")
+ * @UniqueEntity("email", message="user.email.already_exists", repositoryMethod="findByEmail")
  */
 abstract class User implements UserInterface
 {
@@ -50,7 +50,7 @@ abstract class User implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank()
      * @Assert\Email()
-     * @Assert\Length(max="180")
+     * @Assert\Length(max="180", maxMessage="user.email.max_length")
      *
      * @JMSSerializer\Groups({"private", "admin_default"})
      * @JMSSerializer\Expose
@@ -63,7 +63,7 @@ abstract class User implements UserInterface
      * @ORM\Column(name="full_name", type="string", length=255)
      *
      * @Assert\NotBlank()
-     * @Assert\Length(max="255")
+     * @Assert\Length(max="255", maxMessage="user.full_name.max_length")
      *
      * @JMSSerializer\Groups({"default"})
      * @JMSSerializer\Expose

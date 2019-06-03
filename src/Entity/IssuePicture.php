@@ -38,7 +38,7 @@ class IssuePicture
     private $id;
 
     /**
-     * @Assert\Image(maxSize="5M", mimeTypes={"image/*"})
+     * @Assert\Image(maxSize="5M", mimeTypes={"image/*"}, maxSizeMessage="picture.max_size")
      * @Vich\UploadableField(mapping="issue_picture", fileNameProperty="image.name", size="image.size", mimeType="image.mimeType", originalName="image.originalName", dimensions="image.dimensions")
      *
      * @var File

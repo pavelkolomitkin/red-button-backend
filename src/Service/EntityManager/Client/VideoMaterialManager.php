@@ -71,6 +71,7 @@ class VideoMaterialManager extends CommonEntityManager
             $result = $this->externalVideoProvider->getMaterial($link);
             $result->setOwner($user);
 
+
             $this->entityManager->persist($result);
             $this->entityManager->flush();
 
