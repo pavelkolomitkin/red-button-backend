@@ -24,14 +24,14 @@ Feature:
     {
         "errors": {
             "email": [
-                "This value is not a valid email address."
+                "Значение адреса электронной почты недопустимо."
             ],
             "phoneNumber": [
-                "This value is not a valid phone number."
+                "Значение не является допустимым номером телефона."
             ],
             "plainPassword": {
                 "password": [
-                    "The password fields must match."
+                    "Пароли должны совпадать"
                 ]
             }
         }
@@ -55,10 +55,10 @@ Feature:
     Then the JSON should be equal to:
     """
     {
-    "errors": {
-        "fullName": [
-            "This value is too long. It should have 255 characters or less."
-          ]
+        "errors": {
+            "fullName": [
+                "Допусимое количество символов: 255"
+            ]
         }
     }
     """
