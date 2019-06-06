@@ -300,8 +300,6 @@ class FeatureContext extends MinkContext
         }, $tags);
         $tagIds = implode(',', $tagIds);
 
-        // http://localhost:7777/api/client/complaint/geo/search?tags=23&topLeftLatitude=48.84965060911401&topLeftLongitude=44.47732207576074&bottomRightLatitude=48.78952005168193&bottomRightLongitude=44.804336998856435
-
         $box = $viewBox->getHash()[0];
 
         $topLeftLatitude = $box['topLeftLatitude'];
