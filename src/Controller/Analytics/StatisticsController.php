@@ -67,8 +67,10 @@ class StatisticsController extends AnalyticsCommonController
     }
 
     /**
+     * @param FederalDistrict $district
      * @param $year
      * @param StatisticsService $service
+     * @return Response
      * @Route(
      *     name="analytics_statistics_federal_district_numbers",
      *     path="/statistics/federal-district-numbers/{id}/{year}",
@@ -127,6 +129,7 @@ class StatisticsController extends AnalyticsCommonController
      *     requirements={"id"="\d+", "year"="\d{4,4}"}
      * )
      * @ParamConverter("region", class="App\Entity\Region")
+     * @return Response
      */
     public function getRegionIssueNumbers(Region $region, $year, StatisticsService $service)
     {
@@ -170,6 +173,10 @@ class StatisticsController extends AnalyticsCommonController
     /**
      * @Route(name="analytics_statistics_region_popular_companies", path="/statistics/region/{id}/{year}/popular-companies", methods={"GET"})
      * @ParamConverter("region", class="App\Entity\Region")
+     * @param Region $region
+     * @param $year
+     * @param StatisticsService $service
+     * @return Response
      */
     public function getRegionPopularCompanies(Region $region, $year, StatisticsService $service)
     {
@@ -192,6 +199,7 @@ class StatisticsController extends AnalyticsCommonController
      *     requirements={"id"="\d+", "year"="\d{4,4}"}
      * )
      * @ParamConverter("company", class="App\Entity\Company")
+     * @return Response
      */
     public function getCompanyStatistics(Company $company, $year, StatisticsService $service)
     {
@@ -218,8 +226,9 @@ class StatisticsController extends AnalyticsCommonController
      *     requirements={"id"="\d+", "year"="\d{4,4}"}
      * )
      * @ParamConverter("company", class="App\Entity\Company")
+     * @return Response
      */
-    public function getDynamicByYear(Company $company, $year, StatisticsService $service)
+    public function getCompanyDynamicByYear(Company $company, $year, StatisticsService $service)
     {
         $statistics = $service->getCompanyIssueNumberDynamicByYear($company, $year);
 
@@ -240,6 +249,7 @@ class StatisticsController extends AnalyticsCommonController
      *     requirements={"id"="\d+", "year"="\d{4,4}"}
      * )
      * @ParamConverter("company", class="App\Entity\Company")
+     * @return Response
      */
     public function getCompanyPopularIssues(Company $company, $year, StatisticsService $service)
     {

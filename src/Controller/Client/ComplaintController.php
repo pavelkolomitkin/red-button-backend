@@ -29,7 +29,7 @@ class ComplaintController extends ClientCommonController
             'topLeftLongitude',
             'bottomRightLatitude',
             'bottomRightLongitude',
-            'serviceTypeId',
+            'serviceType',
             'tags'
         ];
     }

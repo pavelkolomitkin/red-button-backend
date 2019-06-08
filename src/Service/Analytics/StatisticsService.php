@@ -309,7 +309,10 @@ class StatisticsService
 
             if (!is_null($item['issue_year']))
             {
-                $currentRow['years'][$item['issue_year']] = [];
+                if (!isset($currentRow['years'][$item['issue_year']]))
+                {
+                    $currentRow['years'][$item['issue_year']] = [];
+                }
             }
 
             if (!is_null($item['issue_month']))
