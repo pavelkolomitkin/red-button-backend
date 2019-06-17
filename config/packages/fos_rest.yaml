@@ -21,6 +21,7 @@ fos_rest:
   format_listener:
     enabled: true
     rules:
+      - { path: '^/api/user-agreement', priorities: [ 'html', '*/*'], fallback_format: ~, prefer_extension: true }
       - { path: ^/api, priorities: [ json ], fallback_format: json, prefer_extension: true }
       - { path: '^/media/cache', priorities: [ 'html', '*/*'], fallback_format: ~, prefer_extension: true }
   exception:
