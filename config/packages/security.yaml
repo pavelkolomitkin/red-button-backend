@@ -19,6 +19,10 @@ security:
             pattern: ^/api/security/(register|confirm-register|recovery-request|verify-recovery-key|recovery|reset-password)
             anonymous: true
 
+        api_agreement:
+            pattern: ^/api/user-agreement
+            anonymous: true
+
         api_login:
             pattern:  ^/api/security/login
             stateless: true
@@ -45,6 +49,7 @@ security:
         - { path: ^/api/security/verify-recovery-key, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/security/recovery, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/security/reset-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/user-agreement, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/client, roles: ROLE_CLIENT_USER }
         - { path: ^/api/admin, roles: ROLE_ADMIN_USER }
         - { path: ^/api/company-representative, roles: ROLE_COMPANY_REPRESENTATIVE_USER }
