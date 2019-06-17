@@ -110,7 +110,15 @@ class RecoveryPasswordKeyManager extends CommonEntityManager
         $user = $this->userRepository->findOneBy(['email' => $data['email']]);
 
         $entity = $user->getPasswordRecoveryKey();
-        if (!$entity || $this->isRecoveryKeyExpired($entity))
+        if ($entity && $this->isRecoveryKeyExpired($entity))
+        {
+            $this->entityManager->remove($entity);
+            $this->entityManager->flush($entity);
+
+            $entity = null;
+        }
+
+        if (!$entity)
         {
             $entity = new PasswordRecoveryKey();
             $entity->setKey(PasswordRecoveryKey::generateRandomKey());

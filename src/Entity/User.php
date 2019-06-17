@@ -32,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 abstract class User implements UserInterface
 {
     const PASSWORD_MIN_LENGTH = 6;
-    const PASSWORD_MAX_LENGTH = 10;
+    const PASSWORD_MAX_LENGTH = 30;
 
     use SerializeTimestampableTrait;
     use SoftDeleteableEntity;

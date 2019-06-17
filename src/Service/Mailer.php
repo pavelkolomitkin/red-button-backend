@@ -54,7 +54,7 @@ class Mailer
                     'user' => $user,
                     'confirmationLink' => 'http://' . $this->linkHost . '/security/register-confirm/' . $confirmationKey->getKey()]
                 )
-            );
+                , 'text/html');
 
         $this->mailer->send($message);
     }
@@ -70,7 +70,7 @@ class Mailer
                 $this->templating->render('Mail\recovery_password_request.html.twig', [
                     'recoveryLink' => 'http://' . $this->linkHost . '/security/password-recovery/' . $key->getKey()
                 ])
-            )
+            , 'text/html')
         ;
 
         $this->mailer->send($message);
@@ -85,7 +85,7 @@ class Mailer
                 $this->templating->render('Mail\reset_password_notify.html.twig', [
                     'user' => $user
                 ])
-            )
+                , 'text/html')
         ;
 
         $this->mailer->send($message);
