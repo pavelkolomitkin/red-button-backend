@@ -1,5 +1,4 @@
 swiftmailer:
-    url: '%env(MAILER_URL)%'
     transport: '%env(MAILER_TRANSPORT)%'
     port: '%env(MAILER_PORT)%'
     host: '%env(MAILER_HOST)%'
